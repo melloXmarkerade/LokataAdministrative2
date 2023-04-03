@@ -1,0 +1,153 @@
+﻿@page "/issuedTicketPage"
+@inject NavigationManager NavigationManager
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+<h2>Issue Ticket</h2>
+    &nbsp;
+<button class="btn btn-primary">Scan Document Physical Copy</button>
+<hr />
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+<div class="form-group row">
+    <label class="control-label col-md-12">TCT Number</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Date</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Place of Apprehension</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Street</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Barangay</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Date</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Time</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+
+
+<div class="form-group row">
+    <label class="control-label col-md-12">Vehicle Description</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Plate Number</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div><div class="form-group row">
+    <label class="control-label col-md-12">Tracking</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div><div class="form-group row">
+    <label class="control-label col-md-12">Make</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div><div class="form-group row">
+    <label class="control-label col-md-12">Model</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Color</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+
+
+<div class="form-group row">
+    <label class="control-label col-md-12">Place Number</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Violations</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Item Confiscated</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Barangay</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div><div class="form-group row">
+    <label class="control-label col-md-12">City</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="control-label col-md-12">Province</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
+    </div>
+</div>
+
+    &nbsp;
+<div class="form-group">
+    <button class="btn btn-primary" >Submit</button>
+    <button class="btn btn-light" >Cancel</button> <!-- onclick="Cancel" -->
+</div>
+
+<hr />
+
+<hr />
+<h5>Navigation Buttons</h5>
+<button class="btn btn-primary" @onclick="BackButton">Back</button>
+<button class="btn btn-primary" @onclick="HomePage">DashBoard</button>
+<hr />
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+@code {
+    private void BackButton()
+    {
+        NavigationManager.NavigateTo("/issuedTicket");
+    }
+    private void HomePage()
+    {
+        NavigationManager.NavigateTo("/Dashboard");
+    }
+}

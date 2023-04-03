@@ -1,0 +1,49 @@
+﻿
+@page "/Logout"
+@using LokataAdministrative2.Models;
+@inject HttpClient httpClient
+
+
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+<h3>Logout</h3>
+<button @onclick="GetData">Get data from other PC</button>
+<div>
+    @if (!string.IsNullOrEmpty(result))
+    {
+        <p>@result</p>
+    }
+</div>
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+
+
+@code {
+    private string result = " ";
+
+
+
+    private async Task GetData()
+    {
+        var httpClient = new HttpClient();
+
+        var options = new JsonSerializerOptions()
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            PropertyNameCaseInsensitive = true
+        };
+
+        var response = await httpClient.GetFromJsonAsync<CitationDTO>("http://192.168.68.102/api/Citation", options);
+
+        string dto = "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetData();
+    }
+
+
+
+}

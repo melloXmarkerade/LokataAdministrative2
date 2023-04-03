@@ -1,0 +1,83 @@
+﻿@page "/VehicleDetails"
+@inject NavigationManager NavigationManager
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+<h2>Vehicle Details</h2>
+<hr />
+<div class="form-group row">
+    <label class="custom-control-label col-md-12">Search</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="*"-->
+    </div>
+    
+</div>
+
+&nbsp;
+
+<div>
+    <button class="btn btn-primary">Search</button> <!--onclick="AccountSearch"-->
+    <!-- <ValidationMessage For="*" /> -->
+</div>
+
+&nbsp;
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>TCT Number</th>
+            <th>Brand</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Color</th>
+            <th>Plate Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var IssueTicketDetails in ListOfDetails)
+        {
+            <tr>
+                <td>@IssueTicketDetails.TCTNum</td>
+                <td>@IssueTicketDetails.Brand</td>
+                <td>@IssueTicketDetails.Type</td>
+                <td>@IssueTicketDetails.Description</td>
+                <td>@IssueTicketDetails.Color</td>
+                <td>@IssueTicketDetails.PlateNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+<h5>Navigation Buttons</h5>
+<button class="btn btn-primary" @onclick="BackButton">Back</button>
+<button class="btn btn-primary" @onclick="HomePage">DashBoard</button>
+<hr />
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+@code {
+    private void BackButton()
+    {
+        NavigationManager.NavigateTo("/impoundVehicle");
+    }
+    private void HomePage()
+    {
+        NavigationManager.NavigateTo("/Dashboard");
+    }
+    public class IssueTicketDetails
+    {
+        public string TCTNum { get; set; }
+        public string Brand { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
+        public string Color { get; set; }
+        public string PlateNumber { get; set; }
+    }
+
+    public List<IssueTicketDetails> ListOfDetails { get; set; } = new List<IssueTicketDetails>()
+{
+        new IssueTicketDetails() { TCTNum = "J027992", Brand = "YAMAHA ", Type = "2-wheels", Description = "Mio Sporty", Color = "Black", PlateNumber = "6860 YE"},
+        new IssueTicketDetails() { TCTNum = "4283321", Brand = "YAMAHA", Type = "2-wheels", Description = "Mio Sporty", Color = "Black", PlateNumber = "6860 YE"},
+    };
+}

@@ -1,0 +1,99 @@
+﻿@page "/issuedTicket"
+@inject NavigationManager NavigationManager
+
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+<h2>Vehicle Issued Ticket</h2>
+<hr />
+<h4>Issued Ticket List</h4>
+<p style="color:red">======== NOTE: SAMPLE ONLY ===========</p>
+&nbsp;
+<div class="form-group row">
+    <label class="col-md-12">Search</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="*"-->
+    </div>   
+</div>
+
+ &nbsp;
+
+<div class="form-group">
+    <button class="btn btn-primary">Search</button> <!--onclick="AccountSearch"-->
+    <!-- <ValidationMessage For="*" /> -->
+</div>
+ 
+&nbsp;
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>TCT Number</th>
+            <th>Date</th>
+            <th>Place of Apprehension</th>
+            <th>Vehicle Description</th>
+            <th>Plate Number</th>
+            <th>Violations</th>
+            <th>Item Confiscated</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ListOfDetails)
+        {
+            <tr>
+                <td @onclick="() => HandleClick(item)" id="TCTNumber">@item.TCTNum</td>
+                <td>@item.Date</td>
+                <td>@item.PlaceOfApprehension</td>
+                <td>@item.VehicleDescription</td>
+                <td>@item.PlateNum</td>
+                <td>@item.Violation</td>
+                <td>@item.ItemConfiscated </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<button class="btn btn-primary" @onclick="TicketIssuePage">Record Ticket</button>
+
+&nbsp;
+<p style="color:red">======== NOTE: SAMPLE ONLY ===========</p>
+<hr />
+&nbsp;
+&nbsp;&nbsp;&nbsp;
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+
+@code {
+
+
+    private void TicketIssuePage()
+    {
+        NavigationManager.NavigateTo("/issuedTicketPage");
+    }
+
+    public class IssueTicketDetails
+    {
+        public string TCTNum { get; set; }
+        public string Date { get; set; }
+        public string PlaceOfApprehension { get; set; }
+        public string VehicleDescription { get; set; }
+        public string PlateNum { get; set; }
+        public string Violation { get; set; }
+        public string ItemConfiscated { get; set; }
+    }
+
+    private void HandleClick(IssueTicketDetails item)
+    {
+        // Perform some action here, such as opening a link or displaying more information
+        Console.WriteLine($"Clicked on ticket {item.TCTNum} for customer {item.PlateNum}");
+    }
+
+
+    private List<IssueTicketDetails> ListOfDetails { get; set; } = new List<IssueTicketDetails>()
+{
+        new IssueTicketDetails() { TCTNum = "J027992", Date = "12-4-2022 ", PlaceOfApprehension = "J.P Rizal Jayme Street", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
+        new IssueTicketDetails() { TCTNum = "4283321", Date = "7-14-2021", PlaceOfApprehension = "Tabok, Mandaue", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
+    };
+
+}

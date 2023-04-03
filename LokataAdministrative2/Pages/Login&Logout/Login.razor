@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+<h1>Login</h1>
+<hr />
+<div class="form-group row">
+    <label class="col-md-12">Username</label>
+    <div class="col-md-4">
+        <input class="form-control" /> <!-- bind="*"-->
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-md-12">Password</label>
+    <div class="col-md-4">
+        <center><input class="form-control" /> <!-- bind="*"--></center>
+    </div>
+</div>
+
+<hr />
+
+<div class="form-group">    
+    <button type="submit" class="btn btn-primary" @onclick="ToDashboard">Login</button> <!-- onclick="Login" -->
+</div>
+
+<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
+
+
+
+@code {
+
+    private void ToDashboard()
+    {
+        NavigationManager.NavigateTo("/userpage");
+    }
+    
+}
+
