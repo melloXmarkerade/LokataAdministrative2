@@ -1,5 +1,10 @@
 ﻿@page "/issuedTicket"
 @inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using LokataAdministrative2.Models;
 
 
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
@@ -28,27 +33,46 @@
     <thead>
         <tr>
             <th>TCT Number</th>
-            <th>Date</th>
-            <th>Place of Apprehension</th>
+            <th>License Number</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>License Type</th>
+            <th>Officer</th>
+            <th>Address</th>
             <th>Vehicle Description</th>
-            <th>Plate Number</th>
+            <th>Place Apprehended</th>
             <th>Violations</th>
-            <th>Item Confiscated</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in ListOfDetails)
+        @if (citationDtos != null)
         {
-            <tr>
-                <td @onclick="() => HandleClick(item)" id="TCTNumber">@item.TCTNum</td>
-                <td>@item.Date</td>
-                <td>@item.PlaceOfApprehension</td>
-                <td>@item.VehicleDescription</td>
-                <td>@item.PlateNum</td>
-                <td>@item.Violation</td>
-                <td>@item.ItemConfiscated </td>
-            </tr>
+            @foreach (var item in citationDtos)
+            {
+                <tr>
+                    <td>@item.TctNo</td>
+                    <td>@item.LicesnseNo</td>
+                    <td>@item.LastName</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.MiddleName</td>
+                    <td>@item.LicenseType</td>
+                    <td>@item.Officer </td>
+                    <td>@item.Address</td>
+                    <td>@item.VehicleDescription</td>
+                    <td>@item.PlaceApprehended</td>
+                    <td>@item.Violations</td>
+
+                </tr>
+            }
         }
+        else
+        {
+            <p>No Todo Items found.</p>
+        }
+        
+            
+        
     </tbody>
 </table>
 
@@ -72,28 +96,8 @@
         NavigationManager.NavigateTo("/issuedTicketPage");
     }
 
-    public class IssueTicketDetails
-    {
-        public string TCTNum { get; set; }
-        public string Date { get; set; }
-        public string PlaceOfApprehension { get; set; }
-        public string VehicleDescription { get; set; }
-        public string PlateNum { get; set; }
-        public string Violation { get; set; }
-        public string ItemConfiscated { get; set; }
-    }
+    private CitationDTO[]? citationDtos;
 
-    private void HandleClick(IssueTicketDetails item)
-    {
-        // Perform some action here, such as opening a link or displaying more information
-        Console.WriteLine($"Clicked on ticket {item.TCTNum} for customer {item.PlateNum}");
-    }
-
-
-    private List<IssueTicketDetails> ListOfDetails { get; set; } = new List<IssueTicketDetails>()
-{
-        new IssueTicketDetails() { TCTNum = "J027992", Date = "12-4-2022 ", PlaceOfApprehension = "J.P Rizal Jayme Street", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
-        new IssueTicketDetails() { TCTNum = "4283321", Date = "7-14-2021", PlaceOfApprehension = "Tabok, Mandaue", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
-    };
-
+    protected override async Task OnInitializedAsync() =>
+        citationDtos = await Http.GetFromJsonAsync<CitationDTO[]>("https://www.lokatamanagement.com/api/Citation");
 }

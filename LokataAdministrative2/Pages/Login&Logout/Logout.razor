@@ -2,18 +2,32 @@
 @page "/Logout"
 @using LokataAdministrative2.Models;
 @inject HttpClient httpClient
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
 
 
 
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
 <h3>Logout</h3>
-<button @onclick="GetData">Get data from other PC</button>
-<div>
-    @if (!string.IsNullOrEmpty(result))
-    {
-        <p>@result</p>
-    }
-</div>
+
+@if (citationDTOss == null)
+{
+    <p>No Todo Items found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var item in citationDTOss)
+        {
+            <li>@item.Barangay</li>
+            <li>@item.Province</li>
+            <li>@item.City</li>
+        }
+    </ul>
+}
+
+
 
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
 
@@ -23,27 +37,10 @@
     private string result = " ";
 
 
+    private AddressDto[]? citationDTOss;
 
-    private async Task GetData()
-    {
-        var httpClient = new HttpClient();
-
-        var options = new JsonSerializerOptions()
-        {
-            ReferenceHandler = ReferenceHandler.Preserve,
-            PropertyNameCaseInsensitive = true
-        };
-
-        var response = await httpClient.GetFromJsonAsync<CitationDTO>("http://192.168.68.102/api/Citation", options);
-
-        string dto = "";
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await GetData();
-    }
-
+    protected override async Task OnInitializedAsync() =>
+        citationDTOss = await Http.GetFromJsonAsync<AddressDto[]>("https://www.lokatamanagement.com/api/Citation");
 
 
 }

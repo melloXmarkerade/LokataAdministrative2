@@ -1,5 +1,6 @@
 ﻿@page "/issuedTicketPage"
-@inject NavigationManager NavigationManager
+@inject NavigationManager NavigationManager     
+@inject HttpClient Http
 
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
 
@@ -120,20 +121,18 @@
     <hr />
     &nbsp;
     &nbsp;
-    <b><h4>Base Details</h4></b>
+    <b><h4>Address Details</h4></b>
     &nbsp;
     &nbsp;
 <div class="form-group row">
-    <label>
+    <label class="control-label col-md-12">Barangay</label>
         <div class="col-md-4">
-            <span>Barangay</span>
             <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
         </div>
-    </label>
 </div>
 <div class="form-group row">
+    <label class="control-label col-md-12">City</label>
     <div class="col-md-4">
-        <span>City</span>
         <input class="form-control" /> <!-- bind="emp.Gender" disabled -->
     </div>
 </div>
@@ -178,6 +177,8 @@
 
         //Logic Here
     }
+
+    
 
 
 

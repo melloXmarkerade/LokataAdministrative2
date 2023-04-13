@@ -4,11 +4,55 @@
 <hr/>
 <h4>Submission List</h4>
 
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Transaction Number</th>
+            <th>Name</th>
+            <th>Date of Submission</th>
+            <th>Certificate Of Registration</th>
+            <th>Valid LTO Official Reciept</th>
+            <th>Valid Driver's License</th>
+            <th>Special Power Of Attorney</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var IssueTicketDetails in ListOfDetails)
+        {
+            <tr>
+                <td>@IssueTicketDetails.TransactionNum</td>
+                <td>@IssueTicketDetails.Name</td>
+                <td>@IssueTicketDetails.DateOfSub</td>
+                <td>@IssueTicketDetails.CertificateOfRegist</td>
+                <td>@IssueTicketDetails.ValLtoOR</td>
+                <td>@IssueTicketDetails.ValDriveL</td>
+                <td>@IssueTicketDetails.SpecialPOfAttorney</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 
 <hr/>
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
 
 @code {
+
+    public class IssueTicketDetails
+    {
+        public string TransactionNum { get; set; }
+        public string Name { get; set; }
+        public string DateOfSub { get; set; }
+        public string CertificateOfRegist { get; set; }
+        public string ValLtoOR { get; set; }
+        public string ValDriveL { get; set; }
+        public string SpecialPOfAttorney { get; set; }
+    }
+
+    public List<IssueTicketDetails> ListOfDetails { get; set; } = new List<IssueTicketDetails>()
+    {
+        new IssueTicketDetails() { TransactionNum = "J027992", Name = "San Jose", DateOfSub = "11-12-2022", CertificateOfRegist = "<Picture File Here>", ValLtoOR = "<Picture File Here>", ValDriveL = "<Picture File Here>", SpecialPOfAttorney = "<Picture File Here>"  },
+        new IssueTicketDetails() { TransactionNum = "4283321", Name = "Joshua", DateOfSub = "08-15-2022", CertificateOfRegist = "<Picture File Here>", ValLtoOR = "<Picture File Here>", ValDriveL = "<Picture File Here>", SpecialPOfAttorney = "<Picture File Here>"  },
+    };
 
 }
