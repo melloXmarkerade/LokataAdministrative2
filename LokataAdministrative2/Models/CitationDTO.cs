@@ -13,7 +13,7 @@
         public AddressDto? Address { get; set; }
         public VehicleDto? VehicleDescription { get; set; }
         public PlaceDto? PlaceApprehended { get; set; }
-        public List<ViolationDto>? Violations { get; set; }
+        public List<UserViolationDto>? Violations { get; set; }
 
 
     }

@@ -1,4 +1,5 @@
 using LokataAdministrative2;
+using LokataAdministrative2.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,6 @@ builder.Services.AddScoped(sp =>
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
     });
 
-
+builder.Services.AddScoped<ICitationClient, CitationClient>();
 
 await builder.Build().RunAsync();
