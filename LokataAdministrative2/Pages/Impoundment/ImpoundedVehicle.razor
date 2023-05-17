@@ -1,8 +1,7 @@
 ﻿@page "/impoundVehicle"
-@inject NavigationManager NavigationManager
+@inject NavigationManager navigation
 
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-<h2>Impounded Vehicle</h2>
+<h2>Impounded Vehicles</h2>
 <hr />
 
 <h4>Vehicle List</h4>
@@ -16,76 +15,64 @@
 
 &nbsp;
 
-<div class="form-group">
+<div class="form-group mb-3">
     <button class="btn btn-primary">Search</button> <!--onclick="AccountSearch"-->
     <!-- <ValidationMessage For="*" /> -->
 </div>
 
-&nbsp;
-
-<table class="table table-bordered">
+<table class="table table-hover mb-3">
     <thead>
         <tr>
-            <th>TCT Number</th>
-            <th>Vehicle Description</th>
-            <th>Plate Number</th>
-            <th>Violations</th>
-            <th>Item Confiscated</th>
+            <th>No.</th>
+            <th>TCT No.</th>
+            <th>Plate No.</th>
+            <th>Date Impounded</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var IssueTicketDetails in ListOfDetails)
+        @foreach (var citation in citationList)
         {
             <tr>
-                <td>@IssueTicketDetails.TCTNum</td>
-                <td>@IssueTicketDetails.VehicleDescription</td>
-                <td>@IssueTicketDetails.PlateNum</td>
-                <td>@IssueTicketDetails.Violation</td>
-                <td>@IssueTicketDetails.ItemConfiscated </td>
+                <td>@(citationList.IndexOf(citation) + 1)</td>
+                <td>@citation.TctNo</td>
+                <td>@citation.VehicleDescription!.PlateNo</td>
+                <td>@citation.PlaceApprehended!.Date</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" href="address/@citation.Id"><i class="oi oi-pencil"></i></a>
+                    <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(citation.Id!))">
+                        <i class="oi oi-trash"></i>
+                    </button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
-&nbsp;
-
-
 <div class="form-group">
     <button class="btn btn-primary" @onclick="ViewVehicleDetails">View Vehicle Details</button>
 </div>
-&nbsp;
-&nbsp;
-
-
-
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-
 
 @code {
+    List<CitationDto> citationList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        citationList = await citationClient.GetAllRequest();
+    }
+
+    private async Task DeleteAddress(string id)
+    {
+        await citationClient.DeleteRequest(id);
+        await OnInitializedAsync();
+    }
+
     private void ViewVehicleDetails()
     {
-        NavigationManager.NavigateTo("/VehicleDetails");
+        navigation.NavigateTo("/VehicleDetails");
     }
 
     private void TrackVehicle()
     {
-        NavigationManager.NavigateTo("/Tracking");
+        navigation.NavigateTo("/Tracking");
     }
-
-    public class IssueTicketDetails
-    {
-        public string TCTNum { get; set; }
-        public string Date { get; set; }
-        public string PlaceOfApprehension { get; set; }
-        public string VehicleDescription { get; set; }
-        public string PlateNum { get; set; }
-        public string Violation { get; set; }
-        public string ItemConfiscated { get; set; }
-    }
-
-    public List<IssueTicketDetails> ListOfDetails { get; set; } = new List<IssueTicketDetails>()
-    {
-        new IssueTicketDetails() { TCTNum = "J027992", Date = "12-4-2022 ", PlaceOfApprehension = "J.P Rizal Jayme Street", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
-        new IssueTicketDetails() { TCTNum = "4283321", Date = "7-14-2021", PlaceOfApprehension = "Tabok, Mandaue", VehicleDescription = "Yamaha, Mio Sporty, Black", PlateNum = "6860 YE", Violation = "2", ItemConfiscated = "Driver's License, Motor Vehicle"  },
-    };
 }

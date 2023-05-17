@@ -1,8 +1,7 @@
 ﻿namespace LokataAdministrative2.Models
 {
-    public class VehicleDto
+    public class VehicleDto : BaseDto
     {
-        public string? Id { get; set; }
         public string? PlateNo { get; set; }
         public string? Tracking { get; set; }
         public string? Make { get; set; }

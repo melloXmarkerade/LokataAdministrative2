@@ -12,5 +12,19 @@
 @using System.Text.Json.Serialization;
 @using System.Text.Json;
 @using Syncfusion.Blazor;
+@using Blazored  
+@using Blazored.Modal  
+@using Blazored.Modal.Services   
 @using Syncfusion.Blazor.Calendars;
 @using Microsoft.EntityFrameworkCore;
+@using LokataAdministrative2.Models;
+@using LokataAdministrative2.Services;
+@using LokataAdministrative2.Models.Citation;
+@inject ICitationClient citationClient;
+@inject IProvinceClient provinceClient;
+@inject ICityClient cityClient;
+@inject IBarangayClient barangayClient;
+@inject IViolationCategoryClient violationCatClient;
+@inject IViolationClient violationClient;
+@inject IViolationFeeClient violationFeeClient;
+@inject IVehicleClient vehicleImpoundedClient;
