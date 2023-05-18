@@ -1,60 +1,96 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand text-center" href="">LOKATA ADMINISTRATOR</a>
+﻿@inject NavigationManager NavigationManager
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand text-center" href="">LOKATA ADMIN</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
+    @if (!isLoginPressed)
+    {
+        <button @onclick="ToggleLogin">Login</button>
+
+    }
+
+    @if (isLogoutPressed)
+    {
+
+        <button @onclick="ToggleLogout">Logout</button>
+    }
+
+
+    @if (!isButtonPressed)
+    {
+        <div class="form-group row">
+            <label class="col-md-12" style="color:white;">Username</label>
+
+            <input type="username" id="username" name="username" placeholder="Enter your username" class="form-control" />
+
+        </div>
+        <div class="form-group row">
+            <label class="col-md-12" style="color:white;">Password</label>
+
+            <input type="password" id="password" name="password" placeholder="Enter your Password" class="form-control" />
+
+        </div>
+    }
+
+   
+
+
+
+
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-power-standby" aria-hidden="true"></span> Login
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="userpage" @onclick="()=>expandSubMenu= !expandSubMenu">
-                <span class="oi oi-plus" aria-hidden="true"></span> User Page
-            </NavLink>
-            @if (expandSubMenu)
-            {
-                <ul class="nav flex-column">
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="userpage/3">
-                            <span class="oi oi-folder" aria-hidden="true"></span> Requirement Submission
-                        </NavLink>
-                    </li>
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="userpage/1">
-                            <span class="oi oi-paperclip" aria-hidden="true"></span> Submitted Reciept Transactions
-                        </NavLink>
-                    </li>
-                    3
-                </ul>
-            }
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="impoundVehicle">
-                <span class="oi oi-file" aria-hidden="true"></span> Impounded Vehicle
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="issuedticket">
-                <span class="oi oi-folder" aria-hidden="true"></span> Issued Ticket
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="Logout">
-                <span class="oi oi-power-standby" aria-hidden="true"></span> Logout
-            </NavLink>
-        </li>
+@if (isUserLoggedIn)
+{
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="userpage" @onclick="()=>expandSubMenu= !expandSubMenu">
+                    <span class="oi oi-plus" aria-hidden="true"></span> User Page 🢃
+                </NavLink>
+                @if (expandSubMenu)
+                {
+                    <ul class="nav flex-column">
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="userpage/3">
+                                <span class="oi oi-folder" aria-hidden="true"></span> Requirement Submission ➔
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="userpage/1">
+                                <span class="oi oi-paperclip" aria-hidden="true"></span> Submitted Reciept Transactions ➔
+                            </NavLink>
+                        </li>
+                        3
+                    </ul>
+                }
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="impoundVehicle">
+                    <span class="oi oi-file" aria-hidden="true"></span> Impounded Vehicle ➔
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="issuedticket">
+                    <span class="oi oi-folder" aria-hidden="true"></span> Issued Ticket ➔
+                </NavLink>
+            </li>
+        </ul>
+    </div>
 
-    </ul>
-</div>
+
+}
+
 
 @code {
     private bool collapseNavMenu = true;
     private bool expandSubMenu;
+    public bool isUserLoggedIn = false;
+    public bool isButtonPressed = false;
+    public bool isLoginPressed = false;
+    public bool isLogoutPressed = false;
 
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -63,4 +99,20 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+    void ToggleLogin()
+    {
+        isLogoutPressed = !isLogoutPressed;
+        isLoginPressed = !isLoginPressed;
+        isButtonPressed = !isButtonPressed;
+        isUserLoggedIn = !isUserLoggedIn;
+        NavigationManager.NavigateTo("/userpage");
+    }
+    void ToggleLogout()
+    {
+        isLoginPressed = !isLoginPressed;
+        isLogoutPressed = !isLogoutPressed;
+        isButtonPressed = !isButtonPressed;
+        isUserLoggedIn = !isUserLoggedIn;
+        NavigationManager.NavigateTo("/");
+    }   
 }
