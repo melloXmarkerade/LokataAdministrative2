@@ -66,13 +66,7 @@
         await OnInitializedAsync();
     }
 
-    private void ViewVehicleDetails()
-    {
-        navigation.NavigateTo("/VehicleDetails");
-    }
+    private void ViewVehicleDetails() => navigation.NavigateTo("/VehicleDetails");
 
-    private void TrackVehicle()
-    {
-        navigation.NavigateTo("/Tracking");
-    }
+    private void TrackVehicle() => navigation.NavigateTo("/Tracking");
 }
