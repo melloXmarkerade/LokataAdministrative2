@@ -1,4 +1,5 @@
 ﻿using LokataAdministrative2.Models;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
@@ -7,44 +8,54 @@ namespace LokataAdministrative2.Services
 
     public class VehicleClient : IVehicleClient
     {
-        private HttpClient vehicleImpoundedClient;
+        private HttpClient vehicleClient;
 
         public VehicleClient(HttpClient vehicleImpoundedClient)
         {
-            this.vehicleImpoundedClient = vehicleImpoundedClient;
+            this.vehicleClient = vehicleImpoundedClient;
         }
 
-        public async Task PostRequest(VehicleDto dto)
+        public async Task PostRequest(VehicleDto dto, string token)
         {
-            await vehicleImpoundedClient.PostAsJsonAsync("api/Vehicle", dto);
+            AuthenticateToken(token);
+            await vehicleClient.PostAsJsonAsync("api/Vehicle", dto);
         }
 
-        public async Task PutRequest(VehicleDto dto)
+        public async Task PutRequest(VehicleDto dto, string token)
         {
-            await vehicleImpoundedClient.PutAsJsonAsync($"api/Vehicle/{dto.Id}", dto);
+            AuthenticateToken(token);
+            await vehicleClient.PutAsJsonAsync($"api/Vehicle/{dto.Id}", dto);
         }
 
-        public async Task DeleteRequest(string id)
+        public async Task DeleteRequest(string id, string token)
         {
-            await vehicleImpoundedClient.DeleteAsync($"api/Vehicle/{id}");
+            AuthenticateToken(token);
+            await vehicleClient.DeleteAsync($"api/Vehicle/{id}");
         }
 
-        public async Task<VehicleDto?> GetRequestById(string id)
+        public async Task<VehicleDto?> GetRequestById(string id, string token)
         {
-            var response = await vehicleImpoundedClient.GetAsync($"api/Vehicle/{id}");
+            AuthenticateToken(token);
+            var response = await vehicleClient.GetAsync($"api/Vehicle/{id}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<VehicleDto>();
         }
 
-        public async Task<List<VehicleDto>?> GetAllRequest()
+        public async Task<List<VehicleDto>?> GetAllRequest(string token)
         {
-            var response = await vehicleImpoundedClient.GetAsync($"api/Vehicle");
+            AuthenticateToken(token);
+            var response = await vehicleClient.GetAsync($"api/Vehicle");
             if (!response.IsSuccessStatusCode)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<List<VehicleDto>>();
+        }
+
+        public void AuthenticateToken(string token)
+        {
+            vehicleClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
     }
 }

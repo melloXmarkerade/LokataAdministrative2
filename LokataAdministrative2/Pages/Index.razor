@@ -1,23 +1,17 @@
-﻿@page "/Dashboard"
+﻿@page "/index"
+@attribute [Authorize(Roles = "Admin")]
 
-@using System.Collections.Generic
+<PageTitle>Dashboard</PageTitle>
 
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, @context.User.Identity!.Name</h1>
 
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-<h1>Hello, Welcome Back!</h1>
+        Welcome to LOKATA Admin Website.
 
-
-<SurveyPrompt Title="Welcome to Administrative of Lokata" />
-
-<hr />
-
-
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-
-
-
-@code
-{
-
-}
-    
+        <SurveyPrompt Title="Welcome to Administrator of Lokata" />
+    </Authorized>
+    <NotAuthorized>
+        <h1>Hello, Login First!</h1>
+    </NotAuthorized>
+</AuthorizeView>

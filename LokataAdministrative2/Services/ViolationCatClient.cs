@@ -14,33 +14,39 @@ namespace LokataAdministrative2.Services
             this.violationCatClient = violationCatClient;
         }
 
-        public Task PostRequest(ViolationCategoryDto dto)
+        public Task PostRequest(ViolationCategoryDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutRequest(ViolationCategoryDto dto)
+        public Task PutRequest(ViolationCategoryDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteRequest(string id)
+        public Task DeleteRequest(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ViolationCategoryDto?> GetRequestById(string id)
+        public Task<ViolationCategoryDto?> GetRequestById(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<ViolationCategoryDto>?> GetAllRequest()
+        public async Task<List<ViolationCategoryDto>?> GetAllRequest(string token)
         {
+            AuthenticateToken(token);
             var response = await violationCatClient.GetAsync($"/api/violations/category");
             if (!response.IsSuccessStatusCode)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<List<ViolationCategoryDto>>();
+        }
+
+        public void AuthenticateToken(string token)
+        {
+            violationCatClient.DefaultRequestHeaders.Authorization= new("Bearer", token);
         }
     }
 }

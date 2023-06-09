@@ -5,7 +5,7 @@ namespace LokataAdministrative2.Services
 {
     public interface IViolationClient : IClient<ViolationDto>
     {
-        Task<List<ViolationDto>> GetRequestByCategoryId(string id);
+        Task<List<ViolationDto>?> GetRequestByCategoryId(string id, string token);
     }
     public class ViolationClient : IViolationClient
     {
@@ -16,38 +16,44 @@ namespace LokataAdministrative2.Services
             this.violationClient = violationCatClient;
         }
 
-        public Task PostRequest(ViolationDto dto)
+        public Task PostRequest(ViolationDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutRequest(ViolationDto dto)
+        public Task PutRequest(ViolationDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteRequest(string id)
+        public Task DeleteRequest(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ViolationDto?> GetRequestById(string id)
+        public Task<ViolationDto?> GetRequestById(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<ViolationDto>> GetRequestByCategoryId(string id)
+        public async Task<List<ViolationDto>?> GetRequestByCategoryId(string id, string token)
         {
+            AuthenticateToken(token);
             var response = await violationClient.GetAsync($"api/violations/{id}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<List<ViolationDto>>();
+            return response.Content.ReadFromJsonAsync<List<ViolationDto>>().Result!;
         }
 
-        public Task<List<ViolationDto>?> GetAllRequest()
+        public Task<List<ViolationDto>?> GetAllRequest(string token)
         {
             throw new NotImplementedException();
+        }
+
+        public void AuthenticateToken(string token)
+        {
+            violationClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
     }
 }

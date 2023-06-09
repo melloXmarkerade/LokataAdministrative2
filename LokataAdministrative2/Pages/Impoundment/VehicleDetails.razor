@@ -1,5 +1,5 @@
 ﻿@page "/VehicleDetails"
-@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
 
 <p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
 
@@ -59,11 +59,11 @@
 @code {
     private void BackButton()
     {
-        NavigationManager.NavigateTo("/impoundVehicle");
+        navigation.NavigateTo("/impoundVehicle");
     }
     private void HomePage()
     {
-        NavigationManager.NavigateTo("/Dashboard");
+        navigation.NavigateTo("/");
     }
     public class IssueTicketDetails
     {

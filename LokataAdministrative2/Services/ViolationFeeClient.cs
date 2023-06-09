@@ -6,7 +6,7 @@ namespace LokataAdministrative2.Services
 {
     public interface IViolationFeeClient : IClient<ViolationFeeDto> 
     { 
-        Task<List<ViolationFeeDto>> GetRequestByViolationId(string id); 
+        Task<List<ViolationFeeDto>?> GetRequestByViolationId(string id, string token); 
     }
     public class ViolationFeeClient : IViolationFeeClient
     {
@@ -17,38 +17,44 @@ namespace LokataAdministrative2.Services
             this.violationFeeClient = violationFeeClient;
         }
 
-        public Task PostRequest(ViolationFeeDto dto)
+        public Task PostRequest(ViolationFeeDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutRequest(ViolationFeeDto dto)
+        public Task PutRequest(ViolationFeeDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteRequest(string id)
+        public Task DeleteRequest(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ViolationFeeDto?> GetRequestById(string id)
+        public Task<ViolationFeeDto?> GetRequestById(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<ViolationFeeDto>> GetRequestByViolationId(string id)
+        public async Task<List<ViolationFeeDto>?> GetRequestByViolationId(string id, string token)
         {
+            AuthenticateToken(token);
             var response = await violationFeeClient.GetAsync($"api/violations/fees/{id}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<List<ViolationFeeDto>>();
+            return response.Content.ReadFromJsonAsync<List<ViolationFeeDto>>().Result!;
         }
 
-        public Task<List<ViolationFeeDto>?> GetAllRequest()
+        public Task<List<ViolationFeeDto>?> GetAllRequest(string token)
         {
             throw new NotImplementedException();
+        }
+
+        public void AuthenticateToken(string token)
+        {
+            violationFeeClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
     }
 }

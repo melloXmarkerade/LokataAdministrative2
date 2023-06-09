@@ -59,7 +59,7 @@
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
-    
+
     .nav-scrollable {
         /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
@@ -72,7 +72,7 @@
         }
 
         .sidebar {
-            width: 450px;
+            width: 400px;
             height: 100vh;
             position: sticky;
             top: 0;
@@ -92,3 +92,4 @@
             display: none;
         }
     }
+}

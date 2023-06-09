@@ -1,33 +1,49 @@
 ﻿@page "/"
-@inject NavigationManager NavigationManager
+@inject AdminAuthClient adminAuthClient
+@layout LoginLayout
 
-<h1>Login</h1>
-<hr />
-<div class="form-group row">
-    <label class="col-md-12">Username</label>
-    <div class="col-md-4">
-        <input class="form-control" /> <!-- bind="*"-->
+<div class="login d-flex justify-content-center align-items-center vh-100 bg-primary">
+    <div style="width:400px" class="border border-dark p-5 rounded bg-white">
+        <EditForm Model="login" OnValidSubmit="SubmitCredentials">
+            <h3 class="text-center">Sign In</h3>
+            <div class="mb-3">
+                <label for="email">Username</label>
+                <input class="form-control" type="text" placeholder="Enter Username" @bind-value="login.Username" />
+            </div>
+            <div class="mb-2">
+                <label for="password">Password</label>
+                <input class="form-control" type="password" placeholder="Enter Password" @bind-value="login.Password"/>
+            </div>
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" placeholder="Enter Password" id="check" />
+                <label for="check" class="form-check-label">Remember me</label>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </div>
+            <p class="text-end mt-2">
+                Forgot <a href="">Password?</a><a class="ms-2" @onclick="NavigateToSignUp">Sign Up</a>
+            </p>
+        </EditForm>
     </div>
-</div>
-<div class="form-group row">
-    <label class="col-md-12">Password</label>
-    <div class="col-md-4">
-        <center><input class="form-control" /> <!-- bind="*"--></center>
-    </div>
-</div>
-
-<hr />
-
-<div class="form-group">    
-    <button type="submit" class="btn btn-primary" @onclick="ToDashboard">Login</button> <!-- onclick="Login" -->
 </div>
 
 @code {
+    AdminLogin login = new();
 
-    private void ToDashboard()
+    private async Task SubmitCredentials()
     {
-        NavigationManager.NavigateTo("/userpage");
-    }
-    
-}
+        var result = await adminAuthClient.LoginPostRequest(login);
 
+        if (result.ToString() == "Admin Not Found" || result.ToString() == "Wrong password.")
+        {
+            await js.InvokeVoidAsync("alert", result);
+            return;
+        }
+
+        await tokenProvider.SetTokenAsync(result);
+        navigation.NavigateTo("/index");
+    }
+
+    private void NavigateToSignUp() => navigation.NavigateTo("/signup");
+}

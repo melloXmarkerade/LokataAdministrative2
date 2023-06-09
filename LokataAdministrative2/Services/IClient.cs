@@ -2,11 +2,11 @@
 {
     public interface IClient<T>
     {
-        Task PostRequest(T dto);
-        Task PutRequest(T dto); 
-        Task DeleteRequest(string id);
-        Task<T?> GetRequestById(string id);
-        Task<List<T>?> GetAllRequest();
-
+        Task PostRequest(T dto, string token);
+        Task PutRequest(T dto, string token); 
+        Task DeleteRequest(string id, string token);
+        Task<T?> GetRequestById(string id, string token);
+        Task<List<T>> GetAllRequest(string token);
+        void AuthenticateToken(string token);
     }
 }

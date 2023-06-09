@@ -1,5 +1,6 @@
 ﻿using LokataAdministrative2.Models;
-using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
@@ -10,39 +11,47 @@ namespace LokataAdministrative2.Services
     {
         private readonly HttpClient provinceClient;
 
-        public ProvinceClient(HttpClient provinceClient)
-        {
-            this.provinceClient = provinceClient;
-        }
+        public ProvinceClient(HttpClient provinceClient) => this.provinceClient = provinceClient;
 
-        public Task PostRequest(ProvinceDto dto)
+        public Task PostRequest(ProvinceDto dto, string token)
         {
+            AuthenticateToken(token);
             throw new NotImplementedException();
         }
 
-        public Task PutRequest(ProvinceDto dto)
+        public Task PutRequest(ProvinceDto dto, string token)
         {
+            AuthenticateToken(token);
             throw new NotImplementedException();
         }
 
 
-        public Task DeleteRequest(string id)
+        public Task DeleteRequest(string id, string token)
         {
+            AuthenticateToken(token);
             throw new NotImplementedException();
         }
 
-        public Task<ProvinceDto?> GetRequestById(string id)
+        public Task<ProvinceDto?> GetRequestById(string id, string token)
         {
+            AuthenticateToken(token);
             throw new NotImplementedException();
         }
 
-        public async Task<List<ProvinceDto>?> GetAllRequest()
+        public async Task<List<ProvinceDto>?> GetAllRequest(string token)
         {
+            AuthenticateToken(token);
             var response = await provinceClient.GetAsync($"/api/address/province");
             if (!response.IsSuccessStatusCode)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<List<ProvinceDto>>();
+        }
+
+        public void AuthenticateToken(string token)
+        {
+            provinceClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/issuedTicketPage"
-@inject NavigationManager navigation
+@page "/issuedTicketPage/{issuedTicketId}"
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="mb-3">
     <label for="formFile" class="form-label">Scan Document Physical Copy</label>
@@ -8,7 +9,7 @@
 
 <EditForm Model="citation" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator/>
-
+         
     <div class="row mb-3">
         <div class="col-md-7">
             <label class="form-label">TCT No.</label>
@@ -34,13 +35,13 @@
 
             <div class="col-md-4">
                 <label class="form-label">First name</label>
-                <InputText class="form-control" @bind-Value="citation.FirstName"></InputText>
+                <InputText class="form-control" @bind-Value="citation.FirstName" required></InputText>
                 <ValidationMessage For="@(() => citation.FirstName)"></ValidationMessage>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label">Middle name</label>
-                <InputText class="form-control" @bind-Value="citation.MiddleName"></InputText>
+                <InputText class="form-control" @bind-Value="citation.MiddleName" required></InputText>
                 <ValidationMessage For="@(() => citation.MiddleName)"></ValidationMessage>
             </div>
         </div>
@@ -83,13 +84,15 @@
             </div>
         </div>
     </div>
+
     <hr />
+
     <h4>II. License/Permit No.</h4>
     <div class="container mb-3">
         <div class="row">
             <div class="col-sm-4">
                 <label class="form-label">License No.</label>
-                <InputText class="form-control w-75" @bind-Value="citation.LicenseNo"></InputText>
+                <InputText class="form-control w-75" @bind-Value="citation.LicenseNo" required></InputText>
                 <ValidationMessage For="@(() => citation.LicenseNo)"></ValidationMessage>
             </div>
 
@@ -108,59 +111,65 @@
             </div>
         </div>
     </div>
+
     <hr />
+
     <h4>III. Motor Vehicle Description</h4>
     <div class="container mb-3">
         <div class="row">
             <div class="col">
                 <label class="form-label">Plate No.</label>
-                <InputText class="form-control" @bind-Value="vehicle.PlateNo"></InputText>
+                <InputText class="form-control" @bind-Value="vehicle.PlateNo" required></InputText>
                 <ValidationMessage For="@(() => vehicle.PlateNo)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Color</label>
-                <InputText class="form-control" @bind-Value="vehicle.Color"></InputText>
+                <InputText class="form-control" @bind-Value="vehicle.Color" required></InputText>
                 <ValidationMessage For="@(() => vehicle.Color)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Make</label>
-                <InputText class="form-control" @bind-Value="vehicle.Make"></InputText>
+                <InputText class="form-control" @bind-Value="vehicle.Make" required></InputText>
                 <ValidationMessage For="@(() => vehicle.Make)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Model</label>
-                <InputText class="form-control" @bind-Value="vehicle.Model"></InputText>
+                <InputText class="form-control" @bind-Value="vehicle.Model" required></InputText>
                 <ValidationMessage For="@(() => vehicle.Model)"></ValidationMessage>
             </div>
         </div>
     </div>
+
     <hr/>
+
     <h4>IV. Place of Apprehension</h4>
     <div class="container mb-3">
         <div class="row">
             <div class="col">
                 <label class="form-label">Street</label>
-                <InputText class="form-control" @bind-Value="placeApprehended.Street"></InputText>
+                <InputText class="form-control" @bind-Value="placeApprehended.Street" required></InputText>
                 <ValidationMessage For="@(() => placeApprehended.Street)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Barangay</label>
-                <InputText class="form-control" @bind-Value="placeApprehended.Barangay"></InputText>
+                <InputText class="form-control" @bind-Value="placeApprehended.Barangay" required></InputText>
                 <ValidationMessage For="@(() => placeApprehended.Barangay)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Date</label>
-                <InputText type="date" class="form-control" @bind-Value="placeApprehended.Date"></InputText>
+                <InputText type="date" class="form-control" @bind-Value="placeApprehended.Date" required></InputText>
                 <ValidationMessage For="@(() => placeApprehended.Date)"></ValidationMessage>
             </div>
             <div class="col">
                 <label class="form-label">Time</label>
-                <InputText type="time" class="form-control" @bind-Value="placeApprehended.Time"></InputText>
+                <InputText type="time" class="form-control" @bind-Value="placeApprehended.Time" required></InputText>
                 <ValidationMessage For="@(() => placeApprehended.Time)"></ValidationMessage>
             </div>
         </div>
     </div>
+
     <hr/>
+
     <h4>V. Violation(s)</h4>
     <div class="container mb-3">
         <table class="table table-hover table-sm">
@@ -197,7 +206,7 @@
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Confirmation</h5>
+                            <h5 class="modal-title">Add Violation</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseDialog></button>
                         </div>
                         <div class="modal-body">
@@ -247,7 +256,9 @@
             </div>
         }
     </div>
+
     <hr />
+
     <h4>VI. Item(s) Confiscated</h4>
     <div class="container mb-3">
         <div class="row">
@@ -273,9 +284,10 @@
             </div>
         </div>
     </div>
+
     <hr/>
     <h4>VII. Apprehending Officer</h4>
-    <div class="container mb-3">
+    <div class="container mb-5">
         <div class="row">
             <div class="col-md-4">
                 <label for="lastNameValidation" class="form-label">Last name</label>
@@ -285,163 +297,20 @@
 
             <div class="col-md-4">
                 <label class="form-label">First name</label>
-                <InputText class="form-control" @bind-Value="officer.FirstName"></InputText>
+                <InputText class="form-control" @bind-Value="officer.FirstName" required></InputText>
                 <ValidationMessage For="@(() => officer.FirstName)"></ValidationMessage>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label">Middle name</label>
-                <InputText class="form-control" @bind-Value="officer.MiddleName"></InputText>
+                <InputText class="form-control" @bind-Value="officer.MiddleName" required></InputText>
                 <ValidationMessage For="@(() => officer.MiddleName)"></ValidationMessage>
             </div>
         </div>
     </div>
 
-    <div class="form-group mb-3">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button class="btn btn-light">Cancel</button>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">@btnText</button>
+        <button @onclick="Cancel" class="btn btn-light">Cancel</button>
     </div>
 </EditForm>
-
-@code {
-    int counter = 1;
-    bool popup = false;
-
-    CitationDto citation        = new();
-    OfficerDto officer          = new();
-    VehicleDto vehicle          = new();
-    PlaceDto placeApprehended   = new();
-    AddressDto address          = new();
-    UserViolationDto violation  = new();
-
-    List<ProvinceDto> provinces = new();
-    List<CityDto> cities        = new();
-    List<BarangayDto> barangays = new();
-    List<UserViolationDto> userViolations = new();
-    List<ViolationCategoryDto> categories = new();
-    List<ViolationDto> violations         = new();
-    List<ViolationFeeDto> violationFees   = new();
-    List<string> itemConfiscated = new();
-
-    private void ShowPopup() => popup = true;
-
-    private void CloseDialog() => popup = false;
-
-    private void SaveChangesAsync()
-    {
-        userViolations.Add(violation);
-        popup     = false;
-        violation = new();
-    }
-
-    private async Task OnValidSubmit()
-    {
-        citation.Address             = address;
-        citation.VehicleDescription  = vehicle;
-        citation.PlaceApprehended    = placeApprehended;
-        citation.Violations          = userViolations;
-        citation.ItemConfiscated     = itemConfiscated;
-        citation.ApprehendingOfficer = officer;
-
-        await citationClient.PostRequest(citation);
-        navigation.NavigateTo("/issuedTicket");
-    }
-
-    private void SelectedLicenseType(ChangeEventArgs e)
-    {
-        if(e.Value!.ToString()! != null)
-            citation.LicenseType = e.Value!.ToString()!;
-    }
-
-    private void SelectedVehicle(ChangeEventArgs e)
-    {
-        if ((bool)e.Value!)
-            itemConfiscated.Add("Motor Vehicle");
-        else
-            itemConfiscated.Remove("Motor Vehicle");
-    }
-
-    private void SelectedLicense(ChangeEventArgs e)
-    {
-        if ((bool)e.Value!)
-            itemConfiscated.Add("Driver's License");
-        else
-            itemConfiscated.Remove("Driver's License");
-    }
-
-    protected async override Task OnInitializedAsync()
-    {
-        provinces = await provinceClient.GetAllRequest();
-        categories = await violationCatClient.GetAllRequest();
-    }
-
-    protected async void ProvinceClicked(ChangeEventArgs provinceEvent)
-    {
-        cities.Clear();
-
-        if(provinceEvent.Value!.ToString()! == "0")
-        {
-            barangays.Clear();
-            return;
-        }
-
-        address.Province = provinceEvent.Value!.ToString()!;
-        cities = await cityClient.GetRequestByProvinceId(provinceEvent.Value!.ToString()!);
-        this.StateHasChanged();
-    }
-
-    protected async void CityClicked(ChangeEventArgs cityEvent)
-    {
-        barangays.Clear();
-
-        if (cityEvent.Value!.ToString()! == "0")
-            return;
-
-        address.City = cityEvent.Value!.ToString()!;
-        barangays = await barangayClient.GetRequestByCityId(cityEvent.Value!.ToString()!);
-        this.StateHasChanged();
-    }
-
-    protected async void BarangayClicked(ChangeEventArgs barangayClient)
-    {
-        address.Barangay = barangayClient.Value!.ToString()!;
-        this.StateHasChanged();
-    }
-
-    protected async void ViolationCategoryClicked(ChangeEventArgs violationEvent)
-    {
-        violations.Clear();
-
-        if (violationEvent.Value!.ToString()! == "0")
-        {
-            violationFees.Clear();
-            return;            
-        }
-
-        violations         = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!);
-        violation.Category = violationEvent.Value!.ToString()!;
-        this.StateHasChanged();
-    }
-
-    protected async void ViolationClicked(ChangeEventArgs violationEvent)
-    {
-        violationFees.Clear();
-        if (violationEvent.Value!.ToString()! == "0") return;
-
-        violationFees  = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!);
-        violation.Name = violationEvent.Value!.ToString()!;
-        this.StateHasChanged();
-    }
-
-    protected async void ViolationFeeClicked(ChangeEventArgs violationFeeEvent)
-    {
-        violation.Offense = violationFeeEvent.Value!.ToString()!.Substring(0, 1);
-        violation.Fine    = Double.Parse(violationFeeEvent.Value!.ToString()!.Substring(3));
-        this.StateHasChanged();
-    }
-
-    private async Task HandleFileSelection(InputFileChangeEventArgs e)
-    {
-        var file = e.File;
-    }
-}

@@ -1,5 +1,5 @@
 ﻿@page "/impoundVehicle"
-@inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin")]
 
 <h2>Impounded Vehicles</h2>
 <hr />
@@ -27,6 +27,8 @@
             <th>TCT No.</th>
             <th>Plate No.</th>
             <th>Date Impounded</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -37,6 +39,7 @@
                 <td>@citation.TctNo</td>
                 <td>@citation.VehicleDescription!.PlateNo</td>
                 <td>@citation.PlaceApprehended!.Date</td>
+                <td></td>
                 <td>
                     <a class="btn btn-primary btn-sm" href="address/@citation.Id"><i class="oi oi-pencil"></i></a>
                     <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(citation.Id!))">
@@ -57,12 +60,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        citationList = await citationClient.GetAllRequest();
+        var token = await tokenProvider.GetTokenAsync();
+        citationList = await citationClient.GetAllRequest(token);
     }
 
     private async Task DeleteAddress(string id)
     {
-        await citationClient.DeleteRequest(id);
+        await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
         await OnInitializedAsync();
     }
 

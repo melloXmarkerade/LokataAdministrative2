@@ -1,72 +1,355 @@
 ﻿@page "/issuedTicket"
+@attribute [Authorize(Roles = "Admin")]
 @inject ICitationClient citationClient;
-@inject NavigationManager NavigationManager
 
 <h2>Traffic Citation Tickets</h2>
-<hr />
-<h4>Recorded Tickets</h4>
-&nbsp;
-<div class="form-group row">
-    <label class="col-md-12">Search</label>
-    <div class="col-md-4">
-        <input class="form-control" /> <!-- bind="*"-->
-    </div>   
-</div>
 
-<div class="form-group">
-    <button class="btn btn-primary">Search</button>
-    <!-- <ValidationMessage For="*" /> -->
-</div>
- 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>No.</th>
-            <th>TCT No.</th>
-            <th>License No.</th>
-            <th>Date Recorded</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (citationList != null)
-        {
-            @foreach (var item in citationList)
+<button class="btn btn-primary mb-3" @onclick="TicketIssuePage">Record Ticket</button>
+
+@if(citationList is null)
+{
+    <p>Loading..</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>TCT No.</th>
+                <th>License No.</th>
+                <th>Date Recorded</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (citationList != null)
             {
-                <tr>
-                    <td>@(citationList.IndexOf(item) + 1)</td>
-                    <td>@item.TctNo</td>
-                    <td>@item.LicenseNo</td>
-                    <td>@item.DateRecord</td>
-                    <td>
-                        <a class="btn btn-primary btn-sm" href="address/@item.Id"><i class="oi oi-pencil"></i></a>
-                        <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(item.Id!))">
-                            <i class="oi oi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+                @foreach (var item in citationList)
+                {
+                    <tr>
+                        <td>@(citationList.IndexOf(item) + 1)</td>
+                        <td>@item.TctNo</td>
+                        <td>@item.LicenseNo</td>
+                        <td>@item.DateRecord</td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" @onclick="(() => EditTicket(item))"><i class="oi oi-pencil"></i></a>                            
+                            <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(item.Id!))">
+                                <i class="oi oi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<button class="btn btn-primary" @onclick="TicketIssuePage">Record Ticket</button>
-@code {
-    List<CitationDto> citationList = new();
-
-    protected override async Task OnInitializedAsync()
+    if (@Popup)
     {
-        citationList = await citationClient.GetAllRequest();
-    }
+        <EditForm Model="Citation">
+            <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog-scrollable modal-xl modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Citation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ClosePopup></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label">TCT No.</label>
+                                <InputText class="form-control w-auto" @bind-Value="Citation!.TctNo"></InputText>
+                                <ValidationMessage For="@(() => Citation.TctNo)"></ValidationMessage>
+                            </div>
 
-    private async Task DeleteAddress(string id)
-    {
-        await citationClient.DeleteRequest(id);
-        await OnInitializedAsync();
-    }
+                            <div class="col-md-5">
+                                <label class="form-label">Date Record</label>
+                                <InputText type="date" class="form-control" @bind-Value="Citation.DateRecord"></InputText>
+                                <ValidationMessage For="@(() => Citation.DateRecord)"></ValidationMessage>
+                            </div>
+                        </div>
 
-    private void TicketIssuePage()
-    {
-        NavigationManager.NavigateTo("/issuedTicketPage");
+                        <h4>I. Driver's Name</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="lastNameValidation" class="form-label">Last name</label>
+                                    <InputText id="lastNameValidation" class="form-control" @bind-Value="Citation.LastName" required DisplayName="Last Name"></InputText>
+                                    <ValidationMessage For="@(() => Citation.LastName)"></ValidationMessage>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">First name</label>
+                                    <InputText class="form-control" @bind-Value="Citation.FirstName" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.FirstName)"></ValidationMessage>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Middle name</label>
+                                    <InputText class="form-control" @bind-Value="Citation.MiddleName" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.MiddleName)"></ValidationMessage>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>Address</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Province</label>
+                                    <InputSelect @bind-Value="Citation.Address!.Province" class="form-control" @onchange="ProvinceClicked">
+                                        @foreach (var item in Provinces)
+                                        {
+                                            <option value="@item.Province">@item.Province</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">City</label>
+                                    <InputSelect @bind-Value="Citation.Address!.City" class="form-control" @onchange="CityClicked">
+                                        @foreach (var item in Cities)
+                                        {
+                                            <option value="@item.City">@item.City</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Barangay</label>
+                                    <InputSelect @bind-Value="Citation.Address!.Barangay" class="form-control" @onchange="BarangayClicked">
+                                            @foreach (var item in Barangays)
+                                            {
+                                                <option value="@item.Barangay">@item.Barangay</option>
+                                            }
+                                    </InputSelect>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+                        <h4>II. License/Permit No.</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label class="form-label">License No.</label>
+                                    <InputText class="form-control w-75" @bind-Value="Citation.LicenseNo" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.LicenseNo)"></ValidationMessage>
+                                </div>
+
+                                <div class="col-sm-4 mt-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="licenseType" id="Professional-License" value="Professional" @onchange="SelectedLicenseType">
+                                        <label class="form-check-label" for="Professional-License">Professional</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm mt-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="licenseType" id="Non-Professional-License" value="Non-Professional" @onchange="SelectedLicenseType">
+                                        <label class="form-check-label" for="Non-Professional-License">Non-Professional</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <h4>III. Motor Vehicle Description</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label">Plate No.</label>
+                                    <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.PlateNo" required></InputText>
+                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.PlateNo)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Color</label>
+                                    <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Color" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.VehicleDescription!.Color)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Make</label>
+                                    <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Make" required></InputText>
+                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.Make)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Model</label>
+                                    <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Model" required></InputText>
+                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.Model)"></ValidationMessage>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4>IV. Place of Apprehension</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label">Street</label>
+                                    <InputText class="form-control" @bind-Value="Citation.PlaceApprehended!.Street" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.PlaceApprehended!.Street)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Barangay</label>
+                                    <InputText class="form-control" @bind-Value="Citation.PlaceApprehended!.Barangay" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.PlaceApprehended!.Barangay)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Date</label>
+                                    <InputText type="date" class="form-control" @bind-Value="Citation.PlaceApprehended!.Date" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.PlaceApprehended!.Date)"></ValidationMessage>
+                                </div>
+                                <div class="col">
+                                    <label class="form-label">Time</label>
+                                    <InputText type="time" class="form-control" @bind-Value="Citation.PlaceApprehended!.Time" required></InputText>
+                                    <ValidationMessage For="@(() => Citation.PlaceApprehended!.Time)"></ValidationMessage>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4>V. Violation(s)</h4>
+                        <div class="container mb-3">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Category</th>
+                                        <th>Name</th>
+                                        <th>Offense</th>
+                                        <th>Fine</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Citation.Violations != null)
+                                    {
+                                        @foreach (var item in Citation.Violations)
+                                        {
+                                            <tr>
+                                                <td>@(Citation.Violations.IndexOf(item) + 1)</td>
+                                                <td>@item.Category</td>
+                                                <td>@item.Name</td>
+                                                <td>@item.Offense</td>
+                                                <td>@item.Fine</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            <!-- Button trigger modal -->
+                            <button type="button" @onclick="ShowPopup" class="btn btn-primary"> Add Violation</button>
+                                @if (ViolationPopup)
+                            {
+                                <div class="modal" tabindex="-1" style="display:block">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Add Violation</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ViolationCloseDialog></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Category</label>
+                                                        <select class="form-control" @onchange="ViolationCategoryClicked">
+                                                            <option value="0">-- Select Category --</option>
+                                                            @foreach (var item in Categories)
+                                                            {
+                                                                <option value="@item.Category">@item.Category</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Name</label>
+                                                        <select class="form-control" @onchange="ViolationClicked">
+                                                            <option value="0">-- Select Name --</option>
+                                                            @foreach (var item in Violations)
+                                                            {
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Offense</label>
+                                                        <select class="form-control" @onchange="ViolationFeeClicked">
+                                                            <option value="">-- Select Offense --</option>
+                                                            @foreach (var item in ViolationFees)
+                                                            {
+                                                                <option value="1 + @item.FirstOffense">1st Offense: @item.FirstOffense</option>
+                                                                <option value="2 + @item.SecondOffense">2nd Offense: @item.SecondOffense</option>
+                                                                <option value="3 + @item.ThirdOffense">3rd Offense: @item.ThirdOffense</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ViolationCloseDialog>Discard Changes</button>
+                                                <button type="button" class="btn btn-success" @onclick=@(()=>SaveChangesAsync())>Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <hr/>
+                        <h4>VI. Item(s) Confiscated</h4>
+                        <div class="container mb-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked="@SelectLicense" @onchange="SelectedLicense" id="driverLicense">
+                                        <label class="form-check-label" for="driverLicense">
+                                            Driver's License
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
+                                        <label class="form-check-label" for="motorVehicle">
+                                            Motor Vehicle
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="flexCheckDefault1">Others</label>
+                                    <input class="form-text" type="text" id="others" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4>VII. Apprehending Officer</h4>
+                        <div class="container mb-5">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="lastNameValidation" class="form-label">Last name</label>
+                                        <InputText id="lastNameValidation" class="form-control" @bind-Value="Citation!.ApprehendingOfficer!.LastName" required DisplayName="Last Name"></InputText>
+                                    <ValidationMessage For="@(() => Citation.ApprehendingOfficer.LastName)"></ValidationMessage>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">First name</label>
+                                    <InputText class="form-control" @bind-Value="Citation.ApprehendingOfficer.FirstName" required></InputText>
+                                        <ValidationMessage For="@(() => Citation.ApprehendingOfficer.FirstName)"></ValidationMessage>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Middle name</label>
+                                    <InputText class="form-control" @bind-Value="Citation.ApprehendingOfficer.MiddleName" required></InputText>
+                                        <ValidationMessage For="@(() => Citation.ApprehendingOfficer.MiddleName)"></ValidationMessage>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ClosePopup>Discard Changes</button>
+                        <button type="button" class="btn btn-success" @onclick=@(()=>ClosePopup())>Update changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </EditForm>
     }
 }

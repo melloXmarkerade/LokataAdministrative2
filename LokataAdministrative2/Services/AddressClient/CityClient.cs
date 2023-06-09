@@ -1,12 +1,13 @@
 ﻿using LokataAdministrative2.Models;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
     public interface ICityClient : IClient<CityDto> 
     {
-        Task<List<CityDto>> GetRequestByProvinceId(string id);
+        Task<List<CityDto>?> GetRequestByProvinceId(string id, string token);
     }
 
     public class CityClient : ICityClient
@@ -18,36 +19,48 @@ namespace LokataAdministrative2.Services
             this.cityClient = cityClient;
         }
 
-        public Task DeleteRequest(string id)
+        public void AuthenticateToken(string token)
+        {
+            cityClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public Task DeleteRequest(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<CityDto>?> GetAllRequest()
+        public async Task<List<CityDto>> GetAllRequest(string token)
+        {
+            AuthenticateToken(token);
+            var response = await cityClient.GetAsync($"api/address/city");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return response.Content.ReadFromJsonAsync<List<CityDto>>().Result!;
+        }
+
+        public Task<CityDto?> GetRequestById(string id, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CityDto?> GetRequestById(string id)
+        public async Task<List<CityDto>?> GetRequestByProvinceId(string id, string token)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<CityDto>> GetRequestByProvinceId(string id)
-        {
+            AuthenticateToken(token);
             var response = await cityClient.GetAsync($"api/address/city/{id}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<List<CityDto>>();
+            return response.Content.ReadFromJsonAsync<List<CityDto>>().Result!;
         }
 
-        public Task PostRequest(CityDto dto)
+        public Task PostRequest(CityDto dto, string token)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutRequest(CityDto dto)
+        public Task PutRequest(CityDto dto, string token)
         {
             throw new NotImplementedException();
         }
