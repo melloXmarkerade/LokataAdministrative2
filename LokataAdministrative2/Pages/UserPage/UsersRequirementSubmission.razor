@@ -1,52 +1,83 @@
-﻿@page "/userpage/3"
+﻿@page "/userrequirements"
+@attribute [Authorize(Roles = "Admin")]
+<h2 class="mb-5">Submitted Requirements</h2>
 
-<h2>Users Requirement Submission</h2> <p> === PARA ASA NI NGA REQUIRMENTS SPECIFICALLY === </p>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Email</th>
+            <th>Date Submitted</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Requirements)
+        {
+            <tr>
+                <td>@(Requirements.IndexOf(req) + 1)</td>
+                <td>@req.Email</td>
+                <td>@req.DateSubmitted</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewRequirement(req))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if(ReqPopup) {
+    <div class="modal" tabindex="-1" style="display:block">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Requirement Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ReqCloseDialog></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">License Number</label>
+                            <text class="form-control w-auto">@Requirement.LicenseNo</text>
+                        </div>
 
-<hr />
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <text class="form-control w-auto">@Requirement.Email</text>
+                        </div>
 
-<h4>To be Validate User Requirements</h4>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Date Submitted</label>
+                            <text class="form-control w-auto">@Requirement.DateSubmitted</text>
+                        </div>
+                    </div>
 
-&nbsp;
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-&nbsp;
-<p>User Selection Table List Here===></p>
+                    <div class="row">
+                        <table class="table table-sm table-hover mb-3">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>File Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var req in Requirement.Requirements!)
+                                {
+                                    <tr>
+                                        <td>@(Requirement.Requirements!.IndexOf(req) + 1)</td>
+                                        <td><a href="@($"{req.FileUrl}")" target="_blank">@req.FileName</a></td>
+                                        <td>
+                                            <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
-<div class="form-group">
-    <button type="button" class="btn btn-primary">Validate</button> <!-- onclick="Validate" -->
-</div>
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-<hr />
-
-<h4>Approved User Accounts</h4>
-
-&nbsp;
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-&nbsp;
-<p>User Table List Here===></p>
-&nbsp;
-
-<p>NOTE: List will automatically update every 15 - 30 mins.</p>
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-<hr />
-
-<h4>Decline User Accounts</h4>
-
-&nbsp;
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-&nbsp;
-<p>NOTE: For Decline User please double check the missing requirements and missing important information before notifying the user</p>
-<p>List will automatically update every 15 - 30 mins.</p>
-
-&nbsp;
-
-<p>User Selection Table List Here===></p>
-
-&nbsp;
-
-<div class="form-group">
-    <button type="button" class="btn btn-primary">Note</button> <!-- onclick="Note" -->
-</div>
-<p style="color:red">======== NOTE: NOT FINAL CHANGES MAY APPLIED WITHOUT FURTHER NOTICE ===========</p>
-@code {
-
+                </div>
+            </div>
+        </div>
+    </div>
 }

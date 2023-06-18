@@ -20,6 +20,7 @@
 @using LokataAdministrative2.Authentication;
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authorization;
+@inject AdminAuthClient adminAuthClient
 @inject ICitationClient citationClient;
 @inject IProvinceClient provinceClient;
 @inject ICityClient cityClient;
@@ -28,6 +29,8 @@
 @inject IViolationClient violationClient;
 @inject IViolationFeeClient violationFeeClient;
 @inject IVehicleClient vehicleImpoundedClient;
+@inject IUserReqSubmissionClient userRequirement;
+@inject IUserRecSubmissionClient userReceipt;
 @inject TokenAuthenticationStateProvider tokenProvider
 @inject AuthenticationStateProvider stateProvider;
 @inject NavigationManager navigation

@@ -19,6 +19,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
         PlaceDto placeApprehended  = new();
         AddressDto address         = new();
         UserViolationDto violation = new();
+        TrackingDto? vehicleTrack;
 
         List<ProvinceDto> provinces           = new();
         List<CityDto> cities                  = new();
@@ -42,11 +43,16 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private async Task OnValidSubmit()
         {
-            citation.Address = address;
-            citation.VehicleDescription = vehicle;
-            citation.PlaceApprehended = placeApprehended;
-            citation.Violations = userViolations;
-            citation.ItemConfiscated = itemConfiscated;
+            vehicle.Status    = "Unsettled";
+            vehicle.TctNo     = citation.TctNo;
+            vehicle.LicenseNo = citation.LicenseNo;
+            vehicle.DateImpounded = placeApprehended.Date;
+
+            citation.Address             = address;
+            citation.VehicleDescription  = vehicle;
+            citation.PlaceApprehended    = placeApprehended;
+            citation.Violations          = userViolations;
+            citation.ItemConfiscated     = itemConfiscated;
             citation.ApprehendingOfficer = officer;
 
             await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
@@ -65,9 +71,22 @@ namespace LokataAdministrative2.Pages.IssueTicket
         private void SelectedVehicle(ChangeEventArgs e)
         {
             if ((bool)e.Value!)
+            {
+                vehicleTrack = new TrackingDto
+                {
+                    Latitude = "10.323297",
+                    Longitude = "123.941392"
+                };
+
                 itemConfiscated.Add("Motor Vehicle");
+                vehicle.IsImpounded = true;
+            }
             else
+            {
+                vehicleTrack = null;
                 itemConfiscated.Remove("Motor Vehicle");
+                vehicle.IsImpounded = false;
+            }
         }
 
         private void SelectedLicense(ChangeEventArgs e)

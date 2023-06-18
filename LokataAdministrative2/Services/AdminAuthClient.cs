@@ -19,5 +19,11 @@ namespace LokataAdministrative2.Services
             var response = await _adminAuthClient.PostAsJsonAsync("api/adminauth/signin", dto);
             return await response.Content.ReadAsStringAsync();
         }
+
+        public async Task<string> SignupPostRequest(AdminSignup dto)
+        {
+            var response = await _adminAuthClient.PostAsJsonAsync("api/adminauth/signup", dto);
+            return await response.Content.ReadAsStringAsync();
+        }
     }
 }

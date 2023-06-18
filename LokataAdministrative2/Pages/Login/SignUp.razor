@@ -3,42 +3,50 @@
 
 <div class="d-flex justify-content-center align-items-center vh-100 bg-primary">
     <div style="width:400px; height:640px" class="border border-dark p-5 rounded bg-white">
-        <form>
+        <EditForm Model="admin" OnValidSubmit="Signup">
             <h3 class="text-center">Sign Up</h3>
             <div class="mb-2">
                 <label for="lastName">Last Name</label>
-                <input class="form-control" type="text" placeholder="Enter Last Name" />
+                <input class="form-control" type="text" placeholder="Enter Last Name" @bind-value="admin.LastName" />
             </div>
             <div class="mb-2">
                 <label for="firstName">First Name</label>
-                <input class="form-control" type="text" placeholder="Enter First Name" />
+                <input class="form-control" type="text" placeholder="Enter First Name" @bind-value="admin.FirstName" />
             </div>
             <div class="mb-2">
                 <label for="firstName">Middle Name</label>
-                <input class="form-control" type="text" placeholder="Enter Middle Name" />
+                <input class="form-control" type="text" placeholder="Enter Middle Name" @bind-value="admin.MiddleName" />
             </div>
             <div class="mb-2">
                 <label for="firstName">Goverment ID</label>
-                <input class="form-control" type="text" placeholder="Enter ID" />
+                <input class="form-control" type="text" placeholder="Enter ID" @bind-value="admin.GovernmentId" />
             </div>
             <div class="mb-2">
-                <label for="email">Email</label>
-                <input class="form-control" type="email" placeholder="Enter Email" />
+                <label for="username">Username</label>
+                <input class="form-control" type="text" placeholder="Enter Username" @bind-value="admin.Username" />
             </div>
             <div class="mb-4">
                 <label for="password">Password</label>
-                <input class="form-control" type="password" placeholder="Enter Password" />
+                <input class="form-control" type="password" placeholder="Enter Password" @bind-value="admin.Password" />
             </div>
             <div class="d-grid">
-                <button class="btn btn-primary">Sign In</button>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
             </div>
             <p class="text-end mt-2">
                 Already Signup? <a class="ms-2" @onclick="NavigateToSignIn">Sign In</a>
             </p>
-        </form>
+        </EditForm>
     </div>
 </div>
 
 @code {
+    AdminSignup admin = new();
+
+    private async Task Signup()
+    {
+        var result = await adminAuthClient.SignupPostRequest(admin);
+        await js.InvokeVoidAsync("alert", result);
+    }
+
     private void NavigateToSignIn() => navigation.NavigateTo("/");
 }

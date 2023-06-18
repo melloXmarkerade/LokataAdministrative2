@@ -1,13 +1,19 @@
 ﻿using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Syncfusion.Blazor.PdfViewer;
 
 namespace LokataAdministrative2.Pages.IssueTicket
 {
     public partial class IssuedTicket
     {
         [Parameter]
-        public bool SelectLicenseType { get; set; } = false;
+        public bool SelectProfessional { get; set; } = false;
+
+
+        [Parameter]
+        public bool SelectNonProfessional { get; set; } = false;
 
         [Parameter]
         public bool SelectVehicle { get; set; } = false;
@@ -15,6 +21,10 @@ namespace LokataAdministrative2.Pages.IssueTicket
         [Parameter]
         public bool SelectLicense { get; set; } = false;
 
+        public string ProvinceSelectedOption { get; set; } = string.Empty;
+        public string CitySelectedOption { get; set; } = string.Empty;
+        public string BarangaySelectedOption { get; set; } = string.Empty;
+        public AddressDto Address { get; set; } = new();
         private List<ProvinceDto> Provinces { get; set; } = new();
         private List<CityDto> Cities { get; set; } = new();
         private List<BarangayDto> Barangays { get; set; } = new();
@@ -28,9 +38,13 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         List<CitationDto>? citationList;
 
-        private void ShowPopup() => Popup = true;
+        private void ShowPopup() => ViolationPopup = true;
 
-        private void ClosePopup() => Popup = false;
+        private void ClosePopup()
+        {
+            BarangaySelectedOption = Citation!.Address!.Barangay!;
+            Popup = false;
+        }
 
         private void ViolationCloseDialog() => ViolationPopup = false;
 
@@ -39,9 +53,18 @@ namespace LokataAdministrative2.Pages.IssueTicket
             citationList = await citationClient.GetAllRequest(await tokenProvider.GetTokenAsync());
 
             Provinces = await provinceClient.GetAllRequest(await tokenProvider.GetTokenAsync());
-            Cities = await cityClient.GetAllRequest(await tokenProvider.GetTokenAsync());
+            Cities    = await cityClient.GetAllRequest(await tokenProvider.GetTokenAsync());
             
+
             Categories = await violationCatClient.GetAllRequest(await tokenProvider.GetTokenAsync());
+        }
+
+        private void LicenseTypeChecked()
+        {
+            if (Citation!.LicenseType == "Professional")
+                SelectProfessional = true;
+            else
+                SelectNonProfessional = true;
         }
 
         private void SelectedLicenseType(ChangeEventArgs e)
@@ -57,7 +80,12 @@ namespace LokataAdministrative2.Pages.IssueTicket
             await OnInitializedAsync();
         }
 
-        private async void EditTicket(CitationDto citation)
+        private void ViewTicket(CitationDto dto)
+        {
+
+        }
+
+        private async Task EditTicket(CitationDto citation)
         {
             if (citation is not null)
             {
@@ -65,9 +93,14 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
                 SelectVehicle = citation!.ItemConfiscated!.Contains("Motor Vehicle");
                 SelectLicense = citation!.ItemConfiscated!.Contains("Driver's License");
-                Popup = true;
+                LicenseTypeChecked();
 
-                Barangays = await barangayClient.GetRequestByCityId(Citation!.Address!.City!, await tokenProvider.GetTokenAsync());
+                ProvinceSelectedOption = citation.Address!.Province!;
+                CitySelectedOption     = citation.Address!.City!;
+                BarangaySelectedOption = citation.Address!.Barangay!;
+
+                Barangays = await barangayClient.GetRequestByCityId(CitySelectedOption, await tokenProvider.GetTokenAsync());
+                Popup = true;                
             }
 
             //navigation.NavigateTo($"/issuedTicketPage/{id}");
@@ -76,9 +109,15 @@ namespace LokataAdministrative2.Pages.IssueTicket
         private void SelectedVehicle(ChangeEventArgs e)
         {
             if ((bool)e.Value!)
+            {
                 Citation!.ItemConfiscated!.Add("Motor Vehicle");
+                Citation!.VehicleDescription!.IsImpounded = true;
+            }
             else
+            {
                 Citation!.ItemConfiscated!.Remove("Motor Vehicle");
+                Citation!.VehicleDescription!.IsImpounded = false;
+            }
         }
 
         private void SelectedLicense(ChangeEventArgs e)
@@ -91,37 +130,35 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private void TicketIssuePage() => navigation.NavigateTo("/issuedTicketPage");
 
-        private async void ProvinceClicked(ChangeEventArgs provinceEvent)
+        private async Task ProvinceOnValueChanged(string value)
         {
             Cities.Clear();
 
-            if (provinceEvent.Value!.ToString()! == "0")
+            if (value == "0")
             {
                 Barangays.Clear();
                 return;
             }
 
-            Citation!.Address!.Province = provinceEvent.Value!.ToString()!;
-            Cities = await cityClient.GetRequestByProvinceId(provinceEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
-            this.StateHasChanged();
+            ProvinceSelectedOption = value;
+            Cities = await cityClient.GetRequestByProvinceId(value, await tokenProvider.GetTokenAsync());
         }
 
-        private async void CityClicked(ChangeEventArgs cityEvent)
+        private async Task CityOnValueChanged(string value)
         {
             Barangays.Clear();
 
-            if (cityEvent.Value!.ToString()! == "0")
+            if (value == "0")
                 return;
 
-            Citation!.Address!.City = cityEvent.Value!.ToString()!;
-            Barangays = await barangayClient.GetRequestByCityId(cityEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
-            this.StateHasChanged();
+            CitySelectedOption = value;
+            Barangays = await barangayClient.GetRequestByCityId(value, await tokenProvider.GetTokenAsync());
         }
 
-        private void BarangayClicked(ChangeEventArgs barangayClient)
+        private Task BarangayOnValueChanged(string value)
         {
-            Citation!.Address!.Barangay = barangayClient.Value!.ToString()!;
-            this.StateHasChanged();
+            BarangaySelectedOption = value;
+            return Task.CompletedTask;
         }
 
         private async void ViolationCategoryClicked(ChangeEventArgs violationEvent)
@@ -163,6 +200,16 @@ namespace LokataAdministrative2.Pages.IssueTicket
             Citation!.Violations!.Add(Violation);
             ViolationPopup = false;
             Violation = new();
+        }
+
+        private async Task UpdateChanges()
+        {
+            Citation!.Address!.Province = ProvinceSelectedOption;
+            Citation.Address.City       = CitySelectedOption;
+            Citation.Address.Barangay   = BarangaySelectedOption;
+
+            await citationClient.PutRequest(Citation, await tokenProvider.GetTokenAsync());
+            await js.InvokeVoidAsync("alert", "Update Success");
         }
     }
 }

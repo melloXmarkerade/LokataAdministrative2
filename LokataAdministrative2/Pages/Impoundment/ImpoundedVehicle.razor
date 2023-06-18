@@ -1,25 +1,17 @@
 ﻿@page "/impoundVehicle"
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "SuperAdmin, Admin")]
 
 <h2>Impounded Vehicles</h2>
 <hr />
 
 <h4>Vehicle List</h4>
-<div class="form-group row">
+<div class="form-group row mb-3">
     <label class=" col-md-12">Search</label>
     <div class="col-md-4">
         <input class="form-control" /> <!-- bind="*"-->
     </div>
     
 </div>
-
-&nbsp;
-
-<div class="form-group mb-3">
-    <button class="btn btn-primary">Search</button> <!--onclick="AccountSearch"-->
-    <!-- <ValidationMessage For="*" /> -->
-</div>
-
 <table class="table table-hover mb-3">
     <thead>
         <tr>
@@ -32,45 +24,66 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var citation in citationList)
+        @foreach (var vehicle in vehicleList)
         {
             <tr>
-                <td>@(citationList.IndexOf(citation) + 1)</td>
-                <td>@citation.TctNo</td>
-                <td>@citation.VehicleDescription!.PlateNo</td>
-                <td>@citation.PlaceApprehended!.Date</td>
-                <td></td>
+                <td>@(vehicleList.IndexOf(vehicle) + 1)</td>
+                <td>@vehicle.TctNo</td>
+                <td>@vehicle.PlateNo</td>
+                <td>@vehicle.DateImpounded</td>
+                <td>@vehicle.Status</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" href="address/@citation.Id"><i class="oi oi-pencil"></i></a>
-                    <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(citation.Id!))">
-                        <i class="oi oi-trash"></i>
-                    </button>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewVehicle(vehicle))"><i class="oi oi-eye"></i></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+@if (VehiclePopup)
+{
+    <div class="modal" tabindex="-1" style="display:block">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vehicle Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=VehicleCloseDialog></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">License Number</label>
+                            <text class="form-control w-auto">@Vehicle.LicenseNo</text>
+                        </div>
 
-<div class="form-group">
-    <button class="btn btn-primary" @onclick="ViewVehicleDetails">View Vehicle Details</button>
-</div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Tct Number</label>
+                            <text class="form-control w-auto">@Vehicle.TctNo</text>
+                        </div>
 
-@code {
-    List<CitationDto> citationList = new();
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Date Impounded</label>
+                            <text class="form-control w-auto">@Vehicle.DateImpounded</text>
+                        </div>
+                    </div>
 
-    protected override async Task OnInitializedAsync()
-    {
-        var token = await tokenProvider.GetTokenAsync();
-        citationList = await citationClient.GetAllRequest(token);
-    }
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Make</label>
+                            <text class="form-control w-auto">@Vehicle.Make</text>
+                        </div>
 
-    private async Task DeleteAddress(string id)
-    {
-        await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
-        await OnInitializedAsync();
-    }
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Model</label>
+                            <text class="form-control w-auto">@Vehicle.Model</text>
+                        </div>
 
-    private void ViewVehicleDetails() => navigation.NavigateTo("/VehicleDetails");
-
-    private void TrackVehicle() => navigation.NavigateTo("/Tracking");
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Color</label>
+                            <text class="form-control w-auto">@Vehicle.Color</text>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }

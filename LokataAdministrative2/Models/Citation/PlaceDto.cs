@@ -1,6 +1,6 @@
 ﻿namespace LokataAdministrative2.Models
 {
-    public class PlaceDto : BaseDto
+    public class PlaceDto
     {
         public string? Street { get; set; }
         public string? Barangay { get; set; }

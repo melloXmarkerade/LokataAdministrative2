@@ -7,7 +7,7 @@ namespace LokataAdministrative2.Services
 {
     public interface ICityClient : IClient<CityDto> 
     {
-        Task<List<CityDto>?> GetRequestByProvinceId(string id, string token);
+        Task<List<CityDto>> GetRequestByProvinceId(string id, string token);
     }
 
     public class CityClient : ICityClient
@@ -45,7 +45,7 @@ namespace LokataAdministrative2.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<CityDto>?> GetRequestByProvinceId(string id, string token)
+        public async Task<List<CityDto>> GetRequestByProvinceId(string id, string token)
         {
             AuthenticateToken(token);
             var response = await cityClient.GetAsync($"api/address/city/{id}");

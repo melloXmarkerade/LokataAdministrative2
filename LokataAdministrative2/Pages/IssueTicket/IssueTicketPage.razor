@@ -52,7 +52,7 @@
         <div class="row">
             <div class="col-md-4">
                 <label class="form-label">Province</label>
-                <select class="form-control" @onchange="ProvinceClicked">
+                <select class="form-select" @onchange="ProvinceClicked">
                     <option value="0">-- Select Province --</option>
                     @foreach (var item in provinces)
                     {
@@ -63,7 +63,7 @@
 
             <div class="col-md-4">
                 <label class="form-label">City</label>
-                <select class="form-control" @onchange="CityClicked">
+                <select class="form-select" @onchange="CityClicked">
                     <option value="0">-- Select City --</option>
                     @foreach (var item in cities)
                     {
@@ -74,7 +74,7 @@
 
             <div class="col-md-4">
                 <label class="form-label">Barangay</label>
-                <select class="form-control" @onchange="BarangayClicked">
+                <select class="form-select" @onchange="BarangayClicked">
                     <option value="">-- Select Barangay --</option>
                     @foreach (var item in barangays)
                     {
@@ -213,7 +213,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Category</label>
-                                        <select class="form-control" @onchange="ViolationCategoryClicked">
+                                        <select class="form-select" @onchange="ViolationCategoryClicked">
                                             <option value="0">-- Select Category --</option>
                                             @foreach (var item in categories)
                                             {
@@ -224,7 +224,7 @@
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Name</label>
-                                        <select class="form-control" @onchange="ViolationClicked">
+                                        <select class="form-select" @onchange="ViolationClicked">
                                             <option value="0">-- Select Name --</option>
                                             @foreach (var item in violations)
                                             {
@@ -235,7 +235,7 @@
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Offense</label>
-                                        <select class="form-control" @onchange="ViolationFeeClicked">
+                                    <select class="form-select" @onchange="ViolationFeeClicked">
                                             <option value="">-- Select Offense --</option>
                                             @foreach (var item in violationFees)
                                             {

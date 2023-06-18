@@ -26,5 +26,7 @@ builder.Services.AddScoped<IViolationCategoryClient, ViolationCatClient>();
 builder.Services.AddScoped<IViolationClient, ViolationClient>();
 builder.Services.AddScoped<IViolationFeeClient, ViolationFeeClient>();
 builder.Services.AddScoped<IVehicleClient, VehicleClient>();
+builder.Services.AddScoped<IUserReqSubmissionClient, UserReqSubmissionClient>();
+builder.Services.AddScoped<IUserRecSubmissionClient, UserRecSubmissionClient>();
 builder.Services.AddScoped<AdminAuthClient>();
 await builder.Build().RunAsync();
