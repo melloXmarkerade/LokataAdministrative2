@@ -327,10 +327,6 @@ else
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                            <label class="form-label fw-bold" for="flexCheckDefault1">Others</label>
-                                        <input class="form-text" type="text" id="others" />
-                                    </div>
                                 </div>
                             </div>
                             <hr />
@@ -365,5 +361,211 @@ else
                 </div>
             </div>
     </EditForm>
+    }
+
+    if (@ViewCitationPopup)
+    {
+        <div class="modal" tabindex="-1" style="display:block">
+                <div class="modal-dialog-scrollable modal-xl modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Citation Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewCitationPopup></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-7">
+                                    <label class="form-label fw-bold">TCT No.</label>
+                                    <text class="form-control w-auto">@Citation!.TctNo</text>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <label class="form-label fw-bold">Date Record</label>
+                                    <text class="form-control w-auto">@Citation!.DateRecord</text>
+                                </div>
+                            </div>
+
+                            <h4>I. Driver's Name</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="lastNameValidation" class="form-label fw-bold">Last name</label>
+                                        <text class="form-control">@Citation.LastName</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">First name</label>
+                                        <text class="form-control">@Citation.FirstName</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+										<label class="form-label fw-bold">Middle name</label>
+                                        <text class="form-control">@Citation.MiddleName</text>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4>Address</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Province</label>
+                                        <text class="form-control">@Citation.Address!.Province</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">City</label>
+										<text class="form-control">@Citation.Address.City</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Barangay</label>
+                                        <text class="form-control">@Citation.Address.Barangay</text>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr/>
+                            <h4>II. License/Permit No.</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label class="form-label fw-bold">License No.</label>
+                                        <text class="form-control w-75">@Citation.LicenseNo</text>
+                                    </div>
+
+                                    <div class="col-sm-4 mt-4">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="licenseType" id="Professional-License" 
+                                                   value="Professional" checked="@SelectProfessional" @onchange="SelectedLicenseType">
+                                                <label class="form-check-label fw-bold" for="Professional-License">Professional</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm mt-4">
+                                        <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="licenseType" id="Non-Professional-License"
+                                                       value="Non-Professional" checked="@SelectNonProfessional" @onchange="SelectedLicenseType">
+                                                <label class="form-check-label fw-bold" for="Non-Professional-License">Non-Professional</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                            <h4>III. Motor Vehicle Description</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Plate No.</label>
+                                        <text class="form-control">@Citation.VehicleDescription!.PlateNo</text>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Color</label>
+                                        <text class="form-control">@Citation.VehicleDescription!.Color</text>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Make</label>
+                                    <text class="form-control">@Citation.VehicleDescription!.Make</text>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Model</label>
+                                    <text class="form-control">@Citation.VehicleDescription!.Model</text>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <h4>IV. Place of Apprehension</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Street</label>
+                                        <text class="form-control">@Citation.PlaceApprehended!.Street</text>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Barangay</label>
+                                        <text class="form-control">@Citation.PlaceApprehended!.Barangay</text>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label fw-bold">Date</label>
+                                    <text class="form-control">@Citation.PlaceApprehended!.Date</text>
+                                    </div>
+                                    <div class="col">
+                                    <label class="form-label fw-bold">Time</label>
+                                    <text class="form-control">@Citation.PlaceApprehended!.Time</text>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <h4>V. Violation(s)</h4>
+                            <div class="container mb-4">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Category</th>
+                                            <th>Name</th>
+                                            <th>Offense</th>
+                                            <th>Fine</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Citation.Violations != null)
+                                        {
+                                            @foreach (var item in Citation.Violations)
+                                            {
+                                                <tr>
+                                                    <td>@(Citation.Violations.IndexOf(item) + 1)</td>
+                                                    <td>@item.Category</td>
+                                                    <td>@item.Name</td>
+                                                    <td>@item.Offense</td>
+                                                    <td>@item.Fine</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h4>VI. Item(s) Confiscated</h4>
+                            <div class="container mb-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" checked="@SelectLicense" @onchange="SelectedLicense" id="driverLicense">
+                                            <label class="form-check-label fw-bold" for="driverLicense">Driver's License</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
+                                            <label class="form-check-label fw-bold" for="motorVehicle">Motor Vehicle</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <h4>VII. Apprehending Officer</h4>
+                            <div class="container mb-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="lastNameValidation" class="form-label fw-bold">Last name</label>
+                                        <text class="form-control">@Citation!.ApprehendingOfficer!.LastName</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">First name</label>
+                                        <text class="form-control">@Citation.ApprehendingOfficer.FirstName</text>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Middle name</label>
+                                        <text class="form-control">@Citation.ApprehendingOfficer.MiddleName</text>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
     }
 }

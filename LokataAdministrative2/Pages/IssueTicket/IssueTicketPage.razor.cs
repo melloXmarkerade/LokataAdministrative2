@@ -48,12 +48,13 @@ namespace LokataAdministrative2.Pages.IssueTicket
             vehicle.LicenseNo = citation.LicenseNo;
             vehicle.DateImpounded = placeApprehended.Date;
 
-            citation.Address             = address;
-            citation.VehicleDescription  = vehicle;
-            citation.PlaceApprehended    = placeApprehended;
-            citation.Violations          = userViolations;
-            citation.ItemConfiscated     = itemConfiscated;
-            citation.ApprehendingOfficer = officer;
+            citation.Address                     = address;
+            citation.VehicleDescription          = vehicle;
+            citation.VehicleDescription.Location = vehicleTrack;
+            citation.PlaceApprehended            = placeApprehended;
+            citation.Violations                  = userViolations;
+            citation.ItemConfiscated             = itemConfiscated;
+            citation.ApprehendingOfficer         = officer;
 
             await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
             await js.InvokeVoidAsync("alert", "Record Success");
@@ -72,9 +73,9 @@ namespace LokataAdministrative2.Pages.IssueTicket
         {
             if ((bool)e.Value!)
             {
-                vehicleTrack = new TrackingDto
+                vehicleTrack = new()
                 {
-                    Latitude = "10.323297",
+                    Latitude  = "10.323297",
                     Longitude = "123.941392"
                 };
 

@@ -33,8 +33,10 @@ namespace LokataAdministrative2.Pages.IssueTicket
         private List<ViolationFeeDto> ViolationFees { get; set; } = new();
         private UserViolationDto Violation { get; set; } = new(); 
         private bool Popup { get; set; } = false;
+        private bool ViewCitationPopup { get; set; } = false;
         private bool ViolationPopup { get; set; } = false;
         private CitationDto? Citation { get; set; }
+        private TrackingDto? Location { get; set; }
 
         List<CitationDto>? citationList;
 
@@ -45,6 +47,8 @@ namespace LokataAdministrative2.Pages.IssueTicket
             BarangaySelectedOption = Citation!.Address!.Barangay!;
             Popup = false;
         }
+
+        private void CloseViewCitationPopup() => ViewCitationPopup = false;
 
         private void ViolationCloseDialog() => ViolationPopup = false;
 
@@ -82,7 +86,14 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private void ViewTicket(CitationDto dto)
         {
-
+            if(dto is not null)
+            {
+                Citation = dto;
+                SelectVehicle = Citation!.ItemConfiscated!.Contains("Motor Vehicle");
+                SelectLicense = Citation!.ItemConfiscated!.Contains("Driver's License");
+                LicenseTypeChecked();
+                ViewCitationPopup = true;
+            }
         }
 
         private async Task EditTicket(CitationDto citation)
@@ -100,21 +111,26 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 BarangaySelectedOption = citation.Address!.Barangay!;
 
                 Barangays = await barangayClient.GetRequestByCityId(CitySelectedOption, await tokenProvider.GetTokenAsync());
-                Popup = true;                
+                Popup     = true;                
             }
-
-            //navigation.NavigateTo($"/issuedTicketPage/{id}");
         }
 
         private void SelectedVehicle(ChangeEventArgs e)
         {
             if ((bool)e.Value!)
             {
+                Location = new()
+                {
+                    Latitude = "10.323297",
+                    Longitude = "123.941392"
+                };
+
                 Citation!.ItemConfiscated!.Add("Motor Vehicle");
                 Citation!.VehicleDescription!.IsImpounded = true;
             }
             else
             {
+                Location = null;
                 Citation!.ItemConfiscated!.Remove("Motor Vehicle");
                 Citation!.VehicleDescription!.IsImpounded = false;
             }
@@ -207,6 +223,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
             Citation!.Address!.Province = ProvinceSelectedOption;
             Citation.Address.City       = CitySelectedOption;
             Citation.Address.Barangay   = BarangaySelectedOption;
+            Citation.VehicleDescription!.Location = Location;
 
             await citationClient.PutRequest(Citation, await tokenProvider.GetTokenAsync());
             await js.InvokeVoidAsync("alert", "Update Success");

@@ -1,0 +1,79 @@
+﻿@page "/accountregistrations"
+@attribute [Authorize(Roles = "SuperAdmin")]
+
+<h3>Account Registrations</h3>
+
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Name</th>
+            <th>Date Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in Accounts)
+        {
+            <tr>
+                <td>@(Accounts.IndexOf(req) + 1)</td>
+                <td>@req.FirstName @req.MiddleName @req.LastName</td>
+                @*<td>@req.DateSubmitted</td>*@
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewAccount(req))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (AccountPopup)
+{
+    <div class="modal" tabindex="-1" style="display:block">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Account Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=AccountCloseDialog></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">First Name</label>
+                            <text class="form-control w-auto">@Account.FirstName</text>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Middle Name</label>
+                            <text class="form-control w-auto">@Account.MiddleName</text>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Last Name</label>
+                            <text class="form-control w-auto">@Account.LastName</text>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Government Id</label>
+                            <text class="form-control w-auto">@Account.GovernmentId</text>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Username</label>
+                            <text class="form-control w-auto">@Account.Username</text>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Password</label>
+                            <text class="form-control w-auto">@Account.Password</text>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Decline Account</button>
+                    <button type="button" class="btn btn-success">Approve Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -4,7 +4,10 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
-    public interface IVehicleClient : IClient<VehicleDto> { }
+    public interface IVehicleClient : IClient<VehicleDto> 
+    {
+        Task<List<VehicleDto>> GetAllVehicleInfo(string licenseNo);
+    }
 
     public class VehicleClient : IVehicleClient
     {
@@ -43,7 +46,7 @@ namespace LokataAdministrative2.Services
             return await response.Content.ReadFromJsonAsync<VehicleDto>();
         }
 
-        public async Task<List<VehicleDto>?> GetAllRequest(string token)
+        public async Task<List<VehicleDto>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
             var response = await vehicleClient.GetAsync($"api/Vehicle");
@@ -56,6 +59,15 @@ namespace LokataAdministrative2.Services
         public void AuthenticateToken(string token)
         {
             vehicleClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
+        }
+
+        public async Task<List<VehicleDto>> GetAllVehicleInfo(string licenseNo)
+        {
+            var response = await vehicleClient.GetAsync($"api/Vehicle/licenseno/{licenseNo}");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<List<VehicleDto>>();
         }
     }
 }

@@ -53,7 +53,30 @@
                 </li>
             </Authorized>
         </AuthorizeView>
-
+        <AuthorizeView Roles="SuperAdmin">
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="()=>expandSubMenu= !expandSubMenu">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Admin Accounts
+                    </NavLink>
+                    @if (expandSubMenu)
+                    {
+                        <ul class="nav flex-column">
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="accountregistrations">
+                                    <span class="oi oi-folder" aria-hidden="true"></span>Account Registrations
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="userreceipts">
+                                    <span class="oi oi-paperclip" aria-hidden="true"></span> Approved Accounts
+                                </NavLink>
+                            </li>
+                        </ul>
+                    }
+                </li>
+            </Authorized>
+        </AuthorizeView>
     </ul>
 </div>
 
