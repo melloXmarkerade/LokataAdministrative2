@@ -11,15 +11,16 @@
 @using System.Collections.Generic
 @using System.Text.Json.Serialization;
 @using System.Text.Json;
-@using Syncfusion.Blazor; 
-@using Syncfusion.Blazor.Calendars;
-@using Microsoft.EntityFrameworkCore;
-@using LokataAdministrative2.Models;
-@using LokataAdministrative2.Services;
-@using LokataAdministrative2.Models.Citation;
-@using LokataAdministrative2.Authentication;
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Calendars
+@using Microsoft.EntityFrameworkCore
+@using LokataAdministrative2.Models
+@using LokataAdministrative2.Services
+@using LokataAdministrative2.Models.Citation
+@using LokataAdministrative2.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Authorization
+@using CurrieTechnologies.Razor.SweetAlert2
 @inject AdminAuthClient adminAuthClient
 @inject IAdminClient adminClient;
 @inject ICitationClient citationClient;

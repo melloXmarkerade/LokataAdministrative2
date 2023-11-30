@@ -1,7 +1,8 @@
-﻿@page "/accountregistrations"
+﻿@page "/pendingaccounts"
 @attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
 
-<h3>Account Registrations</h3>
+<h3>Pending Accounts</h3>
 
 <table class="table table-hover mb-3">
     <thead>
@@ -17,8 +18,8 @@
         {
             <tr>
                 <td>@(Accounts.IndexOf(req) + 1)</td>
-                <td>@req.FirstName @req.MiddleName @req.LastName</td>
-                @*<td>@req.DateSubmitted</td>*@
+                <td>@req.FirstName @req.LastName</td>
+                <td>@req.DateCreated</td>
                 <td>
                     <a class="btn btn-primary btn-sm" @onclick="(() => ViewAccount(req))"><i class="oi oi-eye"></i></a>
                 </td>
@@ -40,11 +41,6 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">First Name</label>
                             <text class="form-control w-auto">@Account.FirstName</text>
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Middle Name</label>
-                            <text class="form-control w-auto">@Account.MiddleName</text>
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -70,8 +66,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Decline Account</button>
-                    <button type="button" class="btn btn-success">Approve Account</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Decline</button>
+                    <button type="button" class="btn btn-success" @onclick=AprroveAccount>Approve</button>
                 </div>
             </div>
         </div>

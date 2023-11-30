@@ -58,6 +58,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>File Name</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -67,9 +68,24 @@
                                     <tr>
                                         <td>@(Requirement.Requirements!.IndexOf(req) + 1)</td>
                                         <td><a href="@($"{req.FileUrl}")" target="_blank">@req.FileName</a></td>
+                                        <td>@(GetStatus(req.IsApproved))</td>
                                         <td>
-                                            <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
-                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                            @* <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a> *@
+                                            @if (!IsApproved(req) && !IsDeclined(req))
+                                            {
+                                                <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                                <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                            }
+                                            @if (IsApproved(req))
+                                            {
+                                                <a class="btn btn-sm" disabled><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                            }
+                                            @if (IsDeclined(req))
+                                            {
+                                                <a class="btn btn-sm" disabled><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                            }
+
                                         </td>
                                     </tr>
                                 }

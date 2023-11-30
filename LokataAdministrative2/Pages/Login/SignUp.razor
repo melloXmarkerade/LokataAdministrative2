@@ -1,52 +1,51 @@
 ﻿@page "/signup"
 @layout LoginLayout
+@inject SweetAlertService Swal
 
 <div class="d-flex justify-content-center align-items-center vh-100 bg-primary">
-    <div style="width:400px; height:640px" class="border border-dark p-5 rounded bg-white">
-        <EditForm Model="admin" OnValidSubmit="Signup">
-            <h3 class="text-center">Sign Up</h3>
+    <div style="width:400px; height:560px" class="border border-dark p-5 rounded bg-white">
+        <EditForm Model="admin" OnValidSubmit="AdminSignup">
+            <DataAnnotationsValidator/>
+
+            <h3 class="text-center">Create Account</h3>
+
             <div class="mb-2">
-                <label for="lastName">Last Name</label>
-                <input class="form-control" type="text" placeholder="Enter Last Name" @bind-value="admin.LastName" />
+                <label for="lastName">First name</label>
+                <InputText class="form-control" type="text" @bind-Value="admin.FirstName"/>
+                <ValidationMessage For="@(() => admin.FirstName)"/>
             </div>
+
             <div class="mb-2">
-                <label for="firstName">First Name</label>
-                <input class="form-control" type="text" placeholder="Enter First Name" @bind-value="admin.FirstName" />
+                <label for="firstName">Last name</label>
+                <InputText class="form-control" type="text" @bind-Value="admin.LastName"/>
+                <ValidationMessage For="@(() => admin.LastName)"/>
             </div>
-            <div class="mb-2">
-                <label for="firstName">Middle Name</label>
-                <input class="form-control" type="text" placeholder="Enter Middle Name" @bind-value="admin.MiddleName" />
-            </div>
+
             <div class="mb-2">
                 <label for="firstName">Goverment ID</label>
-                <input class="form-control" type="text" placeholder="Enter ID" @bind-value="admin.GovernmentId" />
+                <InputText class="form-control" type="text" @bind-Value="admin.GovernmentId"/>
+                <ValidationMessage For="@(() => admin.GovernmentId)"/>
             </div>
+
             <div class="mb-2">
                 <label for="username">Username</label>
-                <input class="form-control" type="text" placeholder="Enter Username" @bind-value="admin.Username" />
+                <InputText class="form-control" type="text" @bind-Value="admin.Username" />
+                <ValidationMessage For="@(() => admin.Username)" />
             </div>
-            <div class="mb-4">
+
+            <div class="mb-5">
                 <label for="password">Password</label>
-                <input class="form-control" type="password" placeholder="Enter Password" @bind-value="admin.Password" />
+                <InputText class="form-control" type="password" @bind-Value="admin.Password" />
+                <ValidationMessage For="@(() => admin.Password)" />
             </div>
+
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <button type="submit" class="btn btn-primary">Create account</button>
             </div>
-            <p class="text-end mt-2">
-                Already Signup? <a class="ms-2" @onclick="NavigateToSignIn">Sign In</a>
+
+            <p class="text-end mt-1">
+                Already signup? <a class="ms-2 text-decoration-none" @onclick="NavigateToSignIn">Login</a>
             </p>
         </EditForm>
     </div>
 </div>
-
-@code {
-    AdminSignup admin = new();
-
-    private async Task Signup()
-    {
-        var result = await adminAuthClient.SignupPostRequest(admin);
-        await js.InvokeVoidAsync("alert", result);
-    }
-
-    private void NavigateToSignIn() => navigation.NavigateTo("/");
-}

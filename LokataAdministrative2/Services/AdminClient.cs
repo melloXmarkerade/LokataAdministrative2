@@ -1,10 +1,14 @@
 ﻿using LokataAdministrative2.Models;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
-    public interface IAdminClient : IClient<AdminSignup> { }
+    public interface IAdminClient : IClient<AdminSignup> 
+    {
+        Task<List<AdminSignup>> GetRegisteredAccounts(string token);
+    }
 
     public class AdminClient : IAdminClient
     {
@@ -48,7 +52,17 @@ namespace LokataAdministrative2.Services
         public async Task<List<AdminSignup>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
-            var response = await adminClient.GetAsync($"api/admin");
+            var response = await adminClient.GetAsync($"api/admin/pendingaccounts");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<List<AdminSignup>>();
+        }
+
+        public async Task<List<AdminSignup>> GetRegisteredAccounts(string token)
+        {
+            AuthenticateToken(token);
+            var response = await adminClient.GetAsync($"api/admin/registeredaccounts");
             if (!response.IsSuccessStatusCode)
                 return null;
 

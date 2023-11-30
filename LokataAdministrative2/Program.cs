@@ -1,3 +1,4 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2;
 using LokataAdministrative2.Authentication;
 using LokataAdministrative2.Services;
@@ -10,6 +11,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddSweetAlert2();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://www.lokatamanagement.com") });
  

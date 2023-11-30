@@ -2,15 +2,15 @@
 
 namespace LokataAdministrative2.Pages.AdminPage
 {
-    public partial class AccountRegistrations
+    public partial class ApprovedAccounts
     {
         private List<AdminSignup> Accounts { get; set; } = new();
-        private AdminSignup? Account { get; set; } = new();
+        private AdminSignup Account { get; set; } = new();
         private bool AccountPopup { get; set; } = false;
 
         protected override async Task OnInitializedAsync()
         {
-            Accounts = await adminClient.GetAllRequest(await tokenProvider.GetTokenAsync());
+            Accounts = await adminClient.GetRegisteredAccounts(await tokenProvider.GetTokenAsync());
         }
 
         private void ViewAccount(AdminSignup account)
