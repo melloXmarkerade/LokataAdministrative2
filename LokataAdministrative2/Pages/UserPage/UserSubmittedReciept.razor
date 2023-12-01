@@ -60,6 +60,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>File Name</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -67,9 +68,24 @@
                                 <tr>
                                     <td>1</td>
                                     <td><a href="@($"{Receipt.Receipt!.FileUrl}")" target="_blank">@Receipt.Receipt!.FileName</a></td>
+                                    <td>@(GetStatus(Receipt.Receipt))</td>
                                     <td>
-                                        <a class="btn btn-sm" @onclick="(() => ApproveRequirement(Receipt))"><i class="oi oi-circle-check" style="color: green;"></i></a>
-                                        <a class="btn btn-sm" @onclick="(() => DeclineRequirement(Receipt))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                        @* <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                    <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a> *@
+                                        @if (!IsApproved(Receipt.Receipt) && !IsDeclined(Receipt.Receipt))
+                                        {
+                                            <a class="btn btn-sm" @onclick="(() => ApproveRequirement(Receipt.Receipt))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(Receipt.Receipt))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                        }
+                                        @if (IsApproved(Receipt.Receipt))
+                                        {
+                                            <a class="btn btn-sm" disabled><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                        }
+                                        @if (IsDeclined(Receipt.Receipt))
+                                        {
+                                            <a class="btn btn-sm" disabled><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                        }
+
                                     </td>
                                 </tr>
                             </tbody>

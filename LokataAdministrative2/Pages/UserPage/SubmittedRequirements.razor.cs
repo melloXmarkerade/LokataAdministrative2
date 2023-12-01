@@ -32,6 +32,7 @@ namespace LokataAdministrative2.Pages.UserPage
         void DeclineRequirement(Requirement req)
         {
             declinedRequirements.Add(req);
+            req.IsDeclined = true;
         }
 
         bool IsApproved(Requirement req)
@@ -44,10 +45,12 @@ namespace LokataAdministrative2.Pages.UserPage
             return declinedRequirements.Contains(req);
         }
 
-        private string GetStatus(bool status)
+        private string GetStatus(Requirement req)
         {
-            if (status)
+            if (req.IsApproved)
                 return "Approved";
+            else if (req.IsDeclined)
+                return "Declined";
             else
                 return "Pending";
         }

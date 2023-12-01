@@ -8,26 +8,51 @@ namespace LokataAdministrative2.Pages.UserPage
         private UserReceipt Receipt { get; set; } = new();
         private bool RecPopup { get; set; } = false;
 
+        HashSet<Requirement> approvedRequirements = new HashSet<Requirement>();
+        HashSet<Requirement> declinedRequirements = new HashSet<Requirement>();
+
         protected override async Task OnInitializedAsync()
         {
             var token = await tokenProvider.GetTokenAsync();
             Receipts  = await userReceipt.GetAllRequest(token);
         }
 
-        private void ViewRequirement(UserReceipt req)
+        private void ViewRequirement(UserReceipt receipt)
         {
-            Receipt  = req;
+            Receipt = receipt;
             RecPopup = true;
         }
 
-        private void ApproveRequirement(UserReceipt req)
+        void ApproveRequirement(Requirement receipt)
         {
-
+            approvedRequirements.Add(receipt);
+            receipt.IsApproved = true;
         }
 
-        private void DeclineRequirement(UserReceipt req)
+        void DeclineRequirement(Requirement receipt)
         {
+            declinedRequirements.Add(receipt);
+            receipt.IsDeclined = true;
+        }
 
+        bool IsApproved(Requirement receipt)
+        {
+            return approvedRequirements.Contains(receipt);
+        }
+
+        bool IsDeclined(Requirement receipt)
+        {
+            return declinedRequirements.Contains(receipt);
+        }
+
+        private string GetStatus(Requirement req)
+        {
+            if (req.IsApproved)
+                return "Approved";
+            else if (req.IsDeclined)
+                return "Declined";
+            else
+                return "Pending";
         }
 
         private void ReqCloseDialog() => RecPopup = false;
