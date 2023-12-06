@@ -31,5 +31,6 @@ builder.Services.AddScoped<IVehicleClient, VehicleClient>();
 builder.Services.AddScoped<IUserReqSubmissionClient, UserReqSubmissionClient>();
 builder.Services.AddScoped<IUserRecSubmissionClient, UserRecSubmissionClient>();
 builder.Services.AddScoped<IAdminClient, AdminClient>();
+builder.Services.AddScoped<INotificationClient, NotificationClient>();
 builder.Services.AddScoped<AdminAuthClient>();
 await builder.Build().RunAsync();

@@ -1,4 +1,7 @@
-﻿using LokataAdministrative2.Models;
+﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Models;
+using LokataAdministrative2.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace LokataAdministrative2.Pages.UserPage
 {
@@ -7,9 +10,10 @@ namespace LokataAdministrative2.Pages.UserPage
         private List<UserRequirement> Requirements { get; set; } = new();
         private UserRequirement Requirement { get; set; } = new();
         private bool ReqPopup { get; set; } = false;
+        private string InputText { get; set; } = string.Empty;
 
-        HashSet<Requirement> approvedRequirements = new HashSet<Requirement>();
-        HashSet<Requirement> declinedRequirements = new HashSet<Requirement>();
+        List<Requirement> approvedRequirements = new List<Requirement>();
+        List<Requirement> declinedRequirements = new List<Requirement>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -35,14 +39,57 @@ namespace LokataAdministrative2.Pages.UserPage
             req.IsDeclined = true;
         }
 
-        bool IsApproved(Requirement req)
+        public async Task SendNotification()
         {
-            return approvedRequirements.Contains(req);
+            var notif = new NotificationDto
+            {
+                Email = Requirement.Email!,
+                Date = DateTime.Now.ToShortDateString(),
+                Message = InputText
+            };
+
+            var userReq = new UserRequirement
+            {
+                Id = Requirement.Id,
+                Email = Requirement?.Email,
+                LicenseNo = Requirement!.LicenseNo,
+                Requirements = approvedRequirements,
+                DateSubmitted = Requirement.DateSubmitted,
+                PlateNo = Requirement.PlateNo
+            };
+
+            declinedRequirements.ForEach(e => userReq.Requirements.Add(e));
+            await userRequirement.PutRequest(userReq, await tokenProvider.GetTokenAsync());
+            await notificationClient.PostRequest(notif, null);
+
+            var success = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Send Success",
+                Icon = SweetAlertIcon.Success
+            });
+
+            if (success.IsConfirmed)
+            {
+                await OnInitializedAsync();
+                ReqCloseDialog();
+            }
+
         }
 
-        bool IsDeclined(Requirement req)
+        static bool IsApproved(Requirement req) 
         {
-            return declinedRequirements.Contains(req);
+            if (req.IsApproved)
+                return true;
+            else
+                return false;
+        }
+
+        static bool IsDeclined(Requirement req)
+        {
+            if (req.IsDeclined)
+                return true;
+            else
+                return false;
         }
 
         private string GetStatus(Requirement req)
@@ -55,6 +102,9 @@ namespace LokataAdministrative2.Pages.UserPage
                 return "Pending";
         }
 
-        private void ReqCloseDialog() => ReqPopup = false;
+        private void ReqCloseDialog()
+        {
+            ReqPopup = false;
+        }
     }
 }

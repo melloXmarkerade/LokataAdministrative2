@@ -1,5 +1,8 @@
 ﻿@page "/userrequirements"
 @attribute [Authorize(Roles = "Admin")]
+@inject INotificationClient notificationClient;
+@inject SweetAlertService Swal
+
 <h2 class="mb-5">Submitted Requirements</h2>
 
 <table class="table table-hover mb-3">
@@ -70,8 +73,6 @@
                                         <td><a href="@($"{req.FileUrl}")" target="_blank">@req.FileName</a></td>
                                         <td>@(GetStatus(req))</td>
                                         <td>
-                                            @* <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
-                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a> *@
                                             @if (!IsApproved(req) && !IsDeclined(req))
                                             {
                                                 <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
@@ -91,8 +92,14 @@
                                 }
                             </tbody>
                         </table>
+
+                        <textarea class="form-control" @bind="InputText"></textarea>
                     </div>
 
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="SendNotification">Send</button>
                 </div>
             </div>
         </div>
