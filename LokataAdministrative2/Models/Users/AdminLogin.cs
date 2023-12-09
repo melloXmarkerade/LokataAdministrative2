@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LokataAdministrative2.Models
+namespace LokataAdministrative2.Models.Users
 {
     public class AdminLogin
     {

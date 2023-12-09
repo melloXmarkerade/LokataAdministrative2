@@ -1,12 +1,11 @@
-﻿using LokataAdministrative2.Models;
-using LokataAdministrative2.Models.Citation;
+﻿using LokataAdministrative2.Models.Citation;
 using System.Net.Http.Json;
 
-namespace LokataAdministrative2.Services
+namespace LokataAdministrative2.Services.ViolationsClient
 {
-    public interface IViolationFeeClient : IClient<ViolationFeeDto> 
-    { 
-        Task<List<ViolationFeeDto>?> GetRequestByViolationId(string id, string token); 
+    public interface IViolationFeeClient : IClient<ViolationFeeDto>
+    {
+        Task<List<ViolationFeeDto>?> GetRequestByViolationId(string id, string token);
     }
     public class ViolationFeeClient : IViolationFeeClient
     {

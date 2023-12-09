@@ -1,11 +1,7 @@
 ﻿@page "/issuedTicketPage"
 @page "/issuedTicketPage/{issuedTicketId}"
 @attribute [Authorize(Roles = "Admin")]
-
-<div class="mb-3">
-    <label for="formFile" class="form-label">Scan Document Physical Copy</label>
-    <input class="form-control w-auto" type="file" id="formFile">
-</div>
+@inject SweetAlertService Swal
 
 <EditForm Model="citation" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator/>
@@ -249,14 +245,13 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=CloseDialog>Discard Changes</button>
-                            <button type="button" class="btn btn-success" @onclick=@(()=>SaveChangesAsync())>Save changes</button>
+                            <button type="button" class="btn btn-success" @onclick=@(()=>SaveViolations())>Save changes</button>
                         </div>
                     </div>
                 </div>
             </div>
         }
     </div>
-
     <hr />
 
     <h4>VI. Item(s) Confiscated</h4>
@@ -273,9 +268,63 @@
             <div class="col-md-4">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" @onchange="SelectedVehicle" id="motorVehicle">
+                    @if (PaymentSummaryPopup)
+                    {
+                        <div class="modal" tabindex="-1" style="display:block">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add Storage/Towing Rates</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ClosePaymentSummary></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Storage Rate</label>
+                                                <select class="form-select" @onchange="StorageRateClicked">
+                                                    <option value="0">-- Select Vehicle Type --</option>
+                                                    @foreach (var item in storages)
+                                                    {
+                                                        <option value="@item.Id">@item.VehicleType</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Towing Rate</label>
+                                                <select class="form-select" @onchange="TowingRateClicked">
+                                                    <option value="0">-- Select Load of Vehicle --</option>
+                                                    @foreach (var item in towings)
+                                                    {
+                                                        <option value="@item.Id">@item.VehicleType</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label class="form-label">Impounding Area</label>
+                                                <select class="form-select" @onchange="ImpoundingAreaClicked">
+                                                    <option value="">-- Select Impounded Area --</option>
+                                                    @foreach (var item in impoundingAreas)
+                                                    {
+                                                        <option value="@item.Id">@item.ImpoundingArea</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ClosePaymentSummary>Discard Changes</button>
+                                        <button type="button" class="btn btn-success" @onclick=@(()=>SavePaymentsummary())>Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <label class="form-check-label" for="motorVehicle">
                         Motor Vehicle
                     </label>
+
                 </div>
             </div>
             <div class="col-md-4">
@@ -310,7 +359,7 @@
     </div>
 
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">@btnText</button>
+        <button type="submit" class="btn btn-primary">Add Citation</button>
         <button @onclick="Cancel" class="btn btn-light">Cancel</button>
     </div>
 </EditForm>

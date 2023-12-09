@@ -20,7 +20,9 @@
 @using LokataAdministrative2.Authentication
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Authorization
-@using CurrieTechnologies.Razor.SweetAlert2
+@using CurrieTechnologies.Razor.SweetAlert2;
+@using LokataAdministrative2.Services.AdminClient
+@using LokataAdministrative2.Services.ViolationsClient
 @inject AdminAuthClient adminAuthClient
 @inject IAdminClient adminClient;
 @inject ICitationClient citationClient;
@@ -33,6 +35,9 @@
 @inject IVehicleClient vehicleImpoundedClient;
 @inject IUserReqSubmissionClient userRequirement;
 @inject IUserRecSubmissionClient userReceipt;
+@inject IStorageRateClient storageClient;
+@inject ITowingRateClient towingClient;
+@inject IImpoundingAreaClient impoundingClient;
 @inject TokenAuthenticationStateProvider tokenProvider
 @inject AuthenticationStateProvider stateProvider;
 @inject NavigationManager navigation

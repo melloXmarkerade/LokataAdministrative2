@@ -1,7 +1,7 @@
 ﻿using LokataAdministrative2.Models;
 using System.Net.Http.Json;
 
-namespace LokataAdministrative2.Services
+namespace LokataAdministrative2.Services.ViolationsClient
 {
     public interface IViolationCategoryClient : IClient<ViolationCategoryDto> { }
 
@@ -46,7 +46,7 @@ namespace LokataAdministrative2.Services
 
         public void AuthenticateToken(string token)
         {
-            violationCatClient.DefaultRequestHeaders.Authorization= new("Bearer", token);
+            violationCatClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
     }
 }

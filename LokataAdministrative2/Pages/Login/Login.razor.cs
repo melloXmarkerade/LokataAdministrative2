@@ -1,5 +1,5 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
-using LokataAdministrative2.Models;
+using LokataAdministrative2.Models.Users;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

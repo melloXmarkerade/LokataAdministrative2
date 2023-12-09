@@ -7,7 +7,7 @@ namespace LokataAdministrative2.Services
 
     public class NotificationClient : INotificationClient
     {
-        private HttpClient notificationClient;
+        private readonly HttpClient notificationClient;
 
         public NotificationClient(HttpClient notificationClient)
         {

@@ -40,7 +40,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         List<CitationDto>? citationList;
 
-        private void ShowPopup() => ViolationPopup = true;
+        private void ShowViolationPopup() => ViolationPopup = true;
 
         private void ClosePopup()
         {

@@ -1,5 +1,6 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models;
+using LokataAdministrative2.Models.Users;
 using LokataAdministrative2.Services;
 using Microsoft.AspNetCore.Components;
 
@@ -9,8 +10,8 @@ namespace LokataAdministrative2.Pages.UserPage
     {
         private List<UserRequirement> Requirements { get; set; } = new();
         private UserRequirement Requirement { get; set; } = new();
-        private bool ReqPopup { get; set; } = false;
         private string InputText { get; set; } = string.Empty;
+        private bool ReqPopup { get; set; } = false;
 
         List<Requirement> approvedRequirements = new List<Requirement>();
         List<Requirement> declinedRequirements = new List<Requirement>();

@@ -1,7 +1,7 @@
 ﻿using LokataAdministrative2.Models;
 using System.Net.Http.Json;
 
-namespace LokataAdministrative2.Services
+namespace LokataAdministrative2.Services.ViolationsClient
 {
     public interface IViolationClient : IClient<ViolationDto>
     {
@@ -13,7 +13,7 @@ namespace LokataAdministrative2.Services
 
         public ViolationClient(HttpClient violationCatClient)
         {
-            this.violationClient = violationCatClient;
+            violationClient = violationCatClient;
         }
 
         public Task PostRequest(ViolationDto dto, string token)

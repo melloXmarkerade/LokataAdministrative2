@@ -1,7 +1,10 @@
-﻿using LokataAdministrative2.Models;
+﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
+using Syncfusion.Blazor.Charts;
 
 namespace LokataAdministrative2.Pages.IssueTicket
 {
@@ -9,36 +12,61 @@ namespace LokataAdministrative2.Pages.IssueTicket
     {
         [Parameter]
         public string issuedTicketId { get; set; } = string.Empty;
-
-        string btnText = string.Empty;
+        public bool PaymentSummaryPopup { get; set; } = false;
         bool popup     = false;
 
-        CitationDto citation       = new();
-        OfficerDto officer         = new();
-        VehicleDto vehicle         = new();
-        PlaceDto placeApprehended  = new();
-        AddressDto address         = new();
+        CitationDto citation = new();
+        OfficerDto officer = new();
+        VehicleDto vehicle = new();
+        PlaceDto placeApprehended = new();
+        AddressDto address = new();
         UserViolationDto violation = new();
-        TrackingDto? vehicleTrack;
+        StorageRateDto? storageRate;
+        TowingRateDto? towingRate;
+        TrackingDto? impoundingArea;
+        PaymentSummaryDto? paymentSummary;
 
-        List<ProvinceDto> provinces           = new();
-        List<CityDto> cities                  = new();
-        List<BarangayDto> barangays           = new();
+        List<ProvinceDto> provinces = new();
+        List<CityDto> cities = new();
+        List<BarangayDto> barangays = new();
         List<UserViolationDto> userViolations = new();
         List<ViolationCategoryDto> categories = new();
-        List<ViolationDto> violations         = new();
-        List<ViolationFeeDto> violationFees   = new();
-        List<string> itemConfiscated          = new();
+        List<ViolationDto> violations = new();
+        List<ViolationFeeDto> violationFees = new();
+        List<StorageRateDto> storages = new();
+        List<TowingRateDto> towings = new();
+        List<TrackingDto> impoundingAreas = new();
+        List<string> itemConfiscated = new();
 
         private void ShowPopup() => popup = true;
-
         private void CloseDialog() => popup = false;
+        private void ClosePaymentSummary() => PaymentSummaryPopup = false;
 
-        private void SaveChangesAsync()
+        private void SaveViolations()
         {
             userViolations.Add(violation);
             popup = false;
             violation = new();
+        }
+
+        private void SavePaymentsummary()
+        {
+            double totalViolations = 0;
+            userViolations.ForEach(v =>
+            {
+                totalViolations += v.Fine;
+            });
+
+            paymentSummary = new()
+            {
+                StorageRate = storageRate,
+                TowingRate = towingRate,
+                TotalViolationFees = totalViolations,
+                Date = DateTime.Now.ToShortDateString()
+            };
+
+            PaymentSummaryPopup = false;
+            paymentSummary = new();
         }
 
         private async Task OnValidSubmit()
@@ -48,17 +76,28 @@ namespace LokataAdministrative2.Pages.IssueTicket
             vehicle.LicenseNo = citation.LicenseNo;
             vehicle.DateImpounded = placeApprehended.Date;
 
-            citation.Address                     = address;
-            citation.VehicleDescription          = vehicle;
-            citation.VehicleDescription.Location = vehicleTrack;
-            citation.PlaceApprehended            = placeApprehended;
-            citation.Violations                  = userViolations;
-            citation.ItemConfiscated             = itemConfiscated;
-            citation.ApprehendingOfficer         = officer;
+            citation.Address = address;
+            citation.VehicleDescription = vehicle;
+            citation.VehicleDescription.Location = impoundingArea;
+            citation.PlaceApprehended = placeApprehended;
+            citation.Violations = userViolations;
+            citation.ItemConfiscated = itemConfiscated;
+            citation.ApprehendingOfficer = officer;
+            citation.PaymentSummary = paymentSummary;
 
             await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
-            await js.InvokeVoidAsync("alert", "Record Success");
-            navigation.NavigateTo("/issuedticket");
+
+            var success = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Record Success",
+                Icon = SweetAlertIcon.Success
+            });
+
+            if (success.IsConfirmed)
+            {
+                await OnInitializedAsync();
+                navigation.NavigateTo("/issuedticket");
+            }
         }
 
         private void Cancel() => navigation.NavigateTo("/issuedticket");
@@ -73,18 +112,12 @@ namespace LokataAdministrative2.Pages.IssueTicket
         {
             if ((bool)e.Value!)
             {
-                vehicleTrack = new()
-                {
-                    Latitude  = "10.323297",
-                    Longitude = "123.941392"
-                };
-
+                PaymentSummaryPopup = true;
                 itemConfiscated.Add("Motor Vehicle");
                 vehicle.IsImpounded = true;
             }
             else
             {
-                vehicleTrack = null;
                 itemConfiscated.Remove("Motor Vehicle");
                 vehicle.IsImpounded = false;
             }
@@ -101,24 +134,11 @@ namespace LokataAdministrative2.Pages.IssueTicket
         protected async override Task OnInitializedAsync()
         {
             var token = await tokenProvider.GetTokenAsync();
-            if (issuedTicketId is not null)
-            {
-                citation = await citationClient.GetRequestById(issuedTicketId, token);
-                vehicle = citation!.VehicleDescription!;
-                placeApprehended = citation!.PlaceApprehended!;
-                officer = citation!.ApprehendingOfficer!;
-                address = citation!.Address!;
-                userViolations = citation!.Violations!;
-
-                btnText = "Update Citation";
-            }
-            else
-            {
-                btnText = "Add Citation";
-            }
-
             provinces = await provinceClient.GetAllRequest(token);
             categories = await violationCatClient.GetAllRequest(token);
+            storages = await storageClient.GetAllRequest(token);
+            towings = await towingClient.GetAllRequest(token);
+            impoundingAreas = await impoundingClient.GetAllRequest(token);
         }
 
         private async void ProvinceClicked(ChangeEventArgs provinceEvent)
@@ -154,6 +174,30 @@ namespace LokataAdministrative2.Pages.IssueTicket
             this.StateHasChanged();
         }
 
+        private void StorageRateClicked(ChangeEventArgs storageEvent)
+        {
+            if (storageEvent.Value!.ToString() == "0") return;
+
+            storageRate = storages.FirstOrDefault(s => s.Id == storageEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
+        private void TowingRateClicked(ChangeEventArgs towingEvent)
+        {
+            if (towingEvent.Value!.ToString() == "0") return;
+
+            towingRate = towings.FirstOrDefault(t => t.Id == towingEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
+        private void ImpoundingAreaClicked(ChangeEventArgs impoundingEvent)
+        {
+            if (impoundingEvent.Value!.ToString() == "0") return;
+
+            impoundingArea = impoundingAreas.FirstOrDefault(t => t.Id == impoundingEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
         private async void ViolationCategoryClicked(ChangeEventArgs violationEvent)
         {
             violations.Clear();
@@ -164,8 +208,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 return;
             }
 
-            violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!,
-                            await tokenProvider.GetTokenAsync());
+            violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
             violation.Category = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }

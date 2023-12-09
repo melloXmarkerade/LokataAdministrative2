@@ -1,4 +1,4 @@
-﻿namespace LokataAdministrative2.Models
+﻿namespace LokataAdministrative2.Models.Users
 {
     public class UserReceipt : BaseDto
     {

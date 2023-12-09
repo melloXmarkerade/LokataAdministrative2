@@ -65,15 +65,10 @@ else
                         <div class="modal-body">
                             <div class="row mb-3">
                                 <div class="col-md-7">
-                                    <label class="form-label fw-bold">TCT No.</label>
-                                    <InputText class="form-control w-auto" @bind-Value="Citation!.TctNo"></InputText>
-                                    <ValidationMessage For="@(() => Citation.TctNo)"></ValidationMessage>
+                                    <InputComponent Label="TCT No." @bind-Value="Citation!.TctNo"/>
                                 </div>
-
                                 <div class="col-md-5">
-                                        <label class="form-label fw-bold">Date Record</label>
-                                    <InputText type="date" class="form-control" @bind-Value="Citation.DateRecord"></InputText>
-                                    <ValidationMessage For="@(() => Citation.DateRecord)"></ValidationMessage>
+                                    <InputComponent Label="Date Record" @bind-Value="Citation.DateRecord" />
                                 </div>
                             </div>
 
@@ -81,21 +76,13 @@ else
                             <div class="container mb-3">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="lastNameValidation" class="form-label fw-bold">Last name</label>
-                                        <InputText id="lastNameValidation" class="form-control" @bind-Value="Citation.LastName" required DisplayName="Last Name"></InputText>
-                                        <ValidationMessage For="@(() => Citation.LastName)"></ValidationMessage>
+                                        <InputComponent Label="Last name" @bind-Value="Citation.LastName" @DisplayName="Last Name" />
                                     </div>
-
                                     <div class="col-md-4">
-                                            <label class="form-label fw-bold">First name</label>
-                                        <InputText class="form-control" @bind-Value="Citation.FirstName" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.FirstName)"></ValidationMessage>
+                                        <InputComponent Label="First name" @bind-Value="Citation.FirstName" @DisplayName="First Name" />
                                     </div>
-
                                     <div class="col-md-4">
-                                            <label class="form-label fw-bold">Middle name</label>
-                                        <InputText class="form-control" @bind-Value="Citation.MiddleName" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.MiddleName)"></ValidationMessage>
+                                        <InputComponent Label="Middle name" @bind-Value="Citation.MiddleName" @DisplayName="Middle Name" />
                                     </div>
                                 </div>
                             </div>
@@ -145,9 +132,7 @@ else
                             <div class="container mb-3">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                            <label class="form-label fw-bold">License No.</label>
-                                        <InputText class="form-control w-75" @bind-Value="Citation.LicenseNo" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.LicenseNo)"></ValidationMessage>
+                                        <InputComponent Label="License No." @bind-Value="Citation.LicenseNo" @DisplayName="License No" />
                                     </div>
 
                                     <div class="col-sm-4 mt-4">
@@ -168,57 +153,44 @@ else
                                 </div>
                             </div>
                             <hr/>
+
                             <h4>III. Motor Vehicle Description</h4>
                             <div class="container mb-3">
                                 <div class="row">
                                     <div class="col">
-                                        <label class="form-label fw-bold">Plate No.</label>
-                                        <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.PlateNo" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.PlateNo)"></ValidationMessage>
+                                        <InputComponent Label="Plate No." @bind-Value="Citation.VehicleDescription!.PlateNo" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Color</label>
-                                        <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Color" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.Color)"></ValidationMessage>
+                                        <InputComponent Label="Color" @bind-Value="Citation.VehicleDescription!.Color" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Make</label>
-                                        <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Make" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.Make)"></ValidationMessage>
+                                        <InputComponent Label="Make" @bind-Value="Citation.VehicleDescription!.Make" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Model</label>
-                                        <InputText class="form-control" @bind-Value="Citation.VehicleDescription!.Model" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.VehicleDescription!.Model)"></ValidationMessage>
+                                        <InputComponent Label="Model" @bind-Value="Citation.VehicleDescription!.Model" />
                                     </div>
                                 </div>
                             </div>
                             <hr />
+
                             <h4>IV. Place of Apprehension</h4>
                             <div class="container mb-3">
                                 <div class="row">
                                     <div class="col">
-                                        <label class="form-label fw-bold">Street</label>
-                                        <InputText class="form-control" @bind-Value="Citation.PlaceApprehended!.Street" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.PlaceApprehended!.Street)"></ValidationMessage>
+                                        <InputComponent Label="Street" @bind-Value="Citation.PlaceApprehended!.Street" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Barangay</label>
-                                        <InputText class="form-control" @bind-Value="Citation.PlaceApprehended!.Barangay" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.PlaceApprehended!.Barangay)"></ValidationMessage>
+                                        <InputComponent Label="Barangay" @bind-Value="Citation.PlaceApprehended!.Barangay" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Date</label>
-                                        <InputText type="date" class="form-control" @bind-Value="Citation.PlaceApprehended!.Date" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.PlaceApprehended!.Date)"></ValidationMessage>
+                                        <InputComponent Type="date" Label="Date" @bind-Value="Citation.PlaceApprehended!.Date" />
                                     </div>
                                     <div class="col">
-                                        <label class="form-label fw-bold">Time</label>
-                                        <InputText type="time" class="form-control" @bind-Value="Citation.PlaceApprehended!.Time" required></InputText>
-                                        <ValidationMessage For="@(() => Citation.PlaceApprehended!.Time)"></ValidationMessage>
+                                        <InputComponent Type="time" Label="Time" @bind-Value="Citation.PlaceApprehended!.Time" />
                                     </div>
                                 </div>
                             </div>
+
                             <hr />
                             <h4>V. Violation(s)</h4>
                             <div class="container mb-3">
@@ -248,8 +220,9 @@ else
                                         }
                                     </tbody>
                                 </table>
+
                                 <!-- Button trigger modal -->
-                                <button type="button" @onclick="ShowPopup" class="btn btn-primary"> Add Violation</button>
+                                <button type="button" @onclick="ShowViolationPopup" class="btn btn-primary"> Add Violation</button>
                                 @if (ViolationPopup)
                                 {
                                     <div class="modal" tabindex="-1" style="display:block">
@@ -263,7 +236,7 @@ else
                                                     <div class="row">
                                                         <div class="col-md-4 mb-3">
                                                             <label class="form-label">Category</label>
-                                                            <select class="form-control" @onchange="ViolationCategoryClicked">
+                                                            <select class="form-select" @onchange="ViolationCategoryClicked">
                                                                 <option value="0">-- Select Category --</option>
                                                                 @foreach (var item in Categories)
                                                                 {
@@ -274,7 +247,7 @@ else
 
                                                         <div class="col-md-4 mb-3">
                                                             <label class="form-label">Name</label>
-                                                            <select class="form-control" @onchange="ViolationClicked">
+                                                            <select class="form-select" @onchange="ViolationClicked">
                                                                 <option value="0">-- Select Name --</option>
                                                                 @foreach (var item in Violations)
                                                                 {
@@ -285,7 +258,7 @@ else
 
                                                         <div class="col-md-4 mb-3">
                                                             <label class="form-label">Offense</label>
-                                                            <select class="form-control" @onchange="ViolationFeeClicked">
+                                                            <select class="form-select" @onchange="ViolationFeeClicked">
                                                                 <option value="">-- Select Offense --</option>
                                                                 @foreach (var item in ViolationFees)
                                                                 {
@@ -334,21 +307,13 @@ else
                             <div class="container mb-5">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="lastNameValidation" class="form-label fw-bold">Last name</label>
-                                            <InputText id="lastNameValidation" class="form-control" @bind-Value="Citation!.ApprehendingOfficer!.LastName" required DisplayName="Last Name"></InputText>
-                                        <ValidationMessage For="@(() => Citation.ApprehendingOfficer.LastName)"></ValidationMessage>
+                                        <InputComponent Label="Last name" @bind-Value="Citation!.ApprehendingOfficer!.LastName" />
                                     </div>
-
                                     <div class="col-md-4">
-                                        <label class="form-label fw-bold">First name</label>
-                                        <InputText class="form-control" @bind-Value="Citation.ApprehendingOfficer.FirstName" required></InputText>
-                                            <ValidationMessage For="@(() => Citation.ApprehendingOfficer.FirstName)"></ValidationMessage>
+                                        <InputComponent Label="First name" @bind-Value="Citation!.ApprehendingOfficer!.FirstName" />
                                     </div>
-
                                     <div class="col-md-4">
-                                            <label class="form-label fw-bold">Middle name</label>
-                                        <InputText class="form-control" @bind-Value="Citation.ApprehendingOfficer.MiddleName" required></InputText>
-                                            <ValidationMessage For="@(() => Citation.ApprehendingOfficer.MiddleName)"></ValidationMessage>
+                                        <InputComponent Label="Middle name" @bind-Value="Citation!.ApprehendingOfficer!.MiddleName" />
                                     </div>
                                 </div>
                             </div>
@@ -363,6 +328,7 @@ else
     </EditForm>
     }
 
+    //modal for SuperAdmin View Ticket
     if (@ViewCitationPopup)
     {
         <div class="modal" tabindex="-1" style="display:block">
@@ -544,6 +510,7 @@ else
                                 </div>
                             </div>
                             <hr />
+
                             <h4>VII. Apprehending Officer</h4>
                             <div class="container mb-5">
                                 <div class="row">

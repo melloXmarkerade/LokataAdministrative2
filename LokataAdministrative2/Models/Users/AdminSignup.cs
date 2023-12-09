@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LokataAdministrative2.Models
+namespace LokataAdministrative2.Models.Users
 {
     public class AdminSignup : BaseDto
     {
@@ -24,6 +24,6 @@ namespace LokataAdministrative2.Models
 
         public bool IsApproved { get; set; }
 
-        public string DateCreated { get; set; } =string.Empty;
+        public string DateCreated { get; set; } = string.Empty;
     }
 }

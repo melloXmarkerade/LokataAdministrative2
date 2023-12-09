@@ -1,5 +1,5 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
-using LokataAdministrative2.Models;
+using LokataAdministrative2.Models.Users;
 
 namespace LokataAdministrative2.Pages.AdminPage
 {

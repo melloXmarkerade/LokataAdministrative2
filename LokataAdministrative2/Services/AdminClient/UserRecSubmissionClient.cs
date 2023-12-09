@@ -1,8 +1,8 @@
-﻿using LokataAdministrative2.Models;
+﻿using LokataAdministrative2.Models.Users;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace LokataAdministrative2.Services
+namespace LokataAdministrative2.Services.AdminClient
 {
     public interface IUserRecSubmissionClient : IClient<UserReceipt> { }
 
@@ -42,8 +42,7 @@ namespace LokataAdministrative2.Services
         {
             AuthenticateToken(token);
             var response = await userReceipts.GetAsync($"api/usersubmission/receipts/{id}");
-            if (!response.IsSuccessStatusCode)
-                return null;
+            if (!response.IsSuccessStatusCode) return null;
 
             return await response.Content.ReadFromJsonAsync<UserReceipt>();
         }
@@ -52,8 +51,7 @@ namespace LokataAdministrative2.Services
         {
             AuthenticateToken(token);
             var response = await userReceipts.GetAsync($"api/usersubmission/receipts");
-            if (!response.IsSuccessStatusCode)
-                return null;
+            if (!response.IsSuccessStatusCode) return null;
 
             return await response.Content.ReadFromJsonAsync<List<UserReceipt>>();
         }

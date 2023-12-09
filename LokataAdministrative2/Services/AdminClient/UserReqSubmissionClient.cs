@@ -1,8 +1,8 @@
-﻿using LokataAdministrative2.Models;
+﻿using LokataAdministrative2.Models.Users;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace LokataAdministrative2.Services
+namespace LokataAdministrative2.Services.AdminClient
 {
     public interface IUserReqSubmissionClient : IClient<UserRequirement> { }
 
