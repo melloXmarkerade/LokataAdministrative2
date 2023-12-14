@@ -2,9 +2,6 @@
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Newtonsoft.Json.Linq;
-using Syncfusion.Blazor.Charts;
 
 namespace LokataAdministrative2.Pages.IssueTicket
 {
@@ -51,28 +48,41 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private void SavePaymentsummary()
         {
+            paymentSummary = new()
+            {
+                StorageRate = storageRate,
+                TowingRate = towingRate,
+                TotalViolationFees = TotalViolationFees(),
+                Date = DateTime.Now.ToShortDateString()
+            };
+
+            PaymentSummaryPopup = false;
+        }
+
+        private double TotalViolationFees()
+        {
             double totalViolations = 0;
             userViolations.ForEach(v =>
             {
                 totalViolations += v.Fine;
             });
-
-            paymentSummary = new()
-            {
-                StorageRate = storageRate,
-                TowingRate = towingRate,
-                TotalViolationFees = totalViolations,
-                Date = DateTime.Now.ToShortDateString()
-            };
-
-            PaymentSummaryPopup = false;
-            paymentSummary = new();
+            return totalViolations;
         }
 
         private async Task OnValidSubmit()
         {
-            vehicle.Status    = "Unsettled";
-            vehicle.TctNo     = citation.TctNo;
+            if(paymentSummary is null)
+            {
+                vehicle.Status = string.Empty;
+                paymentSummary = new()
+                {
+                    TotalViolationFees = TotalViolationFees(),
+                    Date = DateTime.Now.ToShortDateString()
+                };
+            }
+
+            vehicle.Status = "Unsettled";
+            vehicle.TctNo = citation.TctNo;
             vehicle.LicenseNo = citation.LicenseNo;
             vehicle.DateImpounded = placeApprehended.Date;
 
@@ -118,6 +128,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
             }
             else
             {
+                paymentSummary = new();
                 itemConfiscated.Remove("Motor Vehicle");
                 vehicle.IsImpounded = false;
             }

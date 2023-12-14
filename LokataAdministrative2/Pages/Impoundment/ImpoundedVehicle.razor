@@ -1,5 +1,6 @@
 ﻿@page "/impoundVehicle"
 @attribute [Authorize(Roles = "SuperAdmin, Admin")]
+@inject SweetAlertService Swal
 
 <h2>Impounded Vehicles</h2>
 <hr />
@@ -50,38 +51,77 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">License Number</label>
-                            <text class="form-control w-auto">@Vehicle.LicenseNo</text>
+                            <TextLabelComponent Label="License Number" Value="@Vehicle.LicenseNo" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Tct Number</label>
-                            <text class="form-control w-auto">@Vehicle.TctNo</text>
+                            <TextLabelComponent Label="Tct Number" Value="@Vehicle.TctNo" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Date Impounded</label>
-                            <text class="form-control w-auto">@Vehicle.DateImpounded</text>
+                            <TextLabelComponent Label="Date Impounded" Value="@Vehicle.DateImpounded" />
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Make</label>
-                            <text class="form-control w-auto">@Vehicle.Make</text>
+                            <TextLabelComponent Label="Make" Value="@Vehicle.Make" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Model</label>
-                            <text class="form-control w-auto">@Vehicle.Model</text>
+                            <TextLabelComponent Label="Model" Value="@Vehicle.Model" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Color</label>
-                            <text class="form-control w-auto">@Vehicle.Color</text>
+                            <TextLabelComponent Label="Color" Value="@Vehicle.Color" />
                         </div>
                     </div>
+
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            @if (Vehicle.Status == "Unsettled")
+                            {
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label fw-bold">Impounding Area</label>
+                                        <InputSelect ValueExpression="@(() => ImpoundingAreaSelected)"
+                                                     Value="ImpoundingAreaSelected" class="form-select" ValueChanged="@((string value) => ImpoundingAreaOnValueChanged(value))">
+                                            @foreach (var item in impoundingAreas)
+                                            {
+                                                <option value="@item.ImpoundingArea">@item.ImpoundingArea</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label fw-bold text-white">Impounding Area</label>
+                                        <button type="button" class="btn btn-success" @onclick=ClaimedVehicle>Update Area</button>
+                                    </div>
+                                </div>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="SuperAdmin">
+                        <Authorized>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <TextLabelComponent Label="Impounded Area" Value="@Vehicle.Location!.ImpoundingArea" Style="width:300px"/>
+                                </div>
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+
                 </div>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <div class="modal-footer">
+                            @if (Vehicle.Status == "Unsettled")
+                            {
+                                <button type="button" class="btn btn-success" @onclick=ClaimedVehicle>Claimed</button>
+                            }
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
             </div>
         </div>
     </div>

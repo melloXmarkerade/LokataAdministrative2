@@ -2,12 +2,10 @@
 {
     public class UserReceipt : BaseDto
     {
-        public string? LicenseNo { get; set; }
-
-        public string? Email { get; set; }
-
-        public string? DateSubmitted { get; set; }
-
+        public string LicenseNo { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string DateSubmitted { get; set; } = string.Empty;
+        public string PlateNo { get; set; } = string.Empty;
         public Requirement? Receipt { get; set; }
     }
 }

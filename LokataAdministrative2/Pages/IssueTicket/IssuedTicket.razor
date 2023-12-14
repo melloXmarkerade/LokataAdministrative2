@@ -1,6 +1,7 @@
 ﻿@page "/issuedTicket"
 @attribute [Authorize(Roles = "SuperAdmin, Admin")]
 @inject ICitationClient citationClient;
+@inject SweetAlertService Swal;
 
 <h2>Traffic Citation Tickets</h2>
 
@@ -56,7 +57,7 @@ else
         //Modal for Admin Edit Ticket
         <EditForm Model="Citation">
             <div class="modal" tabindex="-1" style="display:block">
-                <div class="modal-dialog-scrollable modal-xl modal-dialog">
+                <div class="modal-dialog-scrollable modal-lg modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Update Citation</h5>
@@ -65,7 +66,7 @@ else
                         <div class="modal-body">
                             <div class="row mb-3">
                                 <div class="col-md-7">
-                                    <InputComponent Label="TCT No." @bind-Value="Citation!.TctNo"/>
+                                    <InputComponent Label="TCT No." @bind-Value="Citation!.TctNo" Style="width:200px"/>
                                 </div>
                                 <div class="col-md-5">
                                     <InputComponent Label="Date Record" @bind-Value="Citation.DateRecord" />
@@ -135,19 +136,21 @@ else
                                         <InputComponent Label="License No." @bind-Value="Citation.LicenseNo" @DisplayName="License No" />
                                     </div>
 
-                                    <div class="col-sm-4 mt-4">
+                                    <div class="col-sm-4">
+                                        <label class="form-label fw-bold">License Type:</label>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="licenseType" id="Professional-License" 
                                                    value="Professional" checked="@SelectProfessional" @onchange="SelectedLicenseType">
-                                                <label class="form-check-label fw-bold" for="Professional-License">Professional</label>
+                                            <label class="form-check-label fw-bold" for="Professional-License">Professional</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm mt-4">
+                                    <div class="col-sm">
+                                        <label class="form-label fw-bold text-white">License Type:</label>
                                         <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="licenseType" id="Non-Professional-License"
-                                                       value="Non-Professional" checked="@SelectNonProfessional" @onchange="SelectedLicenseType">
-                                                <label class="form-check-label fw-bold" for="Non-Professional-License">Non-Professional</label>
+                                            <input class="form-check-input" type="radio" name="licenseType" id="Non-Professional-License"
+                                                    value="Non-Professional" checked="@SelectNonProfessional" @onchange="SelectedLicenseType">
+                                            <label class="form-check-label fw-bold" for="Non-Professional-License">Non-Professional</label>
                                         </div>
                                     </div>
                                 </div>
@@ -272,7 +275,7 @@ else
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ViolationCloseDialog>Discard Changes</button>
-                                                    <button type="button" class="btn btn-success" @onclick=@(()=>SaveChangesAsync())>Save changes</button>
+                                                    <button type="button" class="btn btn-success" @onclick=@(()=>SaveViolations())>Save changes</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -287,17 +290,66 @@ else
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" checked="@SelectLicense" @onchange="SelectedLicense" id="driverLicense">
-                                            <label class="form-check-label fw-bold" for="driverLicense">
-                                                Driver's License
-                                            </label>
+                                            <label class="form-check-label fw-bold" for="driverLicense">Driver's License</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
-                                            <label class="form-check-label fw-bold" for="motorVehicle">
-                                                Motor Vehicle
-                                            </label>
+                                            <input class="form-check-input" type="checkbox" checked="@SelectedVehicle" @onchange="SelectedVehicle" id="motorVehicle">
+                                            @if (PaymentSummaryPopup)
+                                            {
+                                                <div class="modal" tabindex="-1" style="display:block">
+                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Add Storage/Towing Rates</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ClosePaymentSummary></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label class="form-label">Storage Rate</label>
+                                                                        <select class="form-select" @onchange="StorageRateClicked">
+                                                                            <option value="0">-- Select Vehicle Type --</option>
+                                                                            @foreach (var item in storages)
+                                                                            {
+                                                                                <option value="@item.Id">@item.VehicleType</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label class="form-label">Towing Rate</label>
+                                                                        <select class="form-select" @onchange="TowingRateClicked">
+                                                                            <option value="0">-- Select Load of Vehicle --</option>
+                                                                            @foreach (var item in towings)
+                                                                            {
+                                                                                <option value="@item.Id">@item.VehicleType</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label class="form-label">Impounding Area</label>
+                                                                        <select class="form-select" @onchange="ImpoundingAreaClicked">
+                                                                            <option value="">-- Select Impounded Area --</option>
+                                                                            @foreach (var item in impoundingAreas)
+                                                                            {
+                                                                                <option value="@item.Id">@item.ImpoundingArea</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ClosePaymentSummary>Discard Changes</button>
+                                                                <button type="button" class="btn btn-success" @onclick=@(()=>UpdatePaymentSummary())>Save changes</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <label class="form-check-label fw-bold" for="motorVehicle">Motor Vehicle</label>
                                         </div>
                                     </div>
                                 </div>
@@ -332,7 +384,7 @@ else
     if (@ViewCitationPopup)
     {
         <div class="modal" tabindex="-1" style="display:block">
-                <div class="modal-dialog-scrollable modal-xl modal-dialog">
+                <div class="modal-dialog-scrollable modal-lg modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Citation Details</h5>
@@ -342,12 +394,12 @@ else
                             <div class="row mb-3">
                                 <div class="col-md-7">
                                     <label class="form-label fw-bold">TCT No.</label>
-                                    <text class="form-control w-auto">@Citation!.TctNo</text>
+                                    <text class="form-control w-50">@Citation!.TctNo</text>
                                 </div>
 
                                 <div class="col-md-5">
                                     <label class="form-label fw-bold">Date Record</label>
-                                    <text class="form-control w-auto">@Citation!.DateRecord</text>
+                                    <text class="form-control">@Citation!.DateRecord</text>
                                 </div>
                             </div>
 
@@ -400,17 +452,19 @@ else
                                         <text class="form-control w-75">@Citation.LicenseNo</text>
                                     </div>
 
-                                    <div class="col-sm-4 mt-4">
+                                    <div class="col-sm-4">
+                                        <label class="form-label fw-bold">License Type:</label>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="licenseType" id="Professional-License" 
+                                            <input class="form-check-input" disabled type="radio" name="licenseType" id="Professional-License" 
                                                    value="Professional" checked="@SelectProfessional" @onchange="SelectedLicenseType">
                                                 <label class="form-check-label fw-bold" for="Professional-License">Professional</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm mt-4">
+                                    <div class="col-sm">
+                                        <label class="form-label fw-bold text-white">License Type:</label>
                                         <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="licenseType" id="Non-Professional-License"
+                                                <input class="form-check-input" disabled type="radio" name="licenseType" id="Non-Professional-License"
                                                        value="Non-Professional" checked="@SelectNonProfessional" @onchange="SelectedLicenseType">
                                                 <label class="form-check-label fw-bold" for="Non-Professional-License">Non-Professional</label>
                                         </div>
@@ -497,13 +551,13 @@ else
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" checked="@SelectLicense" @onchange="SelectedLicense" id="driverLicense">
+                                            <input class="form-check-input" disabled type="checkbox" checked="@SelectLicense" @onchange="SelectedLicense" id="driverLicense">
                                             <label class="form-check-label fw-bold" for="driverLicense">Driver's License</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
+                                            <input class="form-check-input" disabled type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
                                             <label class="form-check-label fw-bold" for="motorVehicle">Motor Vehicle</label>
                                         </div>
                                     </div>

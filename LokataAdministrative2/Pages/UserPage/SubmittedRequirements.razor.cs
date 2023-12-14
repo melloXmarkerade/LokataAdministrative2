@@ -13,19 +13,19 @@ namespace LokataAdministrative2.Pages.UserPage
         private string InputText { get; set; } = string.Empty;
         private bool ReqPopup { get; set; } = false;
 
-        List<Requirement> approvedRequirements = new List<Requirement>();
-        List<Requirement> declinedRequirements = new List<Requirement>();
+        List<Requirement> approvedRequirements = new();
+        List<Requirement> declinedRequirements = new();
 
         protected override async Task OnInitializedAsync()
         {
-            var token    = await tokenProvider.GetTokenAsync();
+            var token = await tokenProvider.GetTokenAsync();
             Requirements = await userRequirement.GetAllRequest(token);
         }
 
         private void ViewRequirement(UserRequirement req)
         {
             Requirement = req;
-            ReqPopup    = true;
+            ReqPopup = true;
         }
 
         void ApproveRequirement(Requirement req)

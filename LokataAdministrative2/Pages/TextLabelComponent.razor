@@ -1,0 +1,15 @@
+﻿<div class="form-group">
+    <label class="form-label fw-bold">@Label</label>
+    <text class="form-control" style="@Style">@Value</text>
+</div>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
+}

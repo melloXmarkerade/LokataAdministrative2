@@ -1,5 +1,7 @@
 ﻿@page "/userreceipts"
 @attribute [Authorize(Roles = "Admin")]
+@inject INotificationClient notificationClient;
+@inject SweetAlertService Swal
 
 <h2>Submitted Reciepts</h2>
 
@@ -70,8 +72,6 @@
                                     <td><a href="@($"{Receipt.Receipt!.FileUrl}")" target="_blank">@Receipt.Receipt!.FileName</a></td>
                                     <td>@(GetStatus(Receipt.Receipt))</td>
                                     <td>
-                                        @* <a class="btn btn-sm" @onclick="(() => ApproveRequirement(req))"><i class="oi oi-circle-check" style="color: green;"></i></a>
-                                    <a class="btn btn-sm" @onclick="(() => DeclineRequirement(req))"><i class="oi oi-circle-x" style="color: red;"></i></a> *@
                                         @if (!IsApproved(Receipt.Receipt) && !IsDeclined(Receipt.Receipt))
                                         {
                                             <a class="btn btn-sm" @onclick="(() => ApproveRequirement(Receipt.Receipt))"><i class="oi oi-circle-check" style="color: green;"></i></a>
@@ -90,7 +90,13 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <textarea class="form-control" @bind="InputText"></textarea>
                     </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="SendNotification">Send</button>
                 </div>
             </div>
         </div>

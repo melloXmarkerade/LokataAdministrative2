@@ -1,8 +1,11 @@
-﻿using LokataAdministrative2.Models;
+﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using Syncfusion.Blazor.PdfViewer;
+using System.Data.SqlTypes;
 
 namespace LokataAdministrative2.Pages.IssueTicket
 {
@@ -10,7 +13,6 @@ namespace LokataAdministrative2.Pages.IssueTicket
     {
         [Parameter]
         public bool SelectProfessional { get; set; } = false;
-
 
         [Parameter]
         public bool SelectNonProfessional { get; set; } = false;
@@ -33,14 +35,23 @@ namespace LokataAdministrative2.Pages.IssueTicket
         private List<ViolationFeeDto> ViolationFees { get; set; } = new();
         private UserViolationDto Violation { get; set; } = new(); 
         private bool Popup { get; set; } = false;
+        public bool PaymentSummaryPopup { get; set; } = false;
         private bool ViewCitationPopup { get; set; } = false;
         private bool ViolationPopup { get; set; } = false;
         private CitationDto? Citation { get; set; }
-        private TrackingDto? Location { get; set; }
 
+        List<StorageRateDto> storages = new();
+        List<TowingRateDto> towings = new();
+        List<TrackingDto> impoundingAreas = new();
         List<CitationDto>? citationList;
+        StorageRateDto? storageRate;
+        TowingRateDto? towingRate;
+        TrackingDto? impoundingArea;
+        PaymentSummaryDto? paymentSummary;
 
         private void ShowViolationPopup() => ViolationPopup = true;
+
+        private void ClosePaymentSummary() => PaymentSummaryPopup = false;
 
         private void ClosePopup()
         {
@@ -54,13 +65,14 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         protected override async Task OnInitializedAsync()
         {
-            citationList = await citationClient.GetAllRequest(await tokenProvider.GetTokenAsync());
-
-            Provinces = await provinceClient.GetAllRequest(await tokenProvider.GetTokenAsync());
-            Cities    = await cityClient.GetAllRequest(await tokenProvider.GetTokenAsync());
-            
-
-            Categories = await violationCatClient.GetAllRequest(await tokenProvider.GetTokenAsync());
+            var token = await tokenProvider.GetTokenAsync();
+            citationList = await citationClient.GetAllRequest(token);
+            Provinces = await provinceClient.GetAllRequest(token);
+            Cities = await cityClient.GetAllRequest(token   );
+            Categories = await violationCatClient.GetAllRequest(token);
+            storages = await storageClient.GetAllRequest(token);
+            towings = await towingClient.GetAllRequest(token);
+            impoundingAreas = await impoundingClient.GetAllRequest(token);
         }
 
         private void LicenseTypeChecked()
@@ -79,9 +91,19 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private async Task DeleteAddress(string id)
         {
-            await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
-            await Task.Delay(3000);
-            await OnInitializedAsync();
+            var delete = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Icon = SweetAlertIcon.Warning,
+                Title = "Do you want to delete citation",
+                ShowDenyButton = true,
+                ConfirmButtonText = "Delete",
+                DenyButtonText = "Cancel"
+            });
+
+            if(delete.IsConfirmed)
+            {
+                await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
+            }
         }
 
         private void ViewTicket(CitationDto dto)
@@ -119,18 +141,12 @@ namespace LokataAdministrative2.Pages.IssueTicket
         {
             if ((bool)e.Value!)
             {
-                Location = new()
-                {
-                    Latitude = "10.323297",
-                    Longitude = "123.941392"
-                };
-
+                PaymentSummaryPopup = true;
                 Citation!.ItemConfiscated!.Add("Motor Vehicle");
                 Citation!.VehicleDescription!.IsImpounded = true;
             }
             else
             {
-                Location = null;
                 Citation!.ItemConfiscated!.Remove("Motor Vehicle");
                 Citation!.VehicleDescription!.IsImpounded = false;
             }
@@ -177,6 +193,30 @@ namespace LokataAdministrative2.Pages.IssueTicket
             return Task.CompletedTask;
         }
 
+        private void StorageRateClicked(ChangeEventArgs storageEvent)
+        {
+            if (storageEvent.Value!.ToString() == "0") return;
+
+            storageRate = storages.FirstOrDefault(s => s.Id == storageEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
+        private void TowingRateClicked(ChangeEventArgs towingEvent)
+        {
+            if (towingEvent.Value!.ToString() == "0") return;
+
+            towingRate = towings.FirstOrDefault(t => t.Id == towingEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
+        private void ImpoundingAreaClicked(ChangeEventArgs impoundingEvent)
+        {
+            if (impoundingEvent.Value!.ToString() == "0") return;
+
+            impoundingArea = impoundingAreas.FirstOrDefault(t => t.Id == impoundingEvent.Value.ToString());
+            this.StateHasChanged();
+        }
+
         private async void ViolationCategoryClicked(ChangeEventArgs violationEvent)
         {
             Violations.Clear();
@@ -187,8 +227,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 return;
             }
 
-            Violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!,
-                            await tokenProvider.GetTokenAsync());
+            Violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
             Violation.Category = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
@@ -198,8 +237,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
             ViolationFees.Clear();
             if (violationEvent.Value!.ToString()! == "0") return;
 
-            ViolationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!,
-                                await tokenProvider.GetTokenAsync());
+            ViolationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
             Violation.Name = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
@@ -211,11 +249,31 @@ namespace LokataAdministrative2.Pages.IssueTicket
             this.StateHasChanged();
         }
 
-        private void SaveChangesAsync()
+        private void SaveViolations()
         {
             Citation!.Violations!.Add(Violation);
             ViolationPopup = false;
             Violation = new();
+        }
+
+        private void UpdatePaymentSummary()
+        {
+            //double totalViolations = 0;
+            //userViolations.ForEach(v =>
+            //{
+            //    totalViolations += v.Fine;
+            //});
+
+            //paymentSummary = new()
+            //{
+            //    StorageRate = storageRate,
+            //    TowingRate = towingRate,
+            //    TotalViolationFees = totalViolations,
+            //    Date = DateTime.Now.ToShortDateString()
+            //};
+
+            //PaymentSummaryPopup = false;
+            //paymentSummary = new();
         }
 
         private async Task UpdateChanges()
@@ -223,7 +281,6 @@ namespace LokataAdministrative2.Pages.IssueTicket
             Citation!.Address!.Province = ProvinceSelectedOption;
             Citation.Address.City       = CitySelectedOption;
             Citation.Address.Barangay   = BarangaySelectedOption;
-            Citation.VehicleDescription!.Location = Location;
 
             await citationClient.PutRequest(Citation, await tokenProvider.GetTokenAsync());
             await js.InvokeVoidAsync("alert", "Update Success");
