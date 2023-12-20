@@ -42,7 +42,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             var notif = new NotificationDto
             {
                 Email = user!.Email!,
-                Date = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc).ToString(),
+                Date = DateTime.Now.ToString("MMMM dd, yyyy"),
                 Message = $"Your vehicle has been moved to {ImpoundingAreaSelected}"
             };
 
@@ -72,7 +72,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             var notif = new NotificationDto
             {
                 Email = user!.Email!,
-                Date = DateTime.Now.ToLongDateString(),
+                Date = DateTime.Now.ToString("MMMM dd, yyyy"),
                 Message = $"Your vehicle with a plate no. {Vehicle.PlateNo} has been claimed."
             };
 

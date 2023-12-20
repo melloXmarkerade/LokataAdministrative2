@@ -293,7 +293,6 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 totalViolations += v.Fine;
             });
 
-
             Citation!.PaymentSummary!.TotalViolationFees = totalViolations;
             Citation!.Address!.Province = ProvinceSelectedOption;
             Citation.Address.City       = CitySelectedOption;
