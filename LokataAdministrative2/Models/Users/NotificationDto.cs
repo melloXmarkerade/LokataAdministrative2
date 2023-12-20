@@ -3,7 +3,7 @@
     public class NotificationDto : BaseDto
     {
         public string Message { get; set; } = string.Empty;
-        public DateTime Date { get; set; }
+        public string Date { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
     }
 }

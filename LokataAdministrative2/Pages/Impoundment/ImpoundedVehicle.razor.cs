@@ -42,7 +42,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             var notif = new NotificationDto
             {
                 Email = user!.Email!,
-                Date = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                Date = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc).ToString(),
                 Message = $"Your vehicle has been moved to {ImpoundingAreaSelected}"
             };
 
@@ -50,7 +50,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             Vehicle.Location = selectedArea;
 
             await notificationClient.PostRequest(notif, null);
-            await vehicleImpoundedClient.PutRequest(Vehicle, await tokenProvider.GetTokenAsync());
+            await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
             var success = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -63,7 +63,6 @@ namespace LokataAdministrative2.Pages.Impoundment
 
         private async void ClaimedVehicle()
         {
-            var token = await tokenProvider.GetTokenAsync();
             user = await userClient.GetRequestById(Vehicle.LicenseNo!, null);
             citation = await citationClient.GetByTctNo(Vehicle.TctNo!, token);
             Vehicle.IsImpounded = false;
@@ -73,18 +72,14 @@ namespace LokataAdministrative2.Pages.Impoundment
             var notif = new NotificationDto
             {
                 Email = user!.Email!,
-                Date = DateTime.UtcNow,
+                Date = DateTime.Now.ToLongDateString(),
                 Message = $"Your vehicle with a plate no. {Vehicle.PlateNo} has been claimed."
             };
 
-            //await notificationClient.PostRequest(notif, null);
-            //await citationClient.PutRequest(citation, token);
-            //await vehicleImpoundedClient.PutRequest(Vehicle, token);
-
-            var postNotificationTask = notificationClient.PostRequest(notif, null);
-            var putCitationTask = citationClient.PutRequest(citation, token);
-            var putVehicleTask = vehicleImpoundedClient.PutRequest(Vehicle, token);
-            await Task.WhenAll(postNotificationTask, putCitationTask, putVehicleTask);
+            await notificationClient.PostRequest(notif, null);
+            await citationClient.PutRequest(citation, token);
+            Thread.Sleep(2000);
+            await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
             await Swal.FireAsync(new SweetAlertOptions
             {
