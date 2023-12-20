@@ -4,6 +4,7 @@
 
 <h3>Pending Accounts</h3>
 
+<SearchBar Items="Accounts" OnSearch="UpdateFilteredPending" />
 <table class="table table-hover mb-3">
     <thead>
         <tr>
@@ -14,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var req in Accounts)
+        @foreach (var req in FilteredAccounts)
         {
             <tr>
                 <td>@(Accounts.IndexOf(req) + 1)</td>

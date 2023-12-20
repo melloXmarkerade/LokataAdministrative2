@@ -5,6 +5,6 @@
         public StorageRateDto? StorageRate { get; set; }
         public TowingRateDto? TowingRate { get; set; }
         public double TotalViolationFees { get; set; }
-        public string? Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

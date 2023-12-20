@@ -4,7 +4,10 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
-    public interface ICitationClient : IClient<CitationDto> { }
+    public interface ICitationClient : IClient<CitationDto> 
+    {
+        Task<CitationDto> GetByTctNo(string tctNo, string token);
+    }
 
     public class CitationClient : ICitationClient
     {
@@ -54,6 +57,16 @@ namespace LokataAdministrative2.Services
         {
             citationClient.DefaultRequestHeaders.Authorization 
                 = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public async Task<CitationDto?> GetByTctNo(string tctNo, string token)
+        {
+            AuthenticateToken(token);
+            var response = await citationClient.GetAsync($"api/Citation/tctno/{tctNo}");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<CitationDto>();
         }
     }
 }

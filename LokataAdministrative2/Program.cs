@@ -35,6 +35,7 @@ builder.Services.AddScoped<IUserRecSubmissionClient, UserRecSubmissionClient>();
 builder.Services.AddScoped<IAdminClient, AdminClient>();
 builder.Services.AddScoped<INotificationClient, NotificationClient>();
 builder.Services.AddScoped<AdminAuthClient>();
+builder.Services.AddScoped<UserClient>();
 builder.Services.AddScoped<IStorageRateClient, StorageRateClient>();
 builder.Services.AddScoped<ITowingRateClient, TowingRatesClient>();
 builder.Services.AddScoped<IImpoundingAreaClient, ImpoundingAreaClient>();

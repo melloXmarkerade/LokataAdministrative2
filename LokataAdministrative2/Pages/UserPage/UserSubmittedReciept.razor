@@ -41,18 +41,15 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">License Number</label>
-                            <text class="form-control w-auto">@Receipt.LicenseNo</text>
+                            <TextLabelComponent Label="License Number" Value="@Receipt.LicenseNo" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Email</label>
-                            <text class="form-control w-auto">@Receipt.Email</text>
+                            <TextLabelComponent Label="Email" Value="@Receipt.Email" />
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Date Submitted</label>
-                            <text class="form-control w-auto">@Receipt.DateSubmitted</text>
+                            <TextLabelComponent Label="Date Submitted" Value="@Receipt.DateSubmitted" />
                         </div>
                     </div>
 
@@ -91,7 +88,7 @@
                             </tbody>
                         </table>
 
-                        <textarea class="form-control" @bind="InputText"></textarea>
+                        <textarea required class="form-control" @bind="InputText"></textarea>
                     </div>
                 </div>
 

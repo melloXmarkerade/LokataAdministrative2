@@ -3,9 +3,6 @@ using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json.Linq;
-using Syncfusion.Blazor.PdfViewer;
-using System.Data.SqlTypes;
 
 namespace LokataAdministrative2.Pages.IssueTicket
 {
@@ -43,6 +40,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
         List<TrackingDto> impoundingAreas = new();
+        List<CitationDto> filteredTickets = new();
         List<CitationDto>? citationList;
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
@@ -67,12 +65,24 @@ namespace LokataAdministrative2.Pages.IssueTicket
         {
             var token = await tokenProvider.GetTokenAsync();
             citationList = await citationClient.GetAllRequest(token);
+            filteredTickets = citationList;
             Provinces = await provinceClient.GetAllRequest(token);
             Cities = await cityClient.GetAllRequest(token   );
             Categories = await violationCatClient.GetAllRequest(token);
             storages = await storageClient.GetAllRequest(token);
             towings = await towingClient.GetAllRequest(token);
             impoundingAreas = await impoundingClient.GetAllRequest(token);
+        }
+
+        void UpdateFilteredTicket(string searchItem)
+        {
+            if (string.IsNullOrEmpty(searchItem))
+                filteredTickets = citationList!;
+            else
+            {
+                filteredTickets = citationList!.Where(ticket => ticket.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) ||
+                                                                ticket.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
         }
 
         private void LicenseTypeChecked()
@@ -123,7 +133,6 @@ namespace LokataAdministrative2.Pages.IssueTicket
             if (citation is not null)
             {
                 Citation = citation;
-
                 SelectVehicle = citation!.ItemConfiscated!.Contains("Motor Vehicle");
                 SelectLicense = citation!.ItemConfiscated!.Contains("Driver's License");
                 LicenseTypeChecked();
@@ -259,7 +268,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
         private void UpdatePaymentSummary()
         {
             //double totalViolations = 0;
-            //userViolations.ForEach(v =>
+            //Citation!.Violations!.ForEach(v =>
             //{
             //    totalViolations += v.Fine;
             //});
@@ -278,6 +287,14 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         private async Task UpdateChanges()
         {
+            double totalViolations = 0;
+            Citation!.Violations!.ForEach(v =>
+            {
+                totalViolations += v.Fine;
+            });
+
+
+            Citation!.PaymentSummary!.TotalViolationFees = totalViolations;
             Citation!.Address!.Province = ProvinceSelectedOption;
             Citation.Address.City       = CitySelectedOption;
             Citation.Address.Barangay   = BarangaySelectedOption;

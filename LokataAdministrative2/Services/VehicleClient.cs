@@ -63,7 +63,7 @@ namespace LokataAdministrative2.Services
 
         public async Task<List<VehicleDto>> GetAllVehicleInfo(string licenseNo)
         {
-            var response = await vehicleClient.GetAsync($"api/Vehicle/licenseno/{licenseNo}");
+            var response = await vehicleClient.GetAsync($"api/Vehicle/admin/licenseno/{licenseNo}");
             if (!response.IsSuccessStatusCode)
                 return null;
 

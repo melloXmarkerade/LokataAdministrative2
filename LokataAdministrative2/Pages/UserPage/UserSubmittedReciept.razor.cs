@@ -44,7 +44,7 @@ namespace LokataAdministrative2.Pages.UserPage
             var notif = new NotificationDto
             {
                 Email = Receipt.Email!,
-                Date = DateTime.Now.ToShortDateString(),
+                Date = DateTime.Now.ToUniversalTime(),
                 Message = InputText
             };
 

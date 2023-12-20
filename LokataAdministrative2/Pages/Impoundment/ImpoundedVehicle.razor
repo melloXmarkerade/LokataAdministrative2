@@ -5,13 +5,7 @@
 <h2>Impounded Vehicles</h2>
 <hr />
 
-<div class="form-group row mb-3">
-    <label class=" col-md-12">Search</label>
-    <div class="col-md-4">
-        <input class="form-control" />
-    </div>
-    
-</div>
+<SearchBar Items="vehicleList" OnSearch="UpdateFilteredVehicle"></SearchBar>
 <table class="table table-hover mb-3">
     <thead>
         <tr>
@@ -24,14 +18,21 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var vehicle in vehicleList)
+        @foreach (var vehicle in filteredVehicles)
         {
             <tr>
-                <td>@(vehicleList.IndexOf(vehicle) + 1)</td>
+                <td>@(filteredVehicles.IndexOf(vehicle) + 1)</td>
                 <td>@vehicle.TctNo</td>
                 <td>@vehicle.PlateNo</td>
                 <td>@vehicle.DateImpounded</td>
-                <td>@vehicle.Status</td>
+                @if(vehicle.Status == "Unsettled")
+                {
+                    <td><span class="badge text-danger">@vehicle.Status</span></td>
+                }
+                else
+                {
+                    <td><span class="badge text-success">@vehicle.Status</span></td>
+                }
                 <td>
                     <a class="btn btn-primary btn-sm" @onclick="(() => ViewVehicle(vehicle))"><i class="oi oi-eye"></i></a>
                 </td>
@@ -95,7 +96,7 @@
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label fw-bold text-white">Impounding Area</label>
-                                        <button type="button" class="btn btn-success" @onclick=ClaimedVehicle>Update Area</button>
+                                        <button type="button" class="btn btn-success" @onclick=UpdateImpoundedArea>Update Area</button>
                                     </div>
                                 </div>
                             }

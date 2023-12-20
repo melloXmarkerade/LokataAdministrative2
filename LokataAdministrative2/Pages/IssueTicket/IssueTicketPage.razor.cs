@@ -53,7 +53,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 StorageRate = storageRate,
                 TowingRate = towingRate,
                 TotalViolationFees = TotalViolationFees(),
-                Date = DateTime.Now.ToShortDateString()
+                Date = DateTime.Now.ToUniversalTime(),
             };
 
             PaymentSummaryPopup = false;
@@ -77,7 +77,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 paymentSummary = new()
                 {
                     TotalViolationFees = TotalViolationFees(),
-                    Date = DateTime.Now.ToShortDateString()
+                    Date = DateTime.Now.ToUniversalTime(),
                 };
             }
 

@@ -18,5 +18,6 @@ namespace LokataAdministrative2.Models
         public OfficerDto? ApprehendingOfficer { get; set; }
         public List<string>? ItemConfiscated { get; set; }
         public PaymentSummaryDto? PaymentSummary { get; set; }
+        public bool IsSettled { get; set; }
     }
 }
