@@ -99,7 +99,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 Citation!.LicenseType = e.Value!.ToString()!;
         }
 
-        private async Task DeleteAddress(string id)
+        private async Task DeleteCitation(string id)
         {
             var delete = await Swal.FireAsync(new SweetAlertOptions
             {
@@ -299,7 +299,12 @@ namespace LokataAdministrative2.Pages.IssueTicket
             Citation.Address.Barangay   = BarangaySelectedOption;
 
             await citationClient.PutRequest(Citation, await tokenProvider.GetTokenAsync());
-            await js.InvokeVoidAsync("alert", "Update Success");
+
+            await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Update Success",
+                Icon = SweetAlertIcon.Success
+            });
         }
     }
 }

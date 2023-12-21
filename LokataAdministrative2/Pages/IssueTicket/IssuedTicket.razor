@@ -41,7 +41,7 @@ else
                             <td>
                                 <AuthorizeView Roles="Admin">
                                     <a class="btn btn-primary btn-sm" @onclick="(async () => await EditTicket(item))"><i class="oi oi-pencil"></i></a>
-                                    <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteAddress(item.Id!))">
+                                    <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteCitation(item.Id!))">
                                         <i class="oi oi-trash"></i>
                                     </button>
                                 </AuthorizeView>
@@ -317,7 +317,7 @@ else
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" checked="@SelectedVehicle" @onchange="SelectedVehicle" id="motorVehicle">
+                                            <input class="form-check-input" type="checkbox" checked="@SelectVehicle" @onchange="SelectedVehicle" id="motorVehicle">
                                             @if (PaymentSummaryPopup)
                                             {
                                                 <div class="modal" tabindex="-1" style="display:block">

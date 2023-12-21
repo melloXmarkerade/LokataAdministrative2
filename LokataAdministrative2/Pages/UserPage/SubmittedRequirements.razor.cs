@@ -1,8 +1,6 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Users;
-using LokataAdministrative2.Services;
-using Microsoft.AspNetCore.Components;
 
 namespace LokataAdministrative2.Pages.UserPage
 {
@@ -52,7 +50,7 @@ namespace LokataAdministrative2.Pages.UserPage
             var userReq = new UserRequirement
             {
                 Id = Requirement.Id,
-                Email = Requirement?.Email,
+                Email = Requirement.Email,
                 LicenseNo = Requirement!.LicenseNo,
                 Requirements = approvedRequirements,
                 DateSubmitted = Requirement.DateSubmitted,

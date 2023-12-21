@@ -102,12 +102,13 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 Title = "Record Success",
                 Icon = SweetAlertIcon.Success
             });
+            navigation.NavigateTo("/issuedticket");
 
-            if (success.IsConfirmed)
-            {
-                await OnInitializedAsync();
-                navigation.NavigateTo("/issuedticket");
-            }
+            //if (success.IsConfirmed)
+            //{
+            //    await OnInitializedAsync();
+            //    navigation.NavigateTo("/issuedticket");
+            //}
         }
 
         private void Cancel() => navigation.NavigateTo("/issuedticket");
