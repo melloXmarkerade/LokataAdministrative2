@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
-    public interface IImpoundingAreaClient : IClient<TrackingDto> { }
+    public interface IImpoundingAreaClient : IClient<ImpoundedArea> { }
 
     public class ImpoundingAreaClient : IImpoundingAreaClient
     {
@@ -20,13 +20,13 @@ namespace LokataAdministrative2.Services
             impoundingService.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
 
-        public async Task PostRequest(TrackingDto dto, string token)
+        public async Task PostRequest(ImpoundedArea dto, string token)
         {
             AuthenticateToken(token);
             await impoundingService.PostAsJsonAsync("api/tracking", dto);
         }
 
-        public async Task PutRequest(TrackingDto dto, string token)
+        public async Task PutRequest(ImpoundedArea dto, string token)
         {
             AuthenticateToken(token);
             await impoundingService.PutAsJsonAsync($"api/tracking/{dto.Id}", dto);
@@ -35,25 +35,25 @@ namespace LokataAdministrative2.Services
         public async Task DeleteRequest(string id, string token)
         {
             AuthenticateToken(token);
-            await impoundingService.DeleteAsync($"api/towingrate/{id}");
+            await impoundingService.DeleteAsync($"api/tracking/{id}");
         }
 
-        public async Task<TrackingDto?> GetRequestById(string id, string token)
+        public async Task<ImpoundedArea?> GetRequestById(string id, string token)
         {
             AuthenticateToken(token);
             var response = await impoundingService.GetAsync($"api/tracking/{id}");
             if (!response.IsSuccessStatusCode) return null;
 
-            return await response.Content.ReadFromJsonAsync<TrackingDto>();
+            return await response.Content.ReadFromJsonAsync<ImpoundedArea>();
         }
 
-        public async Task<List<TrackingDto>> GetAllRequest(string token)
+        public async Task<List<ImpoundedArea>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
             var response = await impoundingService.GetAsync("api/tracking");
             if (!response.IsSuccessStatusCode) return null;
 
-            return response.Content.ReadFromJsonAsync<List<TrackingDto>>().Result!;
+            return response.Content.ReadFromJsonAsync<List<ImpoundedArea>>().Result!;
         }
     }
 }

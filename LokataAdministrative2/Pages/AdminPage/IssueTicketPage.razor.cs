@@ -3,7 +3,7 @@ using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
 
-namespace LokataAdministrative2.Pages.IssueTicket
+namespace LokataAdministrative2.Pages.AdminPage
 {
     public partial class IssueTicketPage
     {
@@ -20,7 +20,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
         UserViolationDto violation = new();
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
-        TrackingDto? impoundingArea;
+        ImpoundedArea? impoundingArea;
         PaymentSummaryDto? paymentSummary;
 
         List<ProvinceDto> provinces = new();
@@ -32,7 +32,7 @@ namespace LokataAdministrative2.Pages.IssueTicket
         List<ViolationFeeDto> violationFees = new();
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
-        List<TrackingDto> impoundingAreas = new();
+        List<ImpoundedArea> impoundingAreas = new();
         List<string> itemConfiscated = new();
 
         private void ShowPopup() => popup = true;

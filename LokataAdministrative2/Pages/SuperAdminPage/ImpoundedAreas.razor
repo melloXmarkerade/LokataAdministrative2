@@ -1,0 +1,89 @@
+﻿@page "/impoundedareas"
+@attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
+
+<h2>Impounded Areas</h2>
+<button class="btn btn-primary mb-3" @onclick="AddImpoundedArea">Add Impoundment Area</button>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Area</th>
+            <th>Address</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var area in ImpoundAreas!)
+        {
+            <tr>
+                <td>@(ImpoundAreas.IndexOf(area) + 1)</td>
+                <td>@area.ImpoundingArea</td>
+                <td>@area.Address</td>
+                <td>@area.Longitude</td>
+                <td>@area.Latitude</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewArea(area))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (ViewAreaPopup)
+{
+    <EditForm Model="Area">
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Impounded Area Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewArea></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Area</label>
+                                <InputText class="form-control" @bind-Value="Area!.ImpoundingArea" required></InputText>
+                                <ValidationMessage For="@(() => Area!.ImpoundingArea)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Address</label>
+                                <InputText class="form-control" @bind-Value="Area!.Address" required></InputText>
+                                <ValidationMessage For="@(() => Area!.Address)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Longitude</label>
+                                <InputText class="form-control" @bind-Value="Area!.Longitude" required></InputText>
+                                <ValidationMessage For="@(() => Area!.Longitude)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Latitude</label>
+                                <InputText class="form-control" @bind-Value="Area!.Latitude" required></InputText>
+                                <ValidationMessage For="@(() => Area!.Latitude)"></ValidationMessage>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        @if (SaveImpoundArea)
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await SaveArea())>Save Area</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateArea())>Update Area</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async()=> await DeleteArea())">Delete Area</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

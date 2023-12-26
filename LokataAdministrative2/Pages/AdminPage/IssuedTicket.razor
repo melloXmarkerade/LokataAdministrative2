@@ -55,7 +55,6 @@ else
             </tbody>
         </table>
     </div>
-    
     //Modal for Admin Edit Ticket
     if (@Popup)
     {
@@ -76,7 +75,7 @@ else
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label fw-bold">Date Record</label>
-                                    <InputText typeof="date" class="form-control" @bind-Value="Citation.DateRecord" required></InputText>
+                                    <InputText type="date" class="form-control" @bind-Value="Citation.DateRecord" required></InputText>
                                     <ValidationMessage For="@(() => Citation.DateRecord)"></ValidationMessage>
                                 </div>
                             </div>
@@ -101,6 +100,7 @@ else
                                     </div>
                                 </div>
                             </div>
+
                             <h4>Address</h4>
                             <div class="container mb-3">
                                 <div class="row">
@@ -399,7 +399,6 @@ else
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick=ClosePopup>Discard Changes</button>
                             <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateChanges())>Update changes</button>
                         </div>
                     </div>

@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\Modal.razor" />
+    <None Include="Pages\Components\Modal.razor" />
   </ItemGroup>
 
 </Project>

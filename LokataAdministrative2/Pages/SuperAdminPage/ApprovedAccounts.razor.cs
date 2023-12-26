@@ -1,12 +1,12 @@
 ﻿using LokataAdministrative2.Models.Users;
 
-namespace LokataAdministrative2.Pages.AdminPage
+namespace LokataAdministrative2.Pages.SuperAdminPage
 {
     public partial class ApprovedAccounts
     {
-        private List<AdminSignup> Accounts { get; set; } = new();
-        private List<AdminSignup> FilteredAccounts { get; set; } = new();
-        private AdminSignup Account { get; set; } = new();
+        private List<AdminDto> Accounts { get; set; } = new();
+        private List<AdminDto> FilteredAccounts { get; set; } = new();
+        private AdminDto Account { get; set; } = new();
         private bool AccountPopup { get; set; } = false;
 
         protected override async Task OnInitializedAsync()
@@ -27,7 +27,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
         }
 
-        private void ViewAccount(AdminSignup account)
+        private void ViewAccount(AdminDto account)
         {
             Account = account;
             AccountPopup = true;

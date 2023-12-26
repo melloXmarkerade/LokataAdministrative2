@@ -2,7 +2,7 @@
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 
-namespace LokataAdministrative2.Pages.Impoundment
+namespace LokataAdministrative2.Pages.AdminPage
 {
     public partial class ImpoundedVehicle
     {
@@ -11,7 +11,7 @@ namespace LokataAdministrative2.Pages.Impoundment
         CitationDto? citation;
         List<VehicleDto> vehicleList = new();
         List<VehicleDto> filteredVehicles = new();
-        List<TrackingDto> impoundingAreas = new();
+        List<ImpoundedArea> impoundingAreas = new();
         public string ImpoundingAreaSelected { get; set; } = string.Empty;
         private VehicleDto Vehicle { get; set; } = new();
         private bool VehiclePopup { get; set; } = false;
@@ -36,7 +36,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             }
         }
 
-        private async void UpdateImpoundedArea()
+        private async Task UpdateImpoundedArea()
         {
             user = await userClient.GetRequestById(Vehicle.LicenseNo!, null);
             var notif = new NotificationDto
@@ -52,7 +52,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             await notificationClient.PostRequest(notif, null);
             await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
-            var success = await Swal.FireAsync(new SweetAlertOptions
+            await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Updated Area Success.",
                 Icon = SweetAlertIcon.Success
@@ -61,7 +61,7 @@ namespace LokataAdministrative2.Pages.Impoundment
             VehiclePopup = false;
         }
 
-        private async void ClaimedVehicle()
+        private async Task ClaimedVehicle()
         {
             user = await userClient.GetRequestById(Vehicle.LicenseNo!, null);
             citation = await citationClient.GetByTctNo(Vehicle.TctNo!, token);

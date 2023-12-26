@@ -1,0 +1,32 @@
+﻿@inherits ComponentBase
+@inject SweetAlertService Swal
+
+<button type="button" class="btn btn-danger btn-sm ms-2" @onclick="ShowConfirmationDialog">
+    <i class="oi oi-trash"></i>
+</button>
+
+@code {
+    [Parameter]
+    public EventCallback<bool> OnConfirmation { get; set; }
+
+    private async Task ShowConfirmationDialog()
+    {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Icon = SweetAlertIcon.Warning,
+                Title = "Do you want to delete citation",
+                ShowDenyButton = true,
+                ConfirmButtonText = "Delete",
+                DenyButtonText = "Cancel"
+            });
+
+        if (result.IsConfirmed)
+        {
+            await OnConfirmation.InvokeAsync(true); // Raise event with true when confirmed
+        }
+        else
+        {
+            await OnConfirmation.InvokeAsync(false); // Raise event with false when canceled
+        }
+    }
+}

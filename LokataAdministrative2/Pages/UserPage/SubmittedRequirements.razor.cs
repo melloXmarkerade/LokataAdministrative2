@@ -11,8 +11,8 @@ namespace LokataAdministrative2.Pages.UserPage
         private string InputText { get; set; } = string.Empty;
         private bool ReqPopup { get; set; } = false;
 
-        List<Requirement> approvedRequirements = new();
-        List<Requirement> declinedRequirements = new();
+        List<FileRequirement> approvedRequirements = new();
+        List<FileRequirement> declinedRequirements = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -26,13 +26,13 @@ namespace LokataAdministrative2.Pages.UserPage
             ReqPopup = true;
         }
 
-        void ApproveRequirement(Requirement req)
+        void ApproveRequirement(FileRequirement req)
         {
             approvedRequirements.Add(req);
             req.IsApproved = true;
         }
 
-        void DeclineRequirement(Requirement req)
+        void DeclineRequirement(FileRequirement req)
         {
             declinedRequirements.Add(req);
             req.IsDeclined = true;
@@ -75,7 +75,7 @@ namespace LokataAdministrative2.Pages.UserPage
 
         }
 
-        static bool IsApproved(Requirement req) 
+        static bool IsApproved(FileRequirement req) 
         {
             if (req.IsApproved)
                 return true;
@@ -83,7 +83,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return false;
         }
 
-        static bool IsDeclined(Requirement req)
+        static bool IsDeclined(FileRequirement req)
         {
             if (req.IsDeclined)
                 return true;
@@ -91,7 +91,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return false;
         }
 
-        private string GetStatus(Requirement req)
+        private string GetStatus(FileRequirement req)
         {
             if (req.IsApproved)
                 return "Approved";

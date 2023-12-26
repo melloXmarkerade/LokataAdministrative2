@@ -1,10 +1,8 @@
 ﻿namespace LokataAdministrative2.Models.Users
 {
-    public class Requirement
+    public class Requirement : BaseDto
     {
-        public string FileName { get; set; } = string.Empty;
-        public string FileUrl { get; set; } = string.Empty;
-        public bool IsApproved { get; set; }
-        public bool IsDeclined { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
     }
 }

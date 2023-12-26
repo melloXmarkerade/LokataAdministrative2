@@ -2,7 +2,7 @@
 
 namespace LokataAdministrative2.Models.Users
 {
-    public class AdminSignup : BaseDto
+    public class AdminDto : BaseDto
     {
 
         [Required(ErrorMessage = "Username should not be empty.")]

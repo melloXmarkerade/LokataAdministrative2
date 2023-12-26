@@ -7,6 +7,6 @@
         public string Email { get; set; } = string.Empty;
         public string DateSubmitted { get; set; } = string.Empty;
         public string PlateNo { get; set; } = string.Empty;
-        public Requirement? Receipt { get; set; }
+        public FileRequirement? Receipt { get; set; }
     }
 }

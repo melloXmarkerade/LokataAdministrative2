@@ -2,9 +2,8 @@
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
-namespace LokataAdministrative2.Pages.IssueTicket
+namespace LokataAdministrative2.Pages.AdminPage
 {
     public partial class IssuedTicket
     {
@@ -39,12 +38,12 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
-        List<TrackingDto> impoundingAreas = new();
+        List<ImpoundedArea> impoundingAreas = new();
         List<CitationDto> filteredTickets = new();
         List<CitationDto>? citationList;
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
-        TrackingDto? impoundingArea;
+        ImpoundedArea? impoundingArea;
         PaymentSummaryDto? paymentSummary;
 
         private void ShowViolationPopup() => ViolationPopup = true;
@@ -112,7 +111,9 @@ namespace LokataAdministrative2.Pages.IssueTicket
 
             if(delete.IsConfirmed)
             {
+                var citation = filteredTickets.Where(e => e.Id == id).FirstOrDefault();
                 await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
+                filteredTickets.Remove(citation!);
             }
         }
 
@@ -305,6 +306,8 @@ namespace LokataAdministrative2.Pages.IssueTicket
                 Title = "Update Success",
                 Icon = SweetAlertIcon.Success
             });
+
+            Popup = false;
         }
     }
 }

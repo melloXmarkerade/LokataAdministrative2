@@ -5,7 +5,7 @@ namespace LokataAdministrative2.Pages.Login
 {
     public partial class Signup
     {
-        AdminSignup admin = new();
+        AdminDto admin = new();
 
         private async Task AdminSignup()
         {

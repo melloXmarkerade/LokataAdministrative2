@@ -1,0 +1,80 @@
+﻿@page "/paymentchannels"
+@attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
+
+
+<h2>Payment Channels</h2>
+<button class="btn btn-primary mb-3" @onclick="AddPaymentChannel">Add Payment Channels</button>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Account Name</th>
+            <th>Account No.</th>
+            <th>Bank Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cha in PaymentChannels)
+        {
+            <tr>
+                <td>@(PaymentChannels.IndexOf(cha) + 1)</td>
+                <td>@cha.AccountName</td>
+                <td>@cha.AccountNo</td>
+                <td>@cha.BankName</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewChannel(cha))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewChannelPopup)
+{
+    <EditForm Model="Channel">
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Payment Channel Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewChannel></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Account Name</label>
+                                <InputText class="form-control" @bind-Value="Channel!.AccountName" required></InputText>
+                                <ValidationMessage For="@(() => Channel!.AccountName)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Account No.</label>
+                                <textarea class="form-control" @bind="Channel!.AccountNo"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Bank Name</label>
+                                <textarea class="form-control" @bind="Channel!.BankName"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        @if (IsSaveChannel)
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await SaveChannel())>Save Requirement</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateChannel())>Update Requirement</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async()=> await DeleteChannel())">Delete Requirement</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

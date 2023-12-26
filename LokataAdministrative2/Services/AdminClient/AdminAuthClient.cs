@@ -20,7 +20,7 @@ namespace LokataAdministrative2.Services.AdminClient
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> SignupPostRequest(AdminSignup dto)
+        public async Task<string> SignupPostRequest(AdminDto dto)
         {
             var response = await _adminAuthClient.PostAsJsonAsync("api/adminauth/signup", dto);
             return await response.Content.ReadAsStringAsync();

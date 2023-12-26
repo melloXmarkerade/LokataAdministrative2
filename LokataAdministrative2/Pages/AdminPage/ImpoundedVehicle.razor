@@ -96,7 +96,7 @@
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label fw-bold text-white">Impounding Area</label>
-                                        <button type="button" class="btn btn-success" @onclick=UpdateImpoundedArea>Update Area</button>
+                                        <button type="button" class="btn btn-success" @onclick=@(async () => await UpdateImpoundedArea())>Update Area</button>
                                     </div>
                                 </div>
                             }
@@ -118,7 +118,7 @@
                         <div class="modal-footer">
                             @if (Vehicle.Status == "Unsettled")
                             {
-                                <button type="button" class="btn btn-success" @onclick=ClaimedVehicle>Claimed</button>
+                                <button type="button" class="btn btn-success" @onclick=@(async () => await ClaimedVehicle())>Claimed</button>
                             }
                         </div>
                     </Authorized>

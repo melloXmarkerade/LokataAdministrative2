@@ -5,9 +5,10 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services.AdminClient
 {
-    public interface IAdminClient : IClient<AdminSignup>
+    public interface IAdminClient : IClient<AdminDto>
     {
-        Task<List<AdminSignup>> GetRegisteredAccounts(string token);
+        Task<List<AdminDto>> GetRegisteredAccounts(string token);
+        Task<AdminDto> GetRequestByName(string name, string token);
     }
 
     public class AdminClient : IAdminClient
@@ -21,13 +22,13 @@ namespace LokataAdministrative2.Services.AdminClient
             adminClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task PostRequest(AdminSignup dto, string token)
+        public async Task PostRequest(AdminDto dto, string token)
         {
             AuthenticateToken(token);
             await adminClient.PostAsJsonAsync("api/admin", dto);
         }
 
-        public async Task PutRequest(AdminSignup dto, string token)
+        public async Task PutRequest(AdminDto dto, string token)
         {
             AuthenticateToken(token);
             await adminClient.PutAsJsonAsync($"api/admin/{dto.Id}", dto);
@@ -39,34 +40,44 @@ namespace LokataAdministrative2.Services.AdminClient
             await adminClient.DeleteAsync($"api/admin/{id}");
         }
 
-        public async Task<AdminSignup?> GetRequestById(string id, string token)
+        public async Task<AdminDto?> GetRequestById(string id, string token)
         {
             AuthenticateToken(token);
             var response = await adminClient.GetAsync($"api/admin/{id}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<AdminSignup>();
+            return await response.Content.ReadFromJsonAsync<AdminDto>();
         }
 
-        public async Task<List<AdminSignup>> GetAllRequest(string token)
+        public async Task<AdminDto?> GetRequestByName(string name, string token)
+        {
+            AuthenticateToken(token);
+            var response = await adminClient.GetAsync($"api/admin/admins/{name}");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<AdminDto>();
+        }
+
+        public async Task<List<AdminDto>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
             var response = await adminClient.GetAsync($"api/admin/pendingaccounts");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<List<AdminSignup>>();
+            return await response.Content.ReadFromJsonAsync<List<AdminDto>>();
         }
 
-        public async Task<List<AdminSignup>> GetRegisteredAccounts(string token)
+        public async Task<List<AdminDto>> GetRegisteredAccounts(string token)
         {
             AuthenticateToken(token);
             var response = await adminClient.GetAsync($"api/admin/registeredaccounts");
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content.ReadFromJsonAsync<List<AdminSignup>>();
+            return await response.Content.ReadFromJsonAsync<List<AdminDto>>();
         }
     }
 }

@@ -1,0 +1,71 @@
+﻿@page "/requirements"
+@attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
+
+<h2>List of Requirements</h2>
+<button class="btn btn-primary mb-3" @onclick="AddRequirement">Add Requirements</button>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var req in RequirementList!)
+        {
+            <tr>
+                <td>@(RequirementList.IndexOf(req) + 1)</td>
+                <td>@req.Name</td>
+                <td>@req.Description</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewRequirement(req))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if(ViewRequirementPopup)
+{
+    <EditForm Model="Requirement">
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Requirement Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewRequirement></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Name</label>
+                                <InputText class="form-control" @bind-Value="Requirement!.Name" required></InputText>
+                                <ValidationMessage For="@(() => Requirement!.Name)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Description</label>
+                                <textarea class="form-control" @bind="Requirement!.Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        @if (IsSaveRequirement)
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await SaveRequirement())>Save Requirement</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateRequirement())>Update Requirement</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async()=> await DeleteRequirement())">Delete Requirement</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
