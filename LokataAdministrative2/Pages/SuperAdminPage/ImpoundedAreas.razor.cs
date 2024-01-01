@@ -7,8 +7,8 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
     {
         bool ViewAreaPopup = false;
         bool SaveImpoundArea = false;
-        public List<ImpoundedArea> ImpoundAreas { get; set; } = new();
-        public ImpoundedArea? Area { get; set; }
+        public List<ImpoundedAreaDto> ImpoundAreas { get; set; } = new();
+        public ImpoundedAreaDto? Area { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -71,7 +71,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
             }
         }
 
-        private void ViewArea(ImpoundedArea area)
+        private void ViewArea(ImpoundedAreaDto area)
         {
             Area = area;
             ViewAreaPopup = true;

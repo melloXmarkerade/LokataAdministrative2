@@ -4,7 +4,10 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services.AdminClient
 {
-    public interface IUserReqSubmissionClient : IClient<UserRequirement> { }
+    public interface IUserReqSubmissionClient : IClient<UserRequirement> 
+    {
+        Task<UserRequirement> GetByTctNo(string tctNo, string token);
+    }
 
     public class UserReqSubmissionClient : IUserReqSubmissionClient
     {
@@ -56,6 +59,16 @@ namespace LokataAdministrative2.Services.AdminClient
                 return null;
 
             return await response.Content.ReadFromJsonAsync<List<UserRequirement>>();
+        }
+
+        public async Task<UserRequirement> GetByTctNo(string tctNo, string token)
+        {
+            AuthenticateToken(token);
+            var response = await userRequirements.GetAsync($"api/usersubmission/requirements/tctno/{tctNo}");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<UserRequirement>();
         }
     }
 }

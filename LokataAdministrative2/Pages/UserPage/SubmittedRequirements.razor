@@ -39,13 +39,13 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <TextLabelComponent Label="License Number" Value="@Requirement.LicenseNo" />
+                            <TextLabelComponent Label="License No." Value="@Requirement.LicenseNo" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <TextLabelComponent Label="Citation No." Value="@Requirement.TctNo" />
                         </div>
                         <div class="col-md-4 mb-3">
                             <TextLabelComponent Label="Email" Value="@Requirement.Email" />
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <TextLabelComponent Label="Date Submitted" Value="@Requirement.DateSubmitted" />
                         </div>
                     </div>
 
@@ -87,7 +87,7 @@
                             </tbody>
                         </table>
 
-                        <textarea class="form-control" @bind="InputText"></textarea>
+                        <textarea type="submit" class="form-control" @bind="InputText" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

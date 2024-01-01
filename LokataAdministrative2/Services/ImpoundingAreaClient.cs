@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services
 {
-    public interface IImpoundingAreaClient : IClient<ImpoundedArea> { }
+    public interface IImpoundingAreaClient : IClient<ImpoundedAreaDto> { }
 
     public class ImpoundingAreaClient : IImpoundingAreaClient
     {
@@ -20,13 +20,13 @@ namespace LokataAdministrative2.Services
             impoundingService.DefaultRequestHeaders.Authorization = new("Bearer", token);
         }
 
-        public async Task PostRequest(ImpoundedArea dto, string token)
+        public async Task PostRequest(ImpoundedAreaDto dto, string token)
         {
             AuthenticateToken(token);
             await impoundingService.PostAsJsonAsync("api/tracking", dto);
         }
 
-        public async Task PutRequest(ImpoundedArea dto, string token)
+        public async Task PutRequest(ImpoundedAreaDto dto, string token)
         {
             AuthenticateToken(token);
             await impoundingService.PutAsJsonAsync($"api/tracking/{dto.Id}", dto);
@@ -38,22 +38,22 @@ namespace LokataAdministrative2.Services
             await impoundingService.DeleteAsync($"api/tracking/{id}");
         }
 
-        public async Task<ImpoundedArea?> GetRequestById(string id, string token)
+        public async Task<ImpoundedAreaDto?> GetRequestById(string id, string token)
         {
             AuthenticateToken(token);
             var response = await impoundingService.GetAsync($"api/tracking/{id}");
             if (!response.IsSuccessStatusCode) return null;
 
-            return await response.Content.ReadFromJsonAsync<ImpoundedArea>();
+            return await response.Content.ReadFromJsonAsync<ImpoundedAreaDto>();
         }
 
-        public async Task<List<ImpoundedArea>> GetAllRequest(string token)
+        public async Task<List<ImpoundedAreaDto>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
             var response = await impoundingService.GetAsync("api/tracking");
             if (!response.IsSuccessStatusCode) return null;
 
-            return response.Content.ReadFromJsonAsync<List<ImpoundedArea>>().Result!;
+            return response.Content.ReadFromJsonAsync<List<ImpoundedAreaDto>>().Result!;
         }
     }
 }

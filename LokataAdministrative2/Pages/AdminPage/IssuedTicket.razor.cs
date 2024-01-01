@@ -38,12 +38,12 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
-        List<ImpoundedArea> impoundingAreas = new();
+        List<ImpoundedAreaDto> impoundingAreas = new();
         List<CitationDto> filteredTickets = new();
         List<CitationDto>? citationList;
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
-        ImpoundedArea? impoundingArea;
+        ImpoundedAreaDto? impoundingArea;
         PaymentSummaryDto? paymentSummary;
 
         private void ShowViolationPopup() => ViolationPopup = true;

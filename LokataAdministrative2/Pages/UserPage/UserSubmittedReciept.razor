@@ -23,7 +23,7 @@
                 <td>@req.Email</td>
                 <td>@req.DateSubmitted</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewRequirement(req))"><i class="oi oi-eye"></i></a>
+                    <a class="btn btn-primary btn-sm" @onclick="(async () => await ViewReceipt(req))"><i class="oi oi-eye"></i></a>
                 </td>
             </tr>
         }
@@ -36,20 +36,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Receipt Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=ReqCloseDialog></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=RecCloseDialog></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <TextLabelComponent Label="License Number" Value="@Receipt.LicenseNo" />
+                            <TextLabelComponent Label="License No." Value="@Receipt.LicenseNo" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <TextLabelComponent Label="Citation No." Value="@Receipt.TctNo" />
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <TextLabelComponent Label="Email" Value="@Receipt.Email" />
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <TextLabelComponent Label="Date Submitted" Value="@Receipt.DateSubmitted" />
                         </div>
                     </div>
 
@@ -71,8 +71,8 @@
                                     <td>
                                         @if (!IsApproved(Receipt.Receipt) && !IsDeclined(Receipt.Receipt))
                                         {
-                                            <a class="btn btn-sm" @onclick="(() => ApproveRequirement(Receipt.Receipt))"><i class="oi oi-circle-check" style="color: green;"></i></a>
-                                            <a class="btn btn-sm" @onclick="(() => DeclineRequirement(Receipt.Receipt))"><i class="oi oi-circle-x" style="color: red;"></i></a>
+                                            <a class="btn btn-sm" @onclick="(() => ApproveReceipt(Receipt.Receipt))"><i class="oi oi-circle-check" style="color: green;"></i></a>
+                                            <a class="btn btn-sm" @onclick="(() => DeclineReceipt(Receipt.Receipt))"><i class="oi oi-circle-x" style="color: red;"></i></a>
                                         }
                                         @if (IsApproved(Receipt.Receipt))
                                         {

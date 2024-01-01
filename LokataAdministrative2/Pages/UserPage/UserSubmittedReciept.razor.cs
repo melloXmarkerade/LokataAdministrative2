@@ -1,16 +1,17 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Users;
-using LokataAdministrative2.Services;
 
 namespace LokataAdministrative2.Pages.UserPage
 {
     public partial class UserSubmittedReciept
     {
         private List<UserReceipt> Receipts { get; set; } = new();
+        private UserRequirement UserReq { get; set; } = new();
         private UserReceipt Receipt { get; set; } = new();
         private string InputText { get; set; } = string.Empty;
         private bool RecPopup { get; set; } = false;
+        bool subjectForImpound = false;
 
         List<FileRequirement> approvedReceiptReqs = new();
         List<FileRequirement> declinedReceiptReqs = new();
@@ -21,26 +22,44 @@ namespace LokataAdministrative2.Pages.UserPage
             Receipts = await userReceipt.GetAllRequest(token);
         }
 
-        private void ViewRequirement(UserReceipt receipt)
+        private async Task ViewReceipt(UserReceipt receipt)
         {
+            UserReq = await userRequirement.GetByTctNo(receipt.TctNo, await tokenProvider.GetTokenAsync());
             Receipt = receipt;
+            subjectForImpound = await vehicleImpoundedClient.CheckTctNoHasImpoundVehicle(Receipt.TctNo);
             RecPopup = true;
         }
 
-        void ApproveRequirement(FileRequirement receipt)
+        private async Task ApproveReceipt(FileRequirement receipt)
         {
-            approvedReceiptReqs.Add(receipt);
-            receipt.IsApproved = true;
-        }
+            if(!subjectForImpound)
+            {
+                approvedReceiptReqs.Add(receipt);
+                receipt.IsApproved = true;
+                return;
+            }
 
-        void DeclineRequirement(FileRequirement receipt)
+            await CheckApproveRequirements(receipt, approvedReceiptReqs);
+        }            
+
+        async void DeclineReceipt(FileRequirement receipt)
         {
-            declinedReceiptReqs.Add(receipt);
-            receipt.IsDeclined = true;
+            await CheckApproveRequirements(receipt, declinedReceiptReqs);
         }
 
         public async Task SendNotification()
         {
+            if (approvedReceiptReqs.Count == 0)
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Required to Approve Receipt",
+                    Text = "Need to approve the receipt before sending a notifications.",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
+            }
+
             var notif = new NotificationDto
             {
                 Email = Receipt.Email!,
@@ -55,25 +74,19 @@ namespace LokataAdministrative2.Pages.UserPage
                 LicenseNo = Receipt!.LicenseNo,
                 Receipt = approvedReceiptReqs.First(),
                 DateSubmitted = Receipt.DateSubmitted,
-                PlateNo = Receipt.PlateNo
+                TctNo = Receipt.TctNo
             };
 
             //declinedReceiptReqs.ForEach(e => userReq.Receipt.Add(e));
             await userReceipt.PutRequest(userReq, await tokenProvider.GetTokenAsync());
-            await notificationClient.PostRequest(notif, null);
+            await notificationClient.PostRequest(notif, null!);
 
-            var success = await Swal.FireAsync(new SweetAlertOptions
+            await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Send Success",
                 Icon = SweetAlertIcon.Success
             });
-
-            if (success.IsConfirmed)
-            {
-                await OnInitializedAsync();
-                ReqCloseDialog();
-            }
-
+            RecPopup = false;
         }
 
         static bool IsApproved(FileRequirement receipt)
@@ -92,7 +105,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return false;
         }
 
-        private string GetStatus(FileRequirement req)
+        private static string GetStatus(FileRequirement req)
         {
             if (req.IsApproved)
                 return "Approved";
@@ -102,6 +115,31 @@ namespace LokataAdministrative2.Pages.UserPage
                 return "Pending";
         }
 
-        private void ReqCloseDialog() => RecPopup = false;
+        private void RecCloseDialog()
+        {
+            UserReq = null!;
+            Receipt = null!;
+            RecPopup = false;
+        }
+
+        private async Task CheckApproveRequirements(FileRequirement receipt, List<FileRequirement> req)
+        {
+            var isApproved = UserReq.Requirements!.All(r => r.IsApproved == true);
+
+            if (isApproved)
+            {
+                req.Add(receipt);
+                receipt.IsApproved = true;
+            }
+            else
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Requirements Pending",
+                    Text = "Submitted requirements should be approve.",
+                    Icon = SweetAlertIcon.Info
+                });
+            }
+        }
     }
 }

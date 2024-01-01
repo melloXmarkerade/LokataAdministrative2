@@ -7,7 +7,7 @@ namespace LokataAdministrative2.Models
         public string? TctNo { get; set; }
         public string? LicenseNo { get; set; }
         public string? PlateNo { get; set; }
-        public ImpoundedArea? Location { get; set; }
+        public ImpoundedAreaDto? Location { get; set; }
         public string? Make { get; set; }
         public string? Model { get; set; }
         public string? Color { get; set; }

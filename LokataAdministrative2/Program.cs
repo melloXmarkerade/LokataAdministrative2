@@ -40,4 +40,5 @@ builder.Services.AddScoped<IStorageRateClient, StorageRateClient>();
 builder.Services.AddScoped<ITowingRateClient, TowingRatesClient>();
 builder.Services.AddScoped<IImpoundingAreaClient, ImpoundingAreaClient>();
 builder.Services.AddScoped<IRequirementClient, RequirementClient>();
+builder.Services.AddScoped<IPaymentChannelClient, PaymentChannelClient>();
 await builder.Build().RunAsync();

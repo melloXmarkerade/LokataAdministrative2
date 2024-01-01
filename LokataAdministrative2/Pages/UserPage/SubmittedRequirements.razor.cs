@@ -40,6 +40,17 @@ namespace LokataAdministrative2.Pages.UserPage
 
         public async Task SendNotification()
         {
+            if(approvedRequirements.Count == 0)
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Required to Approve Requirements",
+                    Text = "Need to approve the requirements before sending a notifications.",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
+            }
+            
             var notif = new NotificationDto
             {
                 Email = Requirement.Email!,
@@ -54,24 +65,20 @@ namespace LokataAdministrative2.Pages.UserPage
                 LicenseNo = Requirement!.LicenseNo,
                 Requirements = approvedRequirements,
                 DateSubmitted = Requirement.DateSubmitted,
-                PlateNo = Requirement.PlateNo
+                TctNo = Requirement.TctNo
             };
 
             declinedRequirements.ForEach(e => userReq.Requirements.Add(e));
             await userRequirement.PutRequest(userReq, await tokenProvider.GetTokenAsync());
             await notificationClient.PostRequest(notif, null);
 
-            var success = await Swal.FireAsync(new SweetAlertOptions
+            await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Send Success",
                 Icon = SweetAlertIcon.Success
             });
 
-            if (success.IsConfirmed)
-            {
-                await OnInitializedAsync();
-                ReqCloseDialog();
-            }
+            ReqPopup = false;
 
         }
 
@@ -103,6 +110,7 @@ namespace LokataAdministrative2.Pages.UserPage
 
         private void ReqCloseDialog()
         {
+            Requirement = null;
             ReqPopup = false;
         }
     }

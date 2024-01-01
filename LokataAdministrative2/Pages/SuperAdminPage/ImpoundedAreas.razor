@@ -33,7 +33,8 @@
 </table>
 @if (ViewAreaPopup)
 {
-    <EditForm Model="Area">
+    <EditForm Model="Area" OnValidSubmit="SaveArea">
+        <DataAnnotationsValidator />
         <div class="modal" tabindex="-1" style="display:block">
             <div class="modal-dialog modal-md modal-dialog-centered">
                 <div class="modal-content">
@@ -45,28 +46,28 @@
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Area</label>
-                                <InputText class="form-control" @bind-Value="Area!.ImpoundingArea" required></InputText>
+                                <InputText class="form-control" @bind-Value="Area!.ImpoundingArea"></InputText>
                                 <ValidationMessage For="@(() => Area!.ImpoundingArea)"></ValidationMessage>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Address</label>
-                                <InputText class="form-control" @bind-Value="Area!.Address" required></InputText>
+                                <InputText class="form-control" @bind-Value="Area!.Address"></InputText>
                                 <ValidationMessage For="@(() => Area!.Address)"></ValidationMessage>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Longitude</label>
-                                <InputText class="form-control" @bind-Value="Area!.Longitude" required></InputText>
+                                <InputText class="form-control" @bind-Value="Area!.Longitude"></InputText>
                                 <ValidationMessage For="@(() => Area!.Longitude)"></ValidationMessage>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Latitude</label>
-                                <InputText class="form-control" @bind-Value="Area!.Latitude" required></InputText>
+                                <InputText class="form-control" @bind-Value="Area!.Latitude"></InputText>
                                 <ValidationMessage For="@(() => Area!.Latitude)"></ValidationMessage>
                             </div>
                         </div>
@@ -74,7 +75,7 @@
                     <div class="modal-footer">
                         @if (SaveImpoundArea)
                         {
-                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await SaveArea())>Save Area</button>
+                            <button type="submit" class="btn btn-success">Save Area</button>
                         }
                         else
                         {

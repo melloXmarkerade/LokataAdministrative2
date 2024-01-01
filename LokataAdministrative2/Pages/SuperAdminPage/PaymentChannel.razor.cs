@@ -5,7 +5,6 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 {
     public partial class PaymentChannel
     {
-
         bool IsSaveChannel = false;
         bool ViewChannelPopup = false;
         public List<PaymentChannelDto> PaymentChannels { get; set; } = new();
@@ -13,7 +12,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         protected override async Task OnInitializedAsync()
         {
-            PaymentChannels = await requirementClient.GetAllRequest(null!);
+            PaymentChannels = await paymentClient.GetAllRequest(null!);
         }
 
         private void AddPaymentChannel()
@@ -26,9 +25,9 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private async Task SaveChannel()
         {
-            await requirementClient.PostRequest(Channel!, await tokenProvider.GetTokenAsync());
+            await paymentClient.PostRequest(Channel!, await tokenProvider.GetTokenAsync());
             Thread.Sleep(1000);
-            PaymentChannels = await requirementClient.GetAllRequest(await tokenProvider.GetTokenAsync());
+            PaymentChannels = await paymentClient.GetAllRequest(await tokenProvider.GetTokenAsync());
 
             await Swal.FireAsync(new SweetAlertOptions
             {
@@ -42,7 +41,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private async Task UpdateChannel()
         {
-            await requirementClient.PutRequest(Channel!, await tokenProvider.GetTokenAsync());
+            await paymentClient.PutRequest(Channel!, await tokenProvider.GetTokenAsync());
 
             await Swal.FireAsync(new SweetAlertOptions
             {
@@ -66,7 +65,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
             if (delete.IsConfirmed)
             {
-                await requirementClient.DeleteRequest(Channel!.Id!, await tokenProvider.GetTokenAsync());
+                await paymentClient.DeleteRequest(Channel!.Id!, await tokenProvider.GetTokenAsync());
                 PaymentChannels.Remove(Channel!);
                 ViewChannelPopup = false;
             }

@@ -30,7 +30,8 @@
 
 @if(ViewRequirementPopup)
 {
-    <EditForm Model="Requirement">
+    <EditForm Model="Requirement" OnValidSubmit="SaveRequirement">
+        <DataAnnotationsValidator />
         <div class="modal" tabindex="-1" style="display:block">
             <div class="modal-dialog modal-md modal-dialog-centered">
                 <div class="modal-content">
@@ -42,7 +43,7 @@
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Name</label>
-                                <InputText class="form-control" @bind-Value="Requirement!.Name" required></InputText>
+                                <InputText class="form-control" @bind-Value="Requirement!.Name"></InputText>
                                 <ValidationMessage For="@(() => Requirement!.Name)"></ValidationMessage>
                             </div>
                         </div>
@@ -56,7 +57,7 @@
                     <div class="modal-footer">
                         @if (IsSaveRequirement)
                         {
-                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await SaveRequirement())>Save Requirement</button>
+                            <button type="submit" class="btn btn-success">Save Requirement</button>
                         }
                         else
                         {

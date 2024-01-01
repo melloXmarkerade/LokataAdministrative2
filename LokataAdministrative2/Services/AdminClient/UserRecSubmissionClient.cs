@@ -4,7 +4,10 @@ using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services.AdminClient
 {
-    public interface IUserRecSubmissionClient : IClient<UserReceipt> { }
+    public interface IUserRecSubmissionClient : IClient<UserReceipt> 
+    {
+        Task<UserReceipt> GetByTctNo(string tctNo, string token);
+    }
 
     public class UserRecSubmissionClient : IUserRecSubmissionClient
     {
@@ -54,6 +57,15 @@ namespace LokataAdministrative2.Services.AdminClient
             if (!response.IsSuccessStatusCode) return null;
 
             return await response.Content.ReadFromJsonAsync<List<UserReceipt>>();
+        }
+
+        public async Task<UserReceipt> GetByTctNo(string tctNo, string token)
+        {
+            AuthenticateToken(token);
+            var response = await userReceipts.GetAsync($"api/usersubmission/receipts/tctno/{tctNo}");
+            if (!response.IsSuccessStatusCode) return null;
+
+            return await response.Content.ReadFromJsonAsync<UserReceipt>();
         }
     }
 }

@@ -23,6 +23,7 @@
 @using CurrieTechnologies.Razor.SweetAlert2;
 @using LokataAdministrative2.Services.AdminClient
 @using LokataAdministrative2.Services.ViolationsClient
+@using LokataAdministrative2.Pages.Components
 @inject AdminAuthClient adminAuthClient
 @inject UserClient userClient;
 @inject INotificationClient notificationClient;
@@ -38,6 +39,7 @@
 @inject IUserReqSubmissionClient userRequirement;
 @inject IUserRecSubmissionClient userReceipt;
 @inject IRequirementClient requirementClient;
+@inject IPaymentChannelClient paymentClient;
 @inject IStorageRateClient storageClient;
 @inject ITowingRateClient towingClient;
 @inject IImpoundingAreaClient impoundingClient;

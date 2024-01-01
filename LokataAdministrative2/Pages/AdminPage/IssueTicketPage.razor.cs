@@ -20,7 +20,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         UserViolationDto violation = new();
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
-        ImpoundedArea? impoundingArea;
+        ImpoundedAreaDto? impoundingArea;
         PaymentSummaryDto? paymentSummary;
 
         List<ProvinceDto> provinces = new();
@@ -32,7 +32,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         List<ViolationFeeDto> violationFees = new();
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
-        List<ImpoundedArea> impoundingAreas = new();
+        List<ImpoundedAreaDto> impoundingAreas = new();
         List<string> itemConfiscated = new();
 
         private void ShowPopup() => popup = true;

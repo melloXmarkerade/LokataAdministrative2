@@ -1,4 +1,5 @@
 ﻿using LokataAdministrative2.Models;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -7,6 +8,7 @@ namespace LokataAdministrative2.Services
     public interface IVehicleClient : IClient<VehicleDto> 
     {
         Task<List<VehicleDto>> GetAllVehicleInfo(string licenseNo);
+        Task<bool> CheckTctNoHasImpoundVehicle(string tctNo);
     }
 
     public class VehicleClient : IVehicleClient
@@ -51,7 +53,7 @@ namespace LokataAdministrative2.Services
             AuthenticateToken(token);
             var response = await vehicleClient.GetAsync($"api/Vehicle");
             if (!response.IsSuccessStatusCode)
-                return null;
+                return null!;
 
             return await response.Content.ReadFromJsonAsync<List<VehicleDto>>();
         }
@@ -65,9 +67,18 @@ namespace LokataAdministrative2.Services
         {
             var response = await vehicleClient.GetAsync($"api/Vehicle/admin/licenseno/{licenseNo}");
             if (!response.IsSuccessStatusCode)
-                return null;
+                return null!;
 
             return await response.Content.ReadFromJsonAsync<List<VehicleDto>>();
+        }
+
+        public async Task<bool> CheckTctNoHasImpoundVehicle(string tctNo)
+        {
+            var response = await vehicleClient.GetAsync($"api/Vehicle/tctno/{tctNo}");
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            return await response.Content.ReadFromJsonAsync<bool>();
         }
     }
 }

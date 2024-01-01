@@ -34,7 +34,7 @@
                     <td><span class="badge text-success">@vehicle.Status</span></td>
                 }
                 <td>
-                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewVehicle(vehicle))"><i class="oi oi-eye"></i></a>
+                    <a class="btn btn-primary btn-sm" @onclick="(async () => await ViewVehicle(vehicle))"><i class="oi oi-eye"></i></a>
                 </td>
             </tr>
         }
