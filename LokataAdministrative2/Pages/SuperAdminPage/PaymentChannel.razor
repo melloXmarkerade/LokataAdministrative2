@@ -60,7 +60,8 @@
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label class="form-label fw-bold">Bank Name</label>
-                                <textarea class="form-control" @bind="Channel!.BankName"></textarea>
+                                <InputText class="form-control" @bind-Value="Channel!.BankName"></InputText>
+                                <ValidationMessage For="@(() => Channel!.BankName)"></ValidationMessage>
                             </div>
                         </div>
                     </div>

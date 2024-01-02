@@ -79,6 +79,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private void CloseViewChannel()
         {
+            IsSaveChannel = false;
             ViewChannelPopup = false;
         }
     }

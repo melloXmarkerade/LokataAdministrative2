@@ -1,0 +1,73 @@
+﻿@page "/storagerates"
+@attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
+
+<h2>Storage Rates</h2>
+<button class="btn btn-primary mb-3" @onclick="AddStorageRate">Add Storage Rate</button>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Vehicle Type</th>
+            <th>Fee</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var storage in storageRates)
+        {
+            <tr>
+                <td>@(storageRates.IndexOf(storage) + 1)</td>
+                <td>@storage.VehicleType</td>
+                <td>@storage.Fee</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewStorageRate(storage))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewRatePopup)
+{
+    <EditForm Model="StorageRate" OnValidSubmit="SaveStorageRate">
+        <DataAnnotationsValidator />
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Storage Rate Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewStorageRate></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Vehicle Type</label>
+                                <InputText class="form-control" @bind-Value="StorageRate!.VehicleType"></InputText>
+                                <ValidationMessage For="@(() => StorageRate.VehicleType)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Fee</label>
+                                <InputText class="form-control" @bind-Value="FeeToString"></InputText>
+                                <ValidationMessage For="@(() => FeeToString)"></ValidationMessage>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        @if (IsSaveRate)
+                        {
+                            <button type="submit" class="btn btn-success">Save Rate</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateStorageRate())>Update Rate</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async()=> await DeleteStorageRate())">Delete Rate</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

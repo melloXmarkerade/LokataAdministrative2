@@ -79,6 +79,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private void CloseViewRequirement()
         {
+            IsSaveRequirement = false;
             ViewRequirementPopup = false;
         }
     }
