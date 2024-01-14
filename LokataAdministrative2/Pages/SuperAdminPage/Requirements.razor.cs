@@ -1,5 +1,6 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models.Users;
+using Microsoft.AspNetCore.Components;
 
 namespace LokataAdministrative2.Pages.SuperAdminPage
 {
@@ -81,6 +82,22 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
         {
             IsSaveRequirement = false;
             ViewRequirementPopup = false;
+        }
+
+        private void SelectedForVehicleOwner(ChangeEventArgs e)
+        {
+            if ((bool)e.Value!)
+                Requirement!.IsForVehicleOwner = true;
+            else
+                Requirement!.IsForVehicleOwner = false;
+        }
+
+        private void SelectedForCompanyVehicle(ChangeEventArgs e)
+        {
+            if ((bool)e.Value!)
+                Requirement!.IsForCompanyVehicle = true;
+            else
+                Requirement!.IsForCompanyVehicle = false;
         }
     }
 }

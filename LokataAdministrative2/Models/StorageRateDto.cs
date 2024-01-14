@@ -6,6 +6,7 @@ namespace LokataAdministrative2.Models
     {
         [Required(ErrorMessage = "VehicleType should not be empty.")]
         public string VehicleType { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Fee should not be empty.")]
         public double Fee { get; set; }
     }

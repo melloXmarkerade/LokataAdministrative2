@@ -19,7 +19,7 @@
             <tr>
                 <td>@(towingRates.IndexOf(towing) + 1)</td>
                 <td>@towing.VehicleType</td>
-                <td>@towing.Fee</td>
+                <td>₱@towing.Fee</td>
                 <td>
                     <a class="btn btn-primary btn-sm" @onclick="(() => ViewTowingRate(towing))"><i class="oi oi-eye"></i></a>
                 </td>

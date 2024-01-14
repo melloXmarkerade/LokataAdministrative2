@@ -27,6 +27,17 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private async Task SaveTowingRate()
         {
+            if (!double.TryParse(FeeToString, out double result))
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Invalid Fee",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
+            }
+
+            TowingRate!.Fee = result;
             await towingClient.PostRequest(TowingRate!, await tokenProvider.GetTokenAsync());
             Thread.Sleep(1000);
             towingRates = await towingClient.GetAllRequest(await tokenProvider.GetTokenAsync());
@@ -43,6 +54,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private async Task UpdateTowingRate()
         {
+            TowingRate!.Fee = Double.Parse(FeeToString);
             await towingClient.PutRequest(TowingRate!, await tokenProvider.GetTokenAsync());
 
             await Swal.FireAsync(new SweetAlertOptions
@@ -59,7 +71,7 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
             var delete = await Swal.FireAsync(new SweetAlertOptions
             {
                 Icon = SweetAlertIcon.Warning,
-                Title = "Do you want to delete storage rate?",
+                Title = "Do you want to delete towing rate?",
                 ShowDenyButton = true,
                 ConfirmButtonText = "Delete",
                 DenyButtonText = "Cancel"

@@ -9,5 +9,8 @@ namespace LokataAdministrative2.Models.Users
 
         [Required(ErrorMessage = "Description should not be empty.")]
         public string? Description { get; set; }
+
+        public bool IsForVehicleOwner { get; set; }
+        public bool IsForCompanyVehicle { get; set; }
     }
 }

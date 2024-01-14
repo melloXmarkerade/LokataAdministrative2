@@ -9,13 +9,13 @@
     <div class="row mb-3">
         <div class="col-md-7">
             <label class="form-label">TCT No.</label>
-            <InputText class="form-control w-auto" @bind-Value="citation.TctNo"></InputText>
+            <InputText class="form-control w-auto" @bind-Value="citation.TctNo" required></InputText>
             <ValidationMessage For="@(() => citation.TctNo)"></ValidationMessage>
         </div>
 
         <div class="col-md-5">
             <label class="form-label">Date Record</label>
-            <InputText type="date" class="form-control" @bind-Value="citation.DateRecord"></InputText>
+            <InputText type="date" class="form-control" @bind-Value="citation.DateRecord" required></InputText>
             <ValidationMessage For="@(() => citation.DateRecord)"></ValidationMessage>
         </div>
     </div>
@@ -25,7 +25,7 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="lastNameValidation" class="form-label">Last name</label>
-                <InputText id="lastNameValidation" class="form-control" @bind-Value="citation.LastName" required DisplayName="Last Name"></InputText>
+                <InputText id="lastNameValidation" class="form-control" @bind-Value="citation.LastName" required></InputText>
                 <ValidationMessage For="@(() => citation.LastName)"></ValidationMessage>
             </div>
 

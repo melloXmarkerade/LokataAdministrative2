@@ -65,7 +65,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task ClaimedVehicle()
         {
-            if(receipt is null)
+            if(receipt.Id is null)
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {

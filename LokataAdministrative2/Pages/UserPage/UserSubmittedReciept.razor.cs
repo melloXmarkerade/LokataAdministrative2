@@ -32,7 +32,18 @@ namespace LokataAdministrative2.Pages.UserPage
 
         private async Task ApproveReceipt(FileRequirement receipt)
         {
-            if(!subjectForImpound)
+            if (UserReq.Id is null)
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Receipt Info",
+                    Text = "Owner didn't submitted a requirements.",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
+            }
+
+            if (!subjectForImpound)
             {
                 approvedReceiptReqs.Add(receipt);
                 receipt.IsApproved = true;
@@ -86,6 +97,8 @@ namespace LokataAdministrative2.Pages.UserPage
                 Title = "Send Success",
                 Icon = SweetAlertIcon.Success
             });
+
+
             RecPopup = false;
         }
 
@@ -124,7 +137,7 @@ namespace LokataAdministrative2.Pages.UserPage
 
         private async Task CheckApproveRequirements(FileRequirement receipt, List<FileRequirement> req)
         {
-            var isApproved = UserReq.Requirements!.All(r => r.IsApproved == true);
+            var isApproved = UserReq!.Requirements!.All(r => r.IsApproved == true);
 
             if (isApproved)
             {

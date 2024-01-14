@@ -1,5 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using LokataAdministrative2.Models.Users
+@inherits LayoutComponentBase
 @inject NavigationManager navigation
+@inject SweetAlertService Swal
+@* @attribute [Authorize(Roles = "SuperAdmin, Admin")] *@
 
 <div class="page">
     <div class="sidebar">
@@ -8,15 +11,17 @@
 
     <main>
         <div class="top-row px-4">
+            <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <div><button class="btn btn-outline-primary" @onclick="(async () => await ViewProfile(context.User.Identity!.Name!))">View Profile</button></div>
+                </Authorized>
+            </AuthorizeView>
+
             <AuthorizeView>
                 <Authorized>
                     <NavLink @onclick="Logout" class="btn btn-outline-primary">Sign Out</NavLink>
                 </Authorized>
-                <NotAuthorized>
-                    <NavLink @onclick="Login" class="btn btn-outline-primary">Sign In</NavLink>
-                </NotAuthorized>
             </AuthorizeView>
-
         </div>
 
         <article class="content px-4">
@@ -25,11 +30,60 @@
     </main>
 </div>
 
+@if (ViewAdmin)
+{
+    <EditForm Model="admin">
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Account Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=AccountCloseDialog></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">First Name</label>
+                                <InputText class="form-control" @bind-Value="admin.FirstName" required></InputText>
+                                <ValidationMessage For="@(() => admin.FirstName)"></ValidationMessage>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Last Name</label>
+                                <InputText class="form-control" @bind-Value="admin.LastName" required></InputText>
+                                <ValidationMessage For="@(() => admin.LastName)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Government Id</label>
+                                <InputText class="form-control" @bind-Value="admin.GovernmentId" required></InputText>
+                                <ValidationMessage For="@(() => admin.GovernmentId)"></ValidationMessage>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Username</label>
+                                <InputText class="form-control" @bind-Value="admin.Username" required></InputText>
+                                <ValidationMessage For="@(() => admin.Username)"></ValidationMessage>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Password</label>
+                                <InputText class="form-control" @bind-Value="admin.Password" required></InputText>
+                                <ValidationMessage For="@(() => admin.Password)"></ValidationMessage>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateAccount())>Update Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+
 @code {
-    private void Login()
-    {
-        navigation.NavigateTo("/");
-    }
 
     private async Task Logout()
     {
@@ -37,5 +91,35 @@
 
         await customAuthStateProvider.SetTokenAsync("");
         navigation.NavigateTo("/", false);
+    }
+
+    bool ViewAdmin = false;
+    AdminDto admin = null!;
+
+    private async Task ViewProfile(string name)
+    {
+        string[] fullname = name.Split(' ');
+        string firstName = fullname[0];
+        admin = await adminClient.GetRequestByName(firstName, await tokenProvider.GetTokenAsync());
+        ViewAdmin = true;
+    }
+
+    private async Task UpdateAccount()
+    {
+        await adminClient.PutRequest(admin, await tokenProvider.GetTokenAsync());
+
+        await Swal.FireAsync(new SweetAlertOptions
+        {
+                Title = "Update Success",
+                Icon = SweetAlertIcon.Success
+        });
+
+        ViewAdmin = false;
+    }
+
+    private void AccountCloseDialog()
+    {
+        admin = null!;
+        ViewAdmin = false;
     }
 }

@@ -25,6 +25,7 @@ else
                     <th>TCT No.</th>
                     <th>License No.</th>
                     <th>Date Recorded</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -38,6 +39,14 @@ else
                             <td>@item.TctNo</td>
                             <td>@item.LicenseNo</td>
                             <td>@item.DateRecord</td>
+                            @if (!item.IsSettled)
+                            {
+                                <td><span class="badge text-danger">Unsettled</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-success">Settled</span></td>
+                            }
                             <td>
                                 <AuthorizeView Roles="Admin">
                                     <a class="btn btn-primary btn-sm" @onclick="(async () => await EditTicket(item))"><i class="oi oi-pencil"></i></a>
@@ -248,7 +257,10 @@ else
                                 </table>
 
                                 <!-- Button trigger modal -->
-                                <button type="button" @onclick="ShowViolationPopup" class="btn btn-primary"> Add Violation</button>
+                                @if(!Citation.IsSettled)
+                                {
+                                    <button type="button" @onclick="ShowViolationPopup" class="btn btn-primary"> Add Violation</button>
+                                }
                                 @if (ViolationPopup)
                                 {
                                     <div class="modal" tabindex="-1" style="display:block">
@@ -398,9 +410,12 @@ else
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateChanges())>Update changes</button>
-                        </div>
+                        @if(!Citation.IsSettled)
+                        {
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateChanges())>Update changes</button>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

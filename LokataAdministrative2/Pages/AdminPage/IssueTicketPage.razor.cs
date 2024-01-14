@@ -52,6 +52,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             {
                 StorageRate = storageRate,
                 TowingRate = towingRate,
+                TotalStorageFee = storageRate.Fee,
                 TotalViolationFees = TotalViolationFees(),
                 Date = DateTime.Now.ToUniversalTime(),
             };
@@ -71,15 +72,17 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task OnValidSubmit()
         {
-            if(paymentSummary is null)
+            if (userViolations is null)
             {
-                vehicle.Status = string.Empty;
-                paymentSummary = new()
+                await Swal.FireAsync(new SweetAlertOptions
                 {
-                    TotalViolationFees = TotalViolationFees(),
-                    Date = DateTime.Now.ToUniversalTime(),
-                };
+                    Title = "Add Violation",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
             }
+
+            CheckPaymentSummary();
 
             vehicle.Status = "Unsettled";
             vehicle.TctNo = citation.TctNo;
@@ -97,18 +100,12 @@ namespace LokataAdministrative2.Pages.AdminPage
 
             await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
 
-            var success = await Swal.FireAsync(new SweetAlertOptions
+            await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Record Success",
                 Icon = SweetAlertIcon.Success
             });
             navigation.NavigateTo("/issuedticket");
-
-            //if (success.IsConfirmed)
-            //{
-            //    await OnInitializedAsync();
-            //    navigation.NavigateTo("/issuedticket");
-            //}
         }
 
         private void Cancel() => navigation.NavigateTo("/issuedticket");
@@ -241,6 +238,19 @@ namespace LokataAdministrative2.Pages.AdminPage
             violation.Offense = violationFeeEvent.Value!.ToString()!.Substring(0, 1);
             violation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()!.Substring(3));
             this.StateHasChanged();
+        }
+
+        private void CheckPaymentSummary()
+        {
+            if (paymentSummary is null)
+            {
+                vehicle.Status = string.Empty;
+                paymentSummary = new()
+                {
+                    TotalViolationFees = TotalViolationFees(),
+                    Date = DateTime.Now.ToUniversalTime(),
+                };
+            }
         }
     }
 }
