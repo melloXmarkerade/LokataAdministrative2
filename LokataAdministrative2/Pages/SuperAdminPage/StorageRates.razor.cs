@@ -54,7 +54,17 @@ namespace LokataAdministrative2.Pages.SuperAdminPage
 
         private async Task UpdateStorageRate()
         {
-            StorageRate!.Fee = Double.Parse(FeeToString);
+            if (!double.TryParse(FeeToString, out double result))
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Invalid Fee",
+                    Icon = SweetAlertIcon.Info
+                });
+                return;
+            }
+
+            StorageRate!.Fee = result;
             await storageClient.PutRequest(StorageRate!, await tokenProvider.GetTokenAsync());
 
             await Swal.FireAsync(new SweetAlertOptions

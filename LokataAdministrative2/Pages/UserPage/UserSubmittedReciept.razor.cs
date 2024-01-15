@@ -74,7 +74,6 @@ namespace LokataAdministrative2.Pages.UserPage
             var notif = new NotificationDto
             {
                 Email = Receipt.Email!,
-                Date = DateTime.Now.ToString("MMMM dd, yyyy"),
                 Message = InputText
             };
 
