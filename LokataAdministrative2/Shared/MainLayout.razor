@@ -114,6 +114,14 @@
                 Icon = SweetAlertIcon.Success
         });
 
+        var admintest = new AdminLogin
+            {
+                Username = admin.Username,
+                Password = admin.Password!
+            };
+
+        string token = await adminAuthClient.LoginPostRequest(admintest);
+        await tokenProvider.SetTokenAsync(token);
         ViewAdmin = false;
     }
 

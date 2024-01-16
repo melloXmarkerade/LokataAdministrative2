@@ -10,7 +10,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         string token = "";
         UserDto? user;
         CitationDto? citation;
-        UserReceipt receipt;
+        UserReceipt? receipt;
         List<VehicleDto> vehicleList = new();
         List<VehicleDto> filteredVehicles = new();
         List<ImpoundedAreaDto> impoundingAreas = new();

@@ -32,7 +32,12 @@ namespace LokataAdministrative2.Pages.UserPage
 
         private async Task ApproveReceipt(FileRequirement receipt)
         {
-            if (UserReq.Id is null)
+            //if(subjectForImpound)
+            //{
+
+            //}
+
+            if (UserReq.Id is null && subjectForImpound == true)
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
