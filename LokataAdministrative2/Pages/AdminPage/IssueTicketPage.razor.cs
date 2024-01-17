@@ -72,7 +72,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task OnValidSubmit()
         {
-            if (userViolations is null)
+            if (userViolations.Count == 0)
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {

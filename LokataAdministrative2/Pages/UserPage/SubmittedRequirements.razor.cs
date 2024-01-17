@@ -40,17 +40,17 @@ namespace LokataAdministrative2.Pages.UserPage
 
         public async Task SendNotification()
         {
-            if(approvedRequirements.Count == 0)
+            if (approvedRequirements.Count == 0)
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = "Required to Approve Requirements",
+                    Title = "Required to Approve or Decline Requirements",
                     Text = "Need to approve the requirements before sending a notifications.",
                     Icon = SweetAlertIcon.Info
                 });
                 return;
             }
-            
+
             var notif = new NotificationDto
             {
                 Email = Requirement.Email!,

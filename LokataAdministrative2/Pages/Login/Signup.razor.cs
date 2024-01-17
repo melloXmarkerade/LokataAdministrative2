@@ -13,7 +13,7 @@ namespace LokataAdministrative2.Pages.Login
 
             var result = await adminAuthClient.SignupPostRequest(admin);
 
-            if(result is "Username existed.")
+            if(result is not "Signup Success")
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
