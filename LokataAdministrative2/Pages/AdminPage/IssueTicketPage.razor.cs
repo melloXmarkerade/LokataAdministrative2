@@ -8,15 +8,15 @@ namespace LokataAdministrative2.Pages.AdminPage
     public partial class IssueTicketPage
     {
         [Parameter]
-        public string issuedTicketId { get; set; } = string.Empty;
+        public string IssuedTicketId { get; set; } = string.Empty;
         public bool PaymentSummaryPopup { get; set; } = false;
-        bool popup     = false;
+        bool popup = false;
 
-        CitationDto citation = new();
-        OfficerDto officer = new();
-        VehicleDto vehicle = new();
-        PlaceDto placeApprehended = new();
-        AddressDto address = new();
+        readonly CitationDto citation = new();
+        readonly OfficerDto officer = new();
+        readonly VehicleDto vehicle = new();
+        readonly PlaceDto placeApprehended = new();
+        readonly AddressDto address = new();
         UserViolationDto violation = new();
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
@@ -33,11 +33,14 @@ namespace LokataAdministrative2.Pages.AdminPage
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
         List<ImpoundedAreaDto> impoundingAreas = new();
-        List<string> itemConfiscated = new();
+        readonly List<string> itemConfiscated = new();
 
         private void ShowPopup() => popup = true;
         private void CloseDialog() => popup = false;
-        private void ClosePaymentSummary() => PaymentSummaryPopup = false;
+        private void ClosePaymentSummary()
+        {
+            PaymentSummaryPopup = false;
+        }
 
         private void SaveViolations()
         {
@@ -52,7 +55,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             {
                 StorageRate = storageRate,
                 TowingRate = towingRate,
-                TotalStorageFee = storageRate.Fee,
+                TotalStorageFee = storageRate!.Fee,
                 TotalViolationFees = TotalViolationFees(),
                 Date = DateTime.Now.ToUniversalTime(),
             };
@@ -72,34 +75,13 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task OnValidSubmit()
         {
-            if (userViolations.Count == 0)
-            {
-                await Swal.FireAsync(new SweetAlertOptions
-                {
-                    Title = "Add Violation",
-                    Icon = SweetAlertIcon.Info
-                });
-                return;
-            }
-
+            if (await CheckEmptyViolations()) return;
+            if (await CheckExistingTctNo()) return;
+            
             CheckPaymentSummary();
-
-            vehicle.Status = "Unsettled";
-            vehicle.TctNo = citation.TctNo;
-            vehicle.LicenseNo = citation.LicenseNo;
-            vehicle.DateImpounded = placeApprehended.Date;
-
-            citation.Address = address;
-            citation.VehicleDescription = vehicle;
-            citation.VehicleDescription.Location = impoundingArea;
-            citation.PlaceApprehended = placeApprehended;
-            citation.Violations = userViolations;
-            citation.ItemConfiscated = itemConfiscated;
-            citation.ApprehendingOfficer = officer;
-            citation.PaymentSummary = paymentSummary;
+            MapCitationData();
 
             await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
-
             await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Record Success",
@@ -227,8 +209,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             violationFees.Clear();
             if (violationEvent.Value!.ToString()! == "0") return;
 
-            violationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!,
-                                await tokenProvider.GetTokenAsync());
+            violationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
             violation.Name = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
@@ -238,6 +219,20 @@ namespace LokataAdministrative2.Pages.AdminPage
             violation.Offense = violationFeeEvent.Value!.ToString()!.Substring(0, 1);
             violation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()!.Substring(3));
             this.StateHasChanged();
+        }
+
+        private async Task<bool> CheckEmptyViolations()
+        {
+            if (userViolations.Count == 0)
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Add Violation",
+                    Icon = SweetAlertIcon.Info
+                });
+                return true;
+            }
+            return false;
         }
 
         private void CheckPaymentSummary()
@@ -251,6 +246,42 @@ namespace LokataAdministrative2.Pages.AdminPage
                     Date = DateTime.Now.ToUniversalTime(),
                 };
             }
+        }
+
+        private void RemoveViolation(UserViolationDto violation) => userViolations.Remove(violation);
+
+        private void MapCitationData()
+        {
+            vehicle.Status = "Unsettled";
+            vehicle.TctNo = citation.TctNo;
+            vehicle.LicenseNo = citation.LicenseNo;
+            vehicle.DateImpounded = placeApprehended.Date;
+
+            citation.Address = address;
+            citation.VehicleDescription = vehicle;
+            citation.VehicleDescription.Location = impoundingArea;
+            citation.PlaceApprehended = placeApprehended;
+            citation.Violations = userViolations;
+            citation.ItemConfiscated = itemConfiscated;
+            citation.ApprehendingOfficer = officer;
+            citation.PaymentSummary = paymentSummary;
+        }
+
+        private async Task<bool> CheckExistingTctNo()
+        {
+            var isExisted = await citationClient.CheckExistedTctNo(citation.TctNo!, await tokenProvider.GetTokenAsync());
+
+            if(isExisted)
+            {
+                await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Tct No. is existed",
+                    Icon = SweetAlertIcon.Info
+                });
+                return true;
+            }
+            return false;
+
         }
     }
 }

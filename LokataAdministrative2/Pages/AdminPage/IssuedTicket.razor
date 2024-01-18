@@ -49,13 +49,11 @@ else
                             }
                             <td>
                                 <AuthorizeView Roles="Admin">
-                                    <a class="btn btn-primary btn-sm" @onclick="(async () => await EditTicket(item))"><i class="oi oi-pencil"></i></a>
-                                    <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteCitation(item.Id!))">
-                                        <i class="oi oi-trash"></i>
-                                    </button>
+                                    <button class="btn btn-primary btn-sm" @onclick="(async () => await EditTicket(item))"><i class="oi oi-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm ms-2" @onclick="(()=> DeleteCitation(item.Id!))"><i class="oi oi-trash"></i></button>
                                 </AuthorizeView>
                                 <AuthorizeView Roles="SuperAdmin">
-                                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewTicket(item))"><i class="oi oi-eye"></i></a>
+                                    <button class="btn btn-primary btn-sm" @onclick="(() => ViewTicket(item))"><i class="oi oi-eye"></i></button>
                                 </AuthorizeView>
                             </td>
                         </tr>

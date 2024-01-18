@@ -7,6 +7,7 @@ namespace LokataAdministrative2.Services
     public interface ICitationClient : IClient<CitationDto> 
     {
         Task<CitationDto> GetByTctNo(string tctNo, string token);
+        Task<bool> CheckExistedTctNo(string tctNo, string token);
     }
 
     public class CitationClient : ICitationClient
@@ -43,7 +44,17 @@ namespace LokataAdministrative2.Services
             return await response.Content.ReadFromJsonAsync<CitationDto>();
         }
 
-        public async Task<List<CitationDto>?> GetAllRequest(string token)
+        public async Task<bool> CheckExistedTctNo(string tctNo, string token)
+        {
+            AuthenticateToken(token);
+            var response = await citationClient.GetAsync($"api/Citation/checktctno/{tctNo}");
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
+
+        public async Task<List<CitationDto>> GetAllRequest(string token)
         {
             AuthenticateToken(token);
             var response = await citationClient.GetAsync($"/api/Citation");

@@ -176,6 +176,7 @@
                     <th>Name</th>
                     <th>Offense</th>
                     <th>Fine</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -189,6 +190,7 @@
                             <td>@item.Name</td>
                             <td>@item.Offense</td>
                             <td>@item.Fine</td>
+                            <td><button class="btn btn-close btn-sm" @onclick="(() => RemoveViolation(item))"></button></td>
                         </tr>
                     }
                 }
@@ -252,6 +254,7 @@
             </div>
         }
     </div>
+
     <hr />
 
     <h4>VI. Item(s) Confiscated</h4>
@@ -260,9 +263,7 @@
             <div class="col-md-4">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" @onchange="SelectedLicense" id="driverLicense">
-                    <label class="form-check-label" for="driverLicense">
-                        Driver's License
-                    </label>
+                    <label class="form-check-label" for="driverLicense">Driver's License</label>
                 </div>
             </div>
             <div class="col-md-4">
@@ -321,9 +322,7 @@
                             </div>
                         </div>
                     }
-                    <label class="form-check-label" for="motorVehicle">
-                        Motor Vehicle
-                    </label>
+                    <label class="form-check-label" for="motorVehicle">Motor Vehicle</label>
 
                 </div>
             </div>

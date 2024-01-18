@@ -5,7 +5,7 @@ namespace LokataAdministrative2.Services.ViolationsClient
 {
     public interface IViolationClient : IClient<ViolationDto>
     {
-        Task<List<ViolationDto>?> GetRequestByCategoryId(string id, string token);
+        Task<List<ViolationDto>> GetRequestByCategoryId(string id, string token);
     }
     public class ViolationClient : IViolationClient
     {
