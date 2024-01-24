@@ -11,17 +11,19 @@ namespace LokataAdministrative2.Pages.AdminPage
         public string IssuedTicketId { get; set; } = string.Empty;
         public bool PaymentSummaryPopup { get; set; } = false;
         bool popup = false;
+        bool isCheckedVehicle = false;
 
         readonly CitationDto citation = new();
         readonly OfficerDto officer = new();
         readonly VehicleDto vehicle = new();
         readonly PlaceDto placeApprehended = new();
         readonly AddressDto address = new();
-        UserViolationDto violation = new();
+        UserViolationDto userViolation = new();
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
         ImpoundedAreaDto? impoundingArea;
         PaymentSummaryDto? paymentSummary;
+        ViolationDto? violationTemp = new();
 
         List<ProvinceDto> provinces = new();
         List<CityDto> cities = new();
@@ -29,24 +31,34 @@ namespace LokataAdministrative2.Pages.AdminPage
         List<UserViolationDto> userViolations = new();
         List<ViolationCategoryDto> categories = new();
         List<ViolationDto> violations = new();
-        List<ViolationFeeDto> violationFees = new();
+        //List<ViolationFeeDto> violationFees = new();
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
         List<ImpoundedAreaDto> impoundingAreas = new();
         readonly List<string> itemConfiscated = new();
 
-        private void ShowPopup() => popup = true;
-        private void CloseDialog() => popup = false;
+        private void ShowPopup()
+        {
+            popup = true;
+        }
+
+        private void CloseDialog()
+        {
+            popup = false;
+        }
+
         private void ClosePaymentSummary()
         {
+            isCheckedVehicle = false;
+            itemConfiscated.Remove("Motor Vehicle");
             PaymentSummaryPopup = false;
         }
 
         private void SaveViolations()
         {
-            userViolations.Add(violation);
+            userViolations.Add(userViolation);
             popup = false;
-            violation = new();
+            userViolation = new();
         }
 
         private void SavePaymentsummary()
@@ -100,17 +112,18 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void SelectedVehicle(ChangeEventArgs e)
         {
-            if ((bool)e.Value!)
+            isCheckedVehicle = (bool)e.Value!;
+            if (isCheckedVehicle)
             {
                 PaymentSummaryPopup = true;
                 itemConfiscated.Add("Motor Vehicle");
-                vehicle.IsImpounded = true;
+                vehicle.IsImpounded = isCheckedVehicle;
             }
             else
             {
-                paymentSummary = new();
+                paymentSummary = null;
                 itemConfiscated.Remove("Motor Vehicle");
-                vehicle.IsImpounded = false;
+                vehicle.IsImpounded = isCheckedVehicle;
             }
         }
 
@@ -195,29 +208,29 @@ namespace LokataAdministrative2.Pages.AdminPage
 
             if (violationEvent.Value!.ToString()! == "0")
             {
-                violationFees.Clear();
+                //violationFees.Clear();
                 return;
             }
 
             violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
-            violation.Category = violationEvent.Value!.ToString()!;
+            userViolation.Category = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
 
-        private async void ViolationClicked(ChangeEventArgs violationEvent)
+        private void ViolationClicked(ChangeEventArgs violationEvent)
         {
-            violationFees.Clear();
+            //violationFees.Clear();
             if (violationEvent.Value!.ToString()! == "0") return;
 
-            violationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
-            violation.Name = violationEvent.Value!.ToString()!;
+            violationTemp = violations.First(i => i.Name == violationEvent.Value!.ToString()!);
+            userViolation.Name = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
 
         private void ViolationFeeClicked(ChangeEventArgs violationFeeEvent)
         {
-            violation.Offense = violationFeeEvent.Value!.ToString()!.Substring(0, 1);
-            violation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()!.Substring(3));
+            userViolation.Offense = violationFeeEvent.Value!.ToString()![..1];
+            userViolation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()![3..]);
             this.StateHasChanged();
         }
 
@@ -248,7 +261,10 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
         }
 
-        private void RemoveViolation(UserViolationDto violation) => userViolations.Remove(violation);
+        private void RemoveViolation(UserViolationDto violation)
+        {
+            userViolations.Remove(violation);
+        }
 
         private void MapCitationData()
         {

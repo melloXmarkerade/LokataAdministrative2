@@ -1,4 +1,6 @@
 ﻿using LokataAdministrative2.Models;
+using LokataAdministrative2.Models.Users;
+using LokataAdministrative2.Services.AdminClient;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services.ViolationsClient
@@ -16,19 +18,22 @@ namespace LokataAdministrative2.Services.ViolationsClient
             violationClient = violationCatClient;
         }
 
-        public Task PostRequest(ViolationDto dto, string token)
+        public async Task PostRequest(ViolationDto dto, string token)
         {
-            throw new NotImplementedException();
+            AuthenticateToken(token);
+            await violationClient.PostAsJsonAsync("api/violations", dto);
         }
 
-        public Task PutRequest(ViolationDto dto, string token)
+        public async Task PutRequest(ViolationDto dto, string token)
         {
-            throw new NotImplementedException();
+            AuthenticateToken(token);
+            await violationClient.PutAsJsonAsync($"api/violations/{dto.Id}", dto);
         }
 
-        public Task DeleteRequest(string id, string token)
+        public async Task DeleteRequest(string id, string token)
         {
-            throw new NotImplementedException();
+            AuthenticateToken(token);
+            await violationClient.DeleteAsync($"api/violations/{id}");
         }
 
         public Task<ViolationDto?> GetRequestById(string id, string token)
@@ -36,19 +41,24 @@ namespace LokataAdministrative2.Services.ViolationsClient
             throw new NotImplementedException();
         }
 
-        public async Task<List<ViolationDto>?> GetRequestByCategoryId(string id, string token)
+        public async Task<List<ViolationDto>> GetRequestByCategoryId(string id, string token)
         {
             AuthenticateToken(token);
             var response = await violationClient.GetAsync($"api/violations/{id}");
             if (!response.IsSuccessStatusCode)
-                return null;
+                return null!;
 
             return response.Content.ReadFromJsonAsync<List<ViolationDto>>().Result!;
         }
 
-        public Task<List<ViolationDto>?> GetAllRequest(string token)
+        public async Task<List<ViolationDto>> GetAllRequest(string token)
         {
-            throw new NotImplementedException();
+            AuthenticateToken(token);
+            var response = await violationClient.GetAsync($"api/violations");
+            if (!response.IsSuccessStatusCode)
+                return null!;
+
+            return await response.Content.ReadFromJsonAsync<List<ViolationDto>>();
         }
 
         public void AuthenticateToken(string token)

@@ -296,12 +296,9 @@ else
                                                             <label class="form-label">Offense</label>
                                                             <select class="form-select" @onchange="ViolationFeeClicked">
                                                                 <option value="">-- Select Offense --</option>
-                                                                @foreach (var item in ViolationFees)
-                                                                {
-                                                                    <option value="1 + @item.FirstOffense">1st Offense: @item.FirstOffense</option>
-                                                                    <option value="2 + @item.SecondOffense">2nd Offense: @item.SecondOffense</option>
-                                                                    <option value="3 + @item.ThirdOffense">3rd Offense: @item.ThirdOffense</option>
-                                                                }
+                                                                <option value="1 + @violationTemp!.ViolationFees!.FirstOffense">1st Offense: @violationTemp!.ViolationFees!.FirstOffense</option>
+                                                                <option value="2 + @violationTemp!.ViolationFees!.SecondOffense">2nd Offense: @violationTemp!.ViolationFees!.SecondOffense</option>
+                                                                <option value="3 + @violationTemp!.ViolationFees!.ThirdOffense">3rd Offense: @violationTemp!.ViolationFees!.ThirdOffense</option>
                                                             </select>
                                                         </div>
                                                     </div>

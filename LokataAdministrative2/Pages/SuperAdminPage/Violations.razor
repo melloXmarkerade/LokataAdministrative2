@@ -1,0 +1,95 @@
+﻿@page "/violations"
+@attribute [Authorize(Roles = "SuperAdmin")]
+@inject SweetAlertService Swal
+
+
+<h2>Violations</h2>
+<button class="btn btn-primary mb-3" @onclick="AddViolation">Add Violation</button>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Category</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var violation in ViolationList)
+        {
+            <tr>
+                <td>@(ViolationList.IndexOf(violation) + 1)</td>
+                <td>@violation.Category</td>
+                <td>@violation.Name</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" @onclick="(() => ViewViolation(violation))"><i class="oi oi-eye"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewViolationPopup)
+{
+    <EditForm Model="Violation" OnValidSubmit="SaveViolation">
+        <DataAnnotationsValidator />
+        <div class="modal" tabindex="-1" style="display:block">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Violation Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick=CloseViewViolation></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Category</label>
+                                <InputText class="form-control" @bind-Value="Violation!.Category"></InputText>
+                                <ValidationMessage For="@(() => Violation!.Category)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">Name</label>
+                                <InputText class="form-control" @bind-Value="Violation.Name"></InputText>
+                                <ValidationMessage For="@(() => Violation!.Name)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">1st Offense</label>
+                                <InputText class="form-control" @bind-Value="FirstOffense"></InputText>
+                                <ValidationMessage For="@(() => Violation!.ViolationFees!.FirstOffense)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">2nd Offense</label>
+                                <InputText class="form-control" @bind-Value="SecondOffense"></InputText>
+                                <ValidationMessage For="@(() => Violation!.ViolationFees!.SecondOffense)"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md mb-3">
+                                <label class="form-label fw-bold">3rd Offense</label>
+                                <InputText class="form-control" @bind-Value="ThirdOffense"></InputText>
+                                <ValidationMessage For="@(() => Violation!.ViolationFees!.ThirdOffense)"></ValidationMessage>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        @if (IsSaveViolation)
+                        {
+                            <button type="submit" class="btn btn-success">Save Violation</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick=@(async ()=> await UpdateViolation())>Update Violation</button>
+                            <button type="button" class="btn btn-danger" @onclick="@(async()=> await DeleteViolation())">Delete Violation</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

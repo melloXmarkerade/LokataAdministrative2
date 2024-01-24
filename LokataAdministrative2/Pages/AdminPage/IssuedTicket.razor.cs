@@ -1,6 +1,7 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
+using LokataAdministrative2.Pages.SuperAdminPage;
 using Microsoft.AspNetCore.Components;
 
 namespace LokataAdministrative2.Pages.AdminPage
@@ -28,7 +29,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         private List<BarangayDto> Barangays { get; set; } = new();
         private List<ViolationCategoryDto> Categories { get; set; } = new();
         private List<ViolationDto> Violations { get; set; } = new();
-        private List<ViolationFeeDto> ViolationFees { get; set; } = new();
+        //private List<ViolationFeeDto> ViolationFees { get; set; } = new();
         private UserViolationDto Violation { get; set; } = new(); 
         private bool Popup { get; set; } = false;
         public bool PaymentSummaryPopup { get; set; } = false;
@@ -45,6 +46,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         TowingRateDto? towingRate;
         ImpoundedAreaDto? impoundingArea;
         PaymentSummaryDto? paymentSummary;
+        ViolationDto? violationTemp;
 
         private void ShowViolationPopup() => ViolationPopup = true;
 
@@ -233,7 +235,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
             if (violationEvent.Value!.ToString()! == "0")
             {
-                ViolationFees.Clear();
+                //ViolationFees.Clear();
                 return;
             }
 
@@ -242,12 +244,12 @@ namespace LokataAdministrative2.Pages.AdminPage
             this.StateHasChanged();
         }
 
-        private async void ViolationClicked(ChangeEventArgs violationEvent)
+        private void ViolationClicked(ChangeEventArgs violationEvent)
         {
-            ViolationFees.Clear();
+            //ViolationFees.Clear();
             if (violationEvent.Value!.ToString()! == "0") return;
 
-            ViolationFees = await violationFeeClient.GetRequestByViolationId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
+            violationTemp = Violations.First(i => i.Name == violationEvent.Value!.ToString()!);
             Violation.Name = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
