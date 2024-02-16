@@ -1,6 +1,4 @@
 ﻿using LokataAdministrative2.Models.Users;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.Net.Http.Json;
 
 namespace LokataAdministrative2.Services.AdminClient

@@ -50,7 +50,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             var selectedArea = impoundingAreas.FirstOrDefault(e => e.ImpoundingArea == ImpoundingAreaSelected);
             Vehicle.Location = selectedArea;
 
-            await notificationClient.PostRequest(notif, null);
+            await notificationClient.PostRequest(notif, null!);
             await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
             await Swal.FireAsync(new SweetAlertOptions
@@ -64,7 +64,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task ClaimedVehicle()
         {
-            if(receipt.Id is null)
+            if(receipt!.Id is null)
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
@@ -128,8 +128,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void ImpoundingAreaOnValueChanged(string value)
         {
-            if (value == "0")
-                return;
+            if (value == "0") return;
             ImpoundingAreaSelected = value;
         }
     }

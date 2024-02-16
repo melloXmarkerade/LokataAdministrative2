@@ -1,9 +1,11 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using LokataAdministrative2.Models.Users;
+using LokataAdministrative2.Services.AdminClient;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LokataAdministrative2.Pages.Login
 {
-    public partial class Signup
+    public partial class SignUp
     {
         AdminDto admin = new();
 
@@ -13,7 +15,7 @@ namespace LokataAdministrative2.Pages.Login
 
             var result = await adminAuthClient.SignupPostRequest(admin);
 
-            if(result is not "Signup Success")
+            if (result is not "Signup Success")
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
