@@ -112,7 +112,6 @@ namespace LokataAdministrative2.Pages.UserPage
                 Icon = SweetAlertIcon.Success
             });
 
-
             RecPopup = false;
         }
 
@@ -155,7 +154,7 @@ namespace LokataAdministrative2.Pages.UserPage
 
             if (isApproved)
             {
-                req = receipt;
+                approvedReceipt = receipt;
                 receipt.IsApproved = true;
             }
             else

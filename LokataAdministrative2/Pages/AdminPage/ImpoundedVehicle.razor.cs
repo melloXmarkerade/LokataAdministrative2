@@ -50,14 +50,21 @@ namespace LokataAdministrative2.Pages.AdminPage
             var selectedArea = impoundingAreas.FirstOrDefault(e => e.ImpoundingArea == ImpoundingAreaSelected);
             Vehicle.Location = selectedArea;
 
-            await notificationClient.PostRequest(notif, null!);
-            await vehicleImpoundedClient.PutRequest(Vehicle, token);
+            await Task.WhenAll(notificationClient.PostRequest(notif, null!), vehicleImpoundedClient.PutRequest(Vehicle, token), 
+                Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Updated Area Success.",
+                    Icon = SweetAlertIcon.Success
+                }));
 
-            await Swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Updated Area Success.",
-                Icon = SweetAlertIcon.Success
-            });
+            //await notificationClient.PostRequest(notif, null!);
+            //await vehicleImpoundedClient.PutRequest(Vehicle, token);
+
+            //await Swal.FireAsync(new SweetAlertOptions
+            //{
+            //    Title = "Updated Area Success.",
+            //    Icon = SweetAlertIcon.Success
+            //});
 
             VehiclePopup = false;
         }
@@ -98,9 +105,9 @@ namespace LokataAdministrative2.Pages.AdminPage
                 Message = $"Your vehicle with a plate no. {Vehicle.PlateNo} has been claimed."
             };
 
-            await notificationClient.PostRequest(notif, null!);
-            await citationClient.PutRequest(citation, token);
-            Thread.Sleep(2000);
+            await Task.WhenAll(notificationClient.PostRequest(notif, null!), citationClient.PutRequest(citation, token));
+            //Thread.Sleep(2000);
+            await Task.Delay(2000);
             await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
             await Swal.FireAsync(new SweetAlertOptions

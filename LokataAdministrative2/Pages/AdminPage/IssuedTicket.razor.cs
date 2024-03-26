@@ -82,7 +82,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             else
             {
                 filteredTickets = citationList!.Where(ticket => ticket.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) ||
-                                                                ticket.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+                    ticket.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
 
@@ -145,7 +145,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 BarangaySelectedOption = citation.Address!.Barangay!;
 
                 Barangays = await barangayClient.GetRequestByCityId(CitySelectedOption, await tokenProvider.GetTokenAsync());
-                Popup     = true;                
+                Popup = true;                
             }
         }
 
@@ -207,7 +207,8 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void StorageRateClicked(ChangeEventArgs storageEvent)
         {
-            if (storageEvent.Value!.ToString() == "0") return;
+            if (storageEvent.Value!.ToString() == "0") 
+                return;
 
             storageRate = storages.FirstOrDefault(s => s.Id == storageEvent.Value.ToString());
             this.StateHasChanged();
@@ -215,7 +216,8 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void TowingRateClicked(ChangeEventArgs towingEvent)
         {
-            if (towingEvent.Value!.ToString() == "0") return;
+            if (towingEvent.Value!.ToString() == "0") 
+                return;
 
             towingRate = towings.FirstOrDefault(t => t.Id == towingEvent.Value.ToString());
             this.StateHasChanged();
@@ -223,7 +225,8 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void ImpoundingAreaClicked(ChangeEventArgs impoundingEvent)
         {
-            if (impoundingEvent.Value!.ToString() == "0") return;
+            if (impoundingEvent.Value!.ToString() == "0") 
+                return;
 
             impoundingArea = impoundingAreas.FirstOrDefault(t => t.Id == impoundingEvent.Value.ToString());
             this.StateHasChanged();

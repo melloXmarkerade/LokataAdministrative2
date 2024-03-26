@@ -78,10 +78,9 @@ namespace LokataAdministrative2.Pages.AdminPage
         private double TotalViolationFees()
         {
             double totalViolations = 0;
-            userViolations.ForEach(v =>
-            {
-                totalViolations += v.Fine;
-            });
+
+            userViolations.ForEach(v => { totalViolations += v.Fine; });
+
             return totalViolations;
         }
 
