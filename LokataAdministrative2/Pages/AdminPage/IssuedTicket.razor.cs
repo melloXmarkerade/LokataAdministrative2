@@ -51,18 +51,15 @@ namespace LokataAdministrative2.Pages.AdminPage
         ViolationDto? violationTemp;
 
         private void ShowViolationPopup() => ViolationPopup = true;
-
         private void ClosePaymentSummary() => PaymentSummaryPopup = false;
+        private void CloseViewCitationPopup() => ViewCitationPopup = false;
+        private void ViolationCloseDialog() => ViolationPopup = false;
 
         private void ClosePopup()
         {
             BarangaySelectedOption = Citation!.Address!.Barangay!;
             Popup = false;
         }
-
-        private void CloseViewCitationPopup() => ViewCitationPopup = false;
-
-        private void ViolationCloseDialog() => ViolationPopup = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -98,7 +95,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void SelectedLicenseType(ChangeEventArgs e)
         {
-            if (e.Value!.ToString()! != null)
+            if (e.Value!.ToString() is not null)
                 Citation!.LicenseType = e.Value!.ToString()!;
         }
 
@@ -121,11 +118,11 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
         }
 
-        private void ViewTicket(CitationDto dto)
+        private void ViewTicket(CitationDto citation)
         {
-            if(dto is not null)
+            if(citation is not null)
             {
-                Citation = dto;
+                Citation = citation;
                 SelectVehicle = Citation!.ItemConfiscated!.Contains("Motor Vehicle");
                 SelectLicense = Citation!.ItemConfiscated!.Contains("Driver's License");
                 LicenseTypeChecked();
@@ -239,10 +236,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             Violations.Clear();
 
             if (violationEvent.Value!.ToString()! == "0")
-            {
-                //ViolationFees.Clear();
                 return;
-            }
 
             Violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, token);
             Violation.Category = violationEvent.Value!.ToString()!;
@@ -251,7 +245,6 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void ViolationClicked(ChangeEventArgs violationEvent)
         {
-            //ViolationFees.Clear();
             if (violationEvent.Value!.ToString()! == "0") 
                 return;
 
@@ -297,10 +290,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         private async Task UpdateChanges()
         {
             double totalViolations = 0;
-            Citation!.Violations!.ForEach(v =>
-            {
-                totalViolations += v.Fine;
-            });
+            Citation!.Violations!.ForEach(v => { totalViolations += v.Fine; });
 
             Citation!.PaymentSummary!.TotalViolationFees = totalViolations;
             Citation!.Address!.Province = ProvinceSelectedOption;
