@@ -35,7 +35,9 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
             else
             {
-                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || 
+                                                      vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || 
+                                                      vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
 
@@ -48,7 +50,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 Message = $"Your vehicle has been moved to {ImpoundingAreaSelected}"
             };
 
-            var selectedArea = impoundingAreas.FirstOrDefault(e => e.ImpoundingArea == ImpoundingAreaSelected);
+            var selectedArea = impoundingAreas.Find(e => e.ImpoundingArea == ImpoundingAreaSelected);
             Vehicle.Location = selectedArea;
 
             await Task.WhenAll(notificationClient.PostRequest(notif, null!), vehicleImpoundedClient.PutRequest(Vehicle, token), 
