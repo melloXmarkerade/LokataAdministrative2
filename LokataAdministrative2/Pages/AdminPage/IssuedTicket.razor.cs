@@ -1,4 +1,5 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Enums;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using LokataAdministrative2.Pages.SuperAdminPage;
@@ -37,6 +38,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         private bool ViolationPopup { get; set; } = false;
         private CitationDto? Citation { get; set; }
 
+        string token = string.Empty;
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
         List<ImpoundedAreaDto> impoundingAreas = new();
@@ -64,7 +66,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         protected override async Task OnInitializedAsync()
         {
-            var token = await tokenProvider.GetTokenAsync();
+            token = await tokenProvider.GetTokenAsync();
             citationList = await citationClient.GetAllRequest(token);
             filteredTickets = citationList;
             Provinces = await provinceClient.GetAllRequest(token);
@@ -81,14 +83,14 @@ namespace LokataAdministrative2.Pages.AdminPage
                 filteredTickets = citationList!;
             else
             {
-                filteredTickets = citationList!.Where(ticket => ticket.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) ||
-                    ticket.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredTickets = citationList!.Where(ticket => ticket.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || 
+                                                      ticket.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
 
         private void LicenseTypeChecked()
         {
-            if (Citation!.LicenseType == "Professional")
+            if (Citation!.LicenseType == nameof(LicenseType.Professional))
                 SelectProfessional = true;
             else
                 SelectNonProfessional = true;
@@ -113,8 +115,8 @@ namespace LokataAdministrative2.Pages.AdminPage
 
             if(delete.IsConfirmed)
             {
-                var citation = filteredTickets.Where(e => e.Id == id).FirstOrDefault();
-                await citationClient.DeleteRequest(id, await tokenProvider.GetTokenAsync());
+                var citation = filteredTickets.Find(e => e.Id == id);
+                await citationClient.DeleteRequest(id, token);
                 filteredTickets.Remove(citation!);
             }
         }
@@ -144,7 +146,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 CitySelectedOption     = citation.Address!.City!;
                 BarangaySelectedOption = citation.Address!.Barangay!;
 
-                Barangays = await barangayClient.GetRequestByCityId(CitySelectedOption, await tokenProvider.GetTokenAsync());
+                Barangays = await barangayClient.GetRequestByCityId(CitySelectedOption, token);
                 Popup = true;                
             }
         }
@@ -185,7 +187,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
 
             ProvinceSelectedOption = value;
-            Cities = await cityClient.GetRequestByProvinceId(value, await tokenProvider.GetTokenAsync());
+            Cities = await cityClient.GetRequestByProvinceId(value, token);
         }
 
         private async Task CityOnValueChanged(string value)
@@ -196,7 +198,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 return;
 
             CitySelectedOption = value;
-            Barangays = await barangayClient.GetRequestByCityId(value, await tokenProvider.GetTokenAsync());
+            Barangays = await barangayClient.GetRequestByCityId(value, token);
         }
 
         private Task BarangayOnValueChanged(string value)
@@ -210,7 +212,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             if (storageEvent.Value!.ToString() == "0") 
                 return;
 
-            storageRate = storages.FirstOrDefault(s => s.Id == storageEvent.Value.ToString());
+            storageRate = storages.Find(s => s.Id == storageEvent.Value.ToString());
             this.StateHasChanged();
         }
 
@@ -219,7 +221,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             if (towingEvent.Value!.ToString() == "0") 
                 return;
 
-            towingRate = towings.FirstOrDefault(t => t.Id == towingEvent.Value.ToString());
+            towingRate = towings.Find(t => t.Id == towingEvent.Value.ToString());
             this.StateHasChanged();
         }
 
@@ -228,7 +230,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             if (impoundingEvent.Value!.ToString() == "0") 
                 return;
 
-            impoundingArea = impoundingAreas.FirstOrDefault(t => t.Id == impoundingEvent.Value.ToString());
+            impoundingArea = impoundingAreas.Find(t => t.Id == impoundingEvent.Value.ToString());
             this.StateHasChanged();
         }
 
@@ -242,7 +244,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 return;
             }
 
-            Violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
+            Violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, token);
             Violation.Category = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
@@ -250,17 +252,18 @@ namespace LokataAdministrative2.Pages.AdminPage
         private void ViolationClicked(ChangeEventArgs violationEvent)
         {
             //ViolationFees.Clear();
-            if (violationEvent.Value!.ToString()! == "0") return;
+            if (violationEvent.Value!.ToString()! == "0") 
+                return;
 
-            violationTemp = Violations.First(i => i.Name == violationEvent.Value!.ToString()!);
+            violationTemp = Violations.Find(i => i.Name == violationEvent.Value!.ToString()!);
             Violation.Name = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
 
         private void ViolationFeeClicked(ChangeEventArgs violationFeeEvent)
         {
-            Violation.Offense = violationFeeEvent.Value!.ToString()!.Substring(0, 1);
-            Violation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()!.Substring(3));
+            Violation.Offense = violationFeeEvent.Value!.ToString()![..1];
+            Violation.Fine = Double.Parse(violationFeeEvent.Value!.ToString()![3..]);
             this.StateHasChanged();
         }
 
@@ -301,10 +304,10 @@ namespace LokataAdministrative2.Pages.AdminPage
 
             Citation!.PaymentSummary!.TotalViolationFees = totalViolations;
             Citation!.Address!.Province = ProvinceSelectedOption;
-            Citation.Address.City       = CitySelectedOption;
-            Citation.Address.Barangay   = BarangaySelectedOption;
+            Citation.Address.City = CitySelectedOption;
+            Citation.Address.Barangay = BarangaySelectedOption;
 
-            await citationClient.PutRequest(Citation, await tokenProvider.GetTokenAsync());
+            await citationClient.PutRequest(Citation, token);
 
             await Swal.FireAsync(new SweetAlertOptions
             {

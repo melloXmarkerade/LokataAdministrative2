@@ -1,4 +1,5 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Enums;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,8 @@ namespace LokataAdministrative2.Pages.AdminPage
         [Parameter]
         public string IssuedTicketId { get; set; } = string.Empty;
         public bool PaymentSummaryPopup { get; set; } = false;
+        
+        string token = string.Empty;
         bool popup = false;
         bool isCheckedVehicle = false;
 
@@ -18,6 +21,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         readonly VehicleDto vehicle = new();
         readonly PlaceDto placeApprehended = new();
         readonly AddressDto address = new();
+
         UserViolationDto userViolation = new();
         StorageRateDto? storageRate;
         TowingRateDto? towingRate;
@@ -86,13 +90,16 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task OnValidSubmit()
         {
-            if (await CheckEmptyViolations()) return;
-            if (await CheckExistingTctNo()) return;
+            if (await CheckEmptyViolations()) 
+                return;
+
+            if (await CheckExistingTctNo()) 
+                return;
             
             CheckPaymentSummary();
             MapCitationData();
 
-            await citationClient.PostRequest(citation, await tokenProvider.GetTokenAsync());
+            await citationClient.PostRequest(citation, token);
             await Swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Record Success",
@@ -112,6 +119,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         private void SelectedVehicle(ChangeEventArgs e)
         {
             isCheckedVehicle = (bool)e.Value!;
+
             if (isCheckedVehicle)
             {
                 PaymentSummaryPopup = true;
@@ -136,7 +144,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         protected async override Task OnInitializedAsync()
         {
-            var token = await tokenProvider.GetTokenAsync();
+            token = await tokenProvider.GetTokenAsync();
             provinces = await provinceClient.GetAllRequest(token);
             categories = await violationCatClient.GetAllRequest(token);
             storages = await storageClient.GetAllRequest(token);
@@ -155,7 +163,7 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
 
             address.Province = provinceEvent.Value!.ToString()!;
-            cities = await cityClient.GetRequestByProvinceId(provinceEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
+            cities = await cityClient.GetRequestByProvinceId(provinceEvent.Value!.ToString()!, token);
             this.StateHasChanged();
         }
 
@@ -167,7 +175,7 @@ namespace LokataAdministrative2.Pages.AdminPage
                 return;
 
             address.City = cityEvent.Value!.ToString()!;
-            barangays = await barangayClient.GetRequestByCityId(cityEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
+            barangays = await barangayClient.GetRequestByCityId(cityEvent.Value!.ToString()!, token);
             this.StateHasChanged();
         }
 
@@ -179,25 +187,28 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void StorageRateClicked(ChangeEventArgs storageEvent)
         {
-            if (storageEvent.Value!.ToString() == "0") return;
+            if (storageEvent.Value!.ToString() == "0") 
+                return;
 
-            storageRate = storages.FirstOrDefault(s => s.Id == storageEvent.Value.ToString());
+            storageRate = storages.Find(s => s.Id == storageEvent.Value.ToString());
             this.StateHasChanged();
         }
 
         private void TowingRateClicked(ChangeEventArgs towingEvent)
         {
-            if (towingEvent.Value!.ToString() == "0") return;
+            if (towingEvent.Value!.ToString() == "0") 
+                return;
 
-            towingRate = towings.FirstOrDefault(t => t.Id == towingEvent.Value.ToString());
+            towingRate = towings.Find(t => t.Id == towingEvent.Value.ToString());
             this.StateHasChanged();
         }
 
         private void ImpoundingAreaClicked(ChangeEventArgs impoundingEvent)
         {
-            if (impoundingEvent.Value!.ToString() == "0") return;
+            if (impoundingEvent.Value!.ToString() == "0") 
+                return;
 
-            impoundingArea = impoundingAreas.FirstOrDefault(t => t.Id == impoundingEvent.Value.ToString());
+            impoundingArea = impoundingAreas.Find(t => t.Id == impoundingEvent.Value.ToString());
             this.StateHasChanged();
         }
 
@@ -206,12 +217,9 @@ namespace LokataAdministrative2.Pages.AdminPage
             violations.Clear();
 
             if (violationEvent.Value!.ToString()! == "0")
-            {
-                //violationFees.Clear();
                 return;
-            }
 
-            violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, await tokenProvider.GetTokenAsync());
+            violations = await violationClient.GetRequestByCategoryId(violationEvent.Value!.ToString()!, token);
             userViolation.Category = violationEvent.Value!.ToString()!;
             this.StateHasChanged();
         }
@@ -219,7 +227,8 @@ namespace LokataAdministrative2.Pages.AdminPage
         private void ViolationClicked(ChangeEventArgs violationEvent)
         {
             //violationFees.Clear();
-            if (violationEvent.Value!.ToString()! == "0") return;
+            if (violationEvent.Value!.ToString()! == "0") 
+                return;
 
             violationTemp = violations.First(i => i.Name == violationEvent.Value!.ToString()!);
             userViolation.Name = violationEvent.Value!.ToString()!;
@@ -242,8 +251,10 @@ namespace LokataAdministrative2.Pages.AdminPage
                     Title = "Add Violation",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return true;
             }
+
             return false;
         }
 
@@ -267,7 +278,7 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void MapCitationData()
         {
-            vehicle.Status = "Unsettled";
+            vehicle.Status = nameof(VehicleStatus.Unsettled);
             vehicle.TctNo = citation.TctNo;
             vehicle.LicenseNo = citation.LicenseNo;
             vehicle.DateImpounded = placeApprehended.Date;
@@ -284,19 +295,18 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task<bool> CheckExistingTctNo()
         {
-            var isExisted = await citationClient.CheckExistedTctNo(citation.TctNo!, await tokenProvider.GetTokenAsync());
-
-            if(isExisted)
+            if(await citationClient.CheckExistedTctNo(citation.TctNo!, token))
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Tct No. is existed",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return true;
             }
-            return false;
 
+            return false;
         }
     }
 }

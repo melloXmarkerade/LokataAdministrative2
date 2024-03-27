@@ -22,6 +22,7 @@ namespace LokataAdministrative2.Pages.Login
                     Title = result,
                     Icon = SweetAlertIcon.Error
                 });
+
                 return;
             }
 

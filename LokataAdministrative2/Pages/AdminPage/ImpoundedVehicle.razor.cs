@@ -1,4 +1,5 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
+using LokataAdministrative2.Enums;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using LokataAdministrative2.Models.Users;
@@ -7,14 +8,14 @@ namespace LokataAdministrative2.Pages.AdminPage
 {
     public partial class ImpoundedVehicle
     {
-        string token = "";
+        string token = string.Empty;
         UserDto? user;
         CitationDto? citation;
         UserReceipt? receipt;
         List<VehicleDto> vehicleList = new();
         List<VehicleDto> filteredVehicles = new();
         List<ImpoundedAreaDto> impoundingAreas = new();
-        public string ImpoundingAreaSelected { get; set; } = string.Empty;
+        private string ImpoundingAreaSelected { get; set; } = string.Empty;
         private VehicleDto Vehicle { get; set; } = new();
         private bool VehiclePopup { get; set; } = false;
 
@@ -29,12 +30,12 @@ namespace LokataAdministrative2.Pages.AdminPage
         void UpdateFilteredVehicle(string searchItem)
         {
             if (string.IsNullOrEmpty(searchItem))
+            {
                 filteredVehicles = vehicleList;
+            }
             else
             {
-                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) ||
-                    vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) ||
-                    vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
 
@@ -78,26 +79,26 @@ namespace LokataAdministrative2.Pages.AdminPage
                     Title = "Need to Submit the Payment Receipt First.",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return;
             }
-            else
+
+            if (!receipt.Receipt!.IsApproved)
             {
-                if(!receipt.Receipt!.IsApproved)
+                await Swal.FireAsync(new SweetAlertOptions
                 {
-                    await Swal.FireAsync(new SweetAlertOptions
-                    {
-                        Title = "Validate and Approved Receipt First",
-                        Icon = SweetAlertIcon.Info
-                    });
-                    return;
-                }
+                    Title = "Validate and Approved Receipt First",
+                    Icon = SweetAlertIcon.Info
+                });
+
+                return;
             }
 
             user = await userClient.GetRequestById(Vehicle.LicenseNo!, null!);
             citation = await citationClient.GetByTctNo(Vehicle.TctNo!, token);
             Vehicle.IsImpounded = false;
             citation.IsSettled = true;
-            Vehicle.Status = "Settled";
+            Vehicle.Status = nameof(VehicleStatus.Settled);
 
             var notif = new NotificationDto
             {
@@ -106,7 +107,6 @@ namespace LokataAdministrative2.Pages.AdminPage
             };
 
             await Task.WhenAll(notificationClient.PostRequest(notif, null!), citationClient.PutRequest(citation, token));
-            //Thread.Sleep(2000);
             await Task.Delay(2000);
             await vehicleImpoundedClient.PutRequest(Vehicle, token);
 
@@ -123,7 +123,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         {
             ImpoundingAreaSelected = vehicle.Location!.ImpoundingArea;
             Vehicle = vehicle;
-            receipt = await userReceipt.GetByTctNo(Vehicle.TctNo!, await tokenProvider.GetTokenAsync());
+            receipt = await userReceipt.GetByTctNo(Vehicle.TctNo!, token);
             VehiclePopup = true;
         }
 
@@ -135,7 +135,9 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void ImpoundingAreaOnValueChanged(string value)
         {
-            if (value == "0") return;
+            if (value == "0")
+                return;
+
             ImpoundingAreaSelected = value;
         }
     }

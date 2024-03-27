@@ -5,12 +5,10 @@ namespace LokataAdministrative2.Pages.Login
 {
     public partial class Login
     {
-        AdminLogin login = new();
+        readonly AdminLogin login = new();
 
         private async Task SubmitCredentials()
         {
-
-
             var result = await adminAuthClient.LoginPostRequest(login);
 
             if (result.ToString() is "Admin Not Found" or "Wrong password.")
@@ -21,6 +19,7 @@ namespace LokataAdministrative2.Pages.Login
                     Icon = SweetAlertIcon.Error,
                     ShowCloseButton = true
                 });
+
                 return;
             }
 
@@ -32,6 +31,7 @@ namespace LokataAdministrative2.Pages.Login
                     Icon = SweetAlertIcon.Info,
                     ShowCloseButton = true
                 });
+
                 return;
             }
 

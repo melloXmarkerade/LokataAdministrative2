@@ -13,18 +13,19 @@ namespace LokataAdministrative2.Pages.UserPage
         private bool RecPopup { get; set; } = false;
         bool subjectForImpound = false;
 
+        string token = string.Empty;
         FileRequirement approvedReceipt = new();
         FileRequirement declinedReceipt = new();
 
         protected override async Task OnInitializedAsync()
         {
-            var token = await tokenProvider.GetTokenAsync();
+            token = await tokenProvider.GetTokenAsync();
             Receipts = await userReceipt.GetAllRequest(token);
         }
 
         private async Task ViewReceipt(UserReceipt receipt)
         {
-            UserReq = await userRequirement.GetByTctNo(receipt.TctNo, await tokenProvider.GetTokenAsync());
+            UserReq = await userRequirement.GetByTctNo(receipt.TctNo, token);
             Receipt = receipt;
             subjectForImpound = await vehicleImpoundedClient.CheckTctNoHasImpoundVehicle(Receipt.TctNo);
             RecPopup = true;
@@ -32,11 +33,6 @@ namespace LokataAdministrative2.Pages.UserPage
 
         private async Task ApproveReceipt(FileRequirement receipt)
         {
-            //if(subjectForImpound)
-            //{
-
-            //}
-
             if (UserReq.Id is null && subjectForImpound == true)
             {
                 await Swal.FireAsync(new SweetAlertOptions
@@ -45,6 +41,7 @@ namespace LokataAdministrative2.Pages.UserPage
                     Text = "Owner didn't submitted a requirements.",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return;
             }
 
@@ -78,6 +75,7 @@ namespace LokataAdministrative2.Pages.UserPage
                     Title = "Required to approve or decline receipt",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return;
             }
 
@@ -101,9 +99,8 @@ namespace LokataAdministrative2.Pages.UserPage
             else
                 userRec.Receipt = approvedReceipt;
 
-
             //declinedReceiptReqs.ForEach(e => userReq.Receipt.Add(e));
-            await userReceipt.PutRequest(userRec, await tokenProvider.GetTokenAsync());
+            await userReceipt.PutRequest(userRec, token);
             await notificationClient.PostRequest(notif, null!);
 
             await Swal.FireAsync(new SweetAlertOptions
@@ -141,7 +138,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return "Pending";
         }
 
-        private void RecCloseDialog()
+        private void ReceiptCloseDialog()
         {
             UserReq = null!;
             Receipt = null!;

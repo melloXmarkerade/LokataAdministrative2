@@ -7,16 +7,17 @@ namespace LokataAdministrative2.Pages.UserPage
     public partial class SubmittedRequirements
     {
         private List<UserRequirement> Requirements { get; set; } = new();
-        private UserRequirement Requirement { get; set; } = new();
+        private UserRequirement? Requirement { get; set; } = new();
         private string InputText { get; set; } = string.Empty;
         private bool ReqPopup { get; set; } = false;
 
-        List<FileRequirement> approvedRequirements = new();
-        List<FileRequirement> declinedRequirements = new();
+        string token = string.Empty;
+        readonly List<FileRequirement> approvedRequirements = new();
+        readonly List<FileRequirement> declinedRequirements = new();
 
         protected override async Task OnInitializedAsync()
         {
-            var token = await tokenProvider.GetTokenAsync();
+            token = await tokenProvider.GetTokenAsync();
             Requirements = await userRequirement.GetAllRequest(token);
         }
 
@@ -48,12 +49,13 @@ namespace LokataAdministrative2.Pages.UserPage
                     Text = "Need to approve the requirements before sending a notifications.",
                     Icon = SweetAlertIcon.Info
                 });
+
                 return;
             }
 
             var notif = new NotificationDto
             {
-                Email = Requirement.Email!,
+                Email = Requirement!.Email!,
                 Message = InputText
             };
 
@@ -68,8 +70,8 @@ namespace LokataAdministrative2.Pages.UserPage
             };
 
             declinedRequirements.ForEach(e => userReq.Requirements.Add(e));
-            await userRequirement.PutRequest(userReq, await tokenProvider.GetTokenAsync());
-            await notificationClient.PostRequest(notif, null);
+            await userRequirement.PutRequest(userReq, token);
+            await notificationClient.PostRequest(notif, null!);
 
             await Swal.FireAsync(new SweetAlertOptions
             {
@@ -78,7 +80,6 @@ namespace LokataAdministrative2.Pages.UserPage
             });
 
             ReqPopup = false;
-
         }
 
         static bool IsApproved(FileRequirement req) 
@@ -97,7 +98,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return false;
         }
 
-        private string GetStatus(FileRequirement req)
+        private static string GetStatus(FileRequirement req)
         {
             if (req.IsApproved)
                 return "Approved";
