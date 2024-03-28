@@ -10,10 +10,11 @@ namespace LokataAdministrative2.Pages.UserPage
         private UserRequirement UserReq { get; set; } = new();
         private UserReceipt Receipt { get; set; } = new();
         private string InputText { get; set; } = string.Empty;
-        private bool RecPopup { get; set; } = false;
-        bool subjectForImpound = false;
+        private bool ReceiptPopup { get; set; } = false;
 
+        bool subjectForImpound = false;
         string token = string.Empty;
+        CitationDto? citation;
         FileRequirement approvedReceipt = new();
         FileRequirement declinedReceipt = new();
 
@@ -28,7 +29,7 @@ namespace LokataAdministrative2.Pages.UserPage
             UserReq = await userRequirement.GetByTctNo(receipt.TctNo, token);
             Receipt = receipt;
             subjectForImpound = await vehicleImpoundedClient.CheckTctNoHasImpoundVehicle(Receipt.TctNo);
-            RecPopup = true;
+            ReceiptPopup = true;
         }
 
         private async Task ApproveReceipt(FileRequirement receipt)
@@ -52,7 +53,7 @@ namespace LokataAdministrative2.Pages.UserPage
                 return;
             }
 
-            await CheckApproveRequirements(receipt, approvedReceipt);
+            await CheckApproveRequirements(receipt);
         }            
 
         async void DeclineReceipt(FileRequirement receipt)
@@ -63,11 +64,13 @@ namespace LokataAdministrative2.Pages.UserPage
                 receipt.IsDeclined = true;
             } 
             else
-                await CheckApproveRequirements(receipt, declinedReceipt);
+                await CheckApproveRequirements(receipt);
         }
 
         public async Task SendNotification()
         {
+            citation = await citationClient.GetByTctNo(UserReq.TctNo!, token);
+
             if (Receipt.Receipt!.IsApproved == false && Receipt.Receipt.IsDeclined == false)
             {
                 await Swal.FireAsync(new SweetAlertOptions
@@ -94,14 +97,9 @@ namespace LokataAdministrative2.Pages.UserPage
                 TctNo = Receipt.TctNo
             };
 
-            if (approvedReceipt.FileUrl == string.Empty)
-                userRec.Receipt = declinedReceipt;
-            else
-                userRec.Receipt = approvedReceipt;
-
-            //declinedReceiptReqs.ForEach(e => userReq.Receipt.Add(e));
-            await userReceipt.PutRequest(userRec, token);
-            await notificationClient.PostRequest(notif, null!);
+            CheckFileUrl(userRec);
+            await CheckCitationReceiptIsImpounded();
+            await Task.WhenAll(userReceipt.PutRequest(userRec, token), notificationClient.PostRequest(notif, null!));
 
             await Swal.FireAsync(new SweetAlertOptions
             {
@@ -109,7 +107,21 @@ namespace LokataAdministrative2.Pages.UserPage
                 Icon = SweetAlertIcon.Success
             });
 
-            RecPopup = false;
+            ReceiptPopup = false;
+        }
+
+        private async Task CheckCitationReceiptIsImpounded()
+        {
+            if (!citation!.VehicleDescription!.IsImpounded)
+                await citationClient.PutRequest(citation, token);
+        }
+
+        private void CheckFileUrl(UserReceipt userRec)
+        {
+            if (approvedReceipt.FileUrl == string.Empty)
+                userRec.Receipt = declinedReceipt;
+            else
+                userRec.Receipt = approvedReceipt;
         }
 
         static bool IsApproved(FileRequirement receipt)
@@ -142,10 +154,10 @@ namespace LokataAdministrative2.Pages.UserPage
         {
             UserReq = null!;
             Receipt = null!;
-            RecPopup = false;
+            ReceiptPopup = false;
         }
 
-        private async Task CheckApproveRequirements(FileRequirement receipt, FileRequirement req)
+        private async Task CheckApproveRequirements(FileRequirement receipt)
         {
             var isApproved = UserReq!.Requirements!.All(r => r.IsApproved == true);
 

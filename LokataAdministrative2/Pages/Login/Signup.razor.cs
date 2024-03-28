@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LokataAdministrative2.Pages.Login
 {
-    public partial class SignUp
+    public partial class Signup
     {
         AdminDto admin = new();
 

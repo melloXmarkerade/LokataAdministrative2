@@ -54,6 +54,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         private void ClosePaymentSummary()
         {
             isCheckedVehicle = false;
+            vehicle.IsImpounded = false;
             itemConfiscated.Remove("Motor Vehicle");
             PaymentSummaryPopup = false;
         }
