@@ -69,7 +69,7 @@ namespace LokataAdministrative2.Pages.UserPage
 
         public async Task SendNotification()
         {
-            citation = await citationClient.GetByTctNo(UserReq.TctNo!, token);
+            citation = await citationClient.GetByTctNo(Receipt.TctNo!, token);
 
             if (Receipt.Receipt!.IsApproved == false && Receipt.Receipt.IsDeclined == false)
             {
@@ -113,7 +113,10 @@ namespace LokataAdministrative2.Pages.UserPage
         private async Task CheckCitationReceiptIsImpounded()
         {
             if (!citation!.VehicleDescription!.IsImpounded)
+            {
+                citation.IsSettled = true;
                 await citationClient.PutRequest(citation, token);
+            }
         }
 
         private void CheckFileUrl(UserReceipt userRec)
