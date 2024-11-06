@@ -133,6 +133,11 @@
                 <InputText class="form-control" @bind-Value="vehicle.Model" required></InputText>
                 <ValidationMessage For="@(() => vehicle.Model)"></ValidationMessage>
             </div>
+            <div class="col">
+                <label class="form-label">Pictures of Vehicle</label>
+                <InputFile class="form-control" OnChange="HandleFilesSelected" multiple></InputFile>
+                <ValidationMessage For="@(() => vehiclePictures)"></ValidationMessage>
+            </div>
         </div>
     </div>
 

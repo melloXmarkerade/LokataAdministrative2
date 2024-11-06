@@ -35,9 +35,9 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
             else
             {
-                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || 
-                                                      vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) || 
-                                                      vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredVehicles = vehicleList!.Where(vehicle => vehicle.PlateNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) 
+                                   || vehicle.TctNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase) 
+                                   || vehicle.LicenseNo!.Contains(searchItem, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
 
@@ -59,15 +59,6 @@ namespace LokataAdministrative2.Pages.AdminPage
                     Title = "Updated Area Success.",
                     Icon = SweetAlertIcon.Success
                 }));
-
-            //await notificationClient.PostRequest(notif, null!);
-            //await vehicleImpoundedClient.PutRequest(Vehicle, token);
-
-            //await Swal.FireAsync(new SweetAlertOptions
-            //{
-            //    Title = "Updated Area Success.",
-            //    Icon = SweetAlertIcon.Success
-            //});
 
             VehiclePopup = false;
         }

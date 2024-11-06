@@ -3,6 +3,7 @@ using LokataAdministrative2.Enums;
 using LokataAdministrative2.Models;
 using LokataAdministrative2.Models.Citation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace LokataAdministrative2.Pages.AdminPage
 {
@@ -15,6 +16,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         string token = string.Empty;
         bool popup = false;
         bool isCheckedVehicle = false;
+        private List<IBrowserFile> vehiclePictures = new();
 
         readonly CitationDto citation = new();
         readonly OfficerDto officer = new();
@@ -35,7 +37,6 @@ namespace LokataAdministrative2.Pages.AdminPage
         List<UserViolationDto> userViolations = new();
         List<ViolationCategoryDto> categories = new();
         List<ViolationDto> violations = new();
-        //List<ViolationFeeDto> violationFees = new();
         List<StorageRateDto> storages = new();
         List<TowingRateDto> towings = new();
         List<ImpoundedAreaDto> impoundingAreas = new();
@@ -308,6 +309,14 @@ namespace LokataAdministrative2.Pages.AdminPage
             }
 
             return false;
+        }
+
+        private async Task HandleFilesSelected(InputFileChangeEventArgs e)
+        {
+            vehiclePictures = e.GetMultipleFiles().ToList();
+            // Process files as needed, for example by uploading each file in the list
+
+
         }
     }
 }
