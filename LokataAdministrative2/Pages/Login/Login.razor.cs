@@ -15,7 +15,7 @@ namespace LokataAdministrative2.Pages.Login
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = result,
+                    Title = result as string,
                     Icon = SweetAlertIcon.Error,
                     ShowCloseButton = true
                 });
@@ -27,7 +27,7 @@ namespace LokataAdministrative2.Pages.Login
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = result,
+                    Title = result as string,
                     Icon = SweetAlertIcon.Info,
                     ShowCloseButton = true
                 });
@@ -35,7 +35,10 @@ namespace LokataAdministrative2.Pages.Login
                 return;
             }
 
-            await tokenProvider.SetTokenAsync(result);
+            AdminLoginResponseDto? adminResponse = result as AdminLoginResponseDto;
+            adminStateService.AdminResponse = adminResponse;
+
+            await tokenProvider.SetTokenAsync(adminResponse!.Token);
             navigation.NavigateTo("/index");
         }
 

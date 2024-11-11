@@ -2,6 +2,7 @@
 @inherits LayoutComponentBase
 @inject NavigationManager navigation
 @inject SweetAlertService Swal
+@inject AdminStateService adminStateService
 @* @attribute [Authorize(Roles = "SuperAdmin, Admin")] *@
 
 <div class="page">
@@ -13,7 +14,7 @@
         <div class="top-row px-4">
             <AuthorizeView Roles="Admin">
                 <Authorized>
-                    <div><button class="btn btn-outline-primary" @onclick="(async () => await ViewProfile(context.User.Identity!.Name!))">View Profile</button></div>
+                    <div><button class="btn btn-outline-primary" @onclick="(() => ViewProfile(context.User.Identity!.Name!))">View Profile</button></div>
                 </Authorized>
             </AuthorizeView>
 
@@ -96,11 +97,12 @@
     bool ViewAdmin = false;
     AdminDto admin = null!;
 
-    private async Task ViewProfile(string name)
+    private void ViewProfile(string name)
     {
         string[] fullname = name.Split(' ');
         string firstName = fullname[0];
-        admin = await adminClient.GetRequestByName(firstName, await tokenProvider.GetTokenAsync());
+        // admin = await adminClient.GetRequestByName(firstName, await tokenProvider.GetTokenAsync());
+        admin = adminStateService.AdminResponse!.Admin!;
         ViewAdmin = true;
     }
 
@@ -120,8 +122,8 @@
                 Password = admin.Password!
             };
 
-        string token = await adminAuthClient.LoginPostRequest(admintest);
-        await tokenProvider.SetTokenAsync(token);
+        var token = await adminAuthClient.LoginPostRequest(admintest) as AdminLoginResponseDto;
+        await tokenProvider.SetTokenAsync(token!.Token);
         ViewAdmin = false;
     }
 

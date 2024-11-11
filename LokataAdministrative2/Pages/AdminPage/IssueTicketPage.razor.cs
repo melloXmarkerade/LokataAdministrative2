@@ -16,7 +16,11 @@ namespace LokataAdministrative2.Pages.AdminPage
         string token = string.Empty;
         bool popup = false;
         bool isCheckedVehicle = false;
-        private List<IBrowserFile> vehiclePictures = new();
+        private List<string> fileNames = new();
+        private List<byte[]> base64Pictures = new();
+        private List<VehiclePictureDto> vehiclePictureList = new();
+        private List<IBrowserFile> files = new();
+        private bool fileLimitExceeded = false;
 
         readonly CitationDto citation = new();
         readonly OfficerDto officer = new();
@@ -34,7 +38,7 @@ namespace LokataAdministrative2.Pages.AdminPage
         List<ProvinceDto> provinces = new();
         List<CityDto> cities = new();
         List<BarangayDto> barangays = new();
-        List<UserViolationDto> userViolations = new();
+        readonly List<UserViolationDto> userViolations = new();
         List<ViolationCategoryDto> categories = new();
         List<ViolationDto> violations = new();
         List<StorageRateDto> storages = new();
@@ -101,6 +105,8 @@ namespace LokataAdministrative2.Pages.AdminPage
             CheckPaymentSummary();
             MapCitationData();
 
+            await UploadVehiclePictureIfImpounded();
+
             await citationClient.PostRequest(citation, token);
             await Swal.FireAsync(new SweetAlertOptions
             {
@@ -108,6 +114,21 @@ namespace LokataAdministrative2.Pages.AdminPage
                 Icon = SweetAlertIcon.Success
             });
             navigation.NavigateTo("/issuedticket");
+        }
+
+        private async Task UploadVehiclePictureIfImpounded()
+        {
+            if(citation.VehicleDescription!.IsImpounded)
+            {
+                await vehicleUploadClient.PostRequest(new VehiclePictureUploadDto
+                {
+                    Email = adminStateService.AdminResponse!.Admin!.Username,
+                    Password = adminStateService.AdminResponse!.Admin.Password,
+                    PlateNo = citation.VehicleDescription!.PlateNo,
+                    FileNames = fileNames,
+                    Pictures = base64Pictures,
+                }, token);
+            }
         }
 
         private void Cancel() => navigation.NavigateTo("/issuedticket");
@@ -280,10 +301,13 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private void MapCitationData()
         {
+            vehicle.Email = adminStateService.AdminResponse!.Admin!.Username;
+            vehicle.Password = adminStateService.AdminResponse!.Admin.Password;
             vehicle.Status = nameof(VehicleStatus.Unsettled);
             vehicle.TctNo = citation.TctNo;
             vehicle.LicenseNo = citation.LicenseNo;
             vehicle.DateImpounded = placeApprehended.Date;
+            vehicle.Pictures = vehiclePictureList;
 
             citation.Address = address;
             citation.VehicleDescription = vehicle;
@@ -313,10 +337,35 @@ namespace LokataAdministrative2.Pages.AdminPage
 
         private async Task HandleFilesSelected(InputFileChangeEventArgs e)
         {
-            vehiclePictures = e.GetMultipleFiles().ToList();
-            // Process files as needed, for example by uploading each file in the list
+            files = e.GetMultipleFiles().ToList();
+
+            if (files.Count > 4)
+            {
+                fileLimitExceeded = true;
+            }
+            else
+            {
+                fileLimitExceeded = false;
+
+                foreach (var file in files)
+                {
+                    using var stream = file.OpenReadStream();
+                    using var memoryStream = new MemoryStream();
+
+                    await stream.CopyToAsync(memoryStream);
+                    byte[] fileBytes = memoryStream.ToArray();
 
 
+                    vehiclePictureList.Add(new VehiclePictureDto
+                    {
+                        FileName = file.Name,
+                        FileUrl = ""
+                    });
+
+                    fileNames.Add(file.Name);
+                    base64Pictures.Add(fileBytes);
+                }
+            }
         }
     }
 }

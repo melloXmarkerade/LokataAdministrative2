@@ -1,11 +1,12 @@
 ﻿@page "/index"
 @using LokataAdministrative2.Models.Users
+@inject AdminStateService adminStateService
 
 <PageTitle>Dashboard</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello, @context.User.Identity!.Name</h1>
+        <h1>Hello, @adminStateService.AdminResponse!.Admin!.FirstName @adminStateService.AdminResponse!.Admin!.LastName</h1>
         Welcome to VIMS Admin Website.
     </Authorized>
 </AuthorizeView>

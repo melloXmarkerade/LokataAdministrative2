@@ -1,6 +1,7 @@
 ﻿@page "/issuedTicketPage"
 @page "/issuedTicketPage/{issuedTicketId}"
 @attribute [Authorize(Roles = "Admin")]
+@inject LokataAdministrative2.Models.Users.AdminStateService adminStateService
 @inject SweetAlertService Swal
 
 <EditForm Model="citation" OnValidSubmit="OnValidSubmit">
@@ -134,9 +135,13 @@
                 <ValidationMessage For="@(() => vehicle.Model)"></ValidationMessage>
             </div>
             <div class="col">
-                <label class="form-label">Pictures of Vehicle</label>
+                <label class="form-label">Pictures (Front, Back, Left, Right)</label>
                 <InputFile class="form-control" OnChange="HandleFilesSelected" multiple></InputFile>
-                <ValidationMessage For="@(() => vehiclePictures)"></ValidationMessage>
+                <ValidationMessage For="@(() => files)"></ValidationMessage>
+                @if (fileLimitExceeded)
+                {
+                    <div class="text-danger">Upload up to 4 files only.</div>
+                }
             </div>
         </div>
     </div>

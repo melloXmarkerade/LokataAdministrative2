@@ -4,6 +4,8 @@ namespace LokataAdministrative2.Models
 {
     public class VehicleDto : BaseDto
     {
+        public string? Email { get; set; }
+        public string? Password { get; set; }
         public string? TctNo { get; set; }
         public string? LicenseNo { get; set; }
         public string? PlateNo { get; set; }
@@ -14,5 +16,6 @@ namespace LokataAdministrative2.Models
         public bool IsImpounded { get; set; }
         public string? DateImpounded { get; set; }
         public string? Status { get; set; }
+        public List<VehiclePictureDto> Pictures { get; set; } = new();
     }
 }
