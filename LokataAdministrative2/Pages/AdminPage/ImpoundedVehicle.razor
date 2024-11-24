@@ -99,6 +99,31 @@
                                         <button type="button" class="btn btn-success" @onclick=@(async () => await UpdateImpoundedArea())>Update Area</button>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label fw-bold">Pictures</label>
+
+                                        @if (Vehicle.Pictures is null || !Vehicle.Pictures.Any())
+                                        {
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <label class="text-center">No Pictures</label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex flex-wrap">
+                                                @foreach (var item in Vehicle.Pictures)
+                                                {
+                                                    <div class="me-3">
+                                                        <img src="@item.FileUrl" alt="Vehicle Image" class="img-fluid" width="175" height="200" />
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
                             }
                         </Authorized>
                     </AuthorizeView>
